@@ -1,11 +1,10 @@
-#include "keepasslib/PwUuid.h"
+#include "KeePassLib/PwUuid.hpp"
 
 #include <chrono>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <vector>
-#include "windef.h"
 using namespace std;
 
 //inline string PrintToHex(const string& input) {
