@@ -16,7 +16,7 @@ class PwUuid {
     void createNew();
     void setZero();
 public:
-    // Standard size in bytes of a UUID
+    // Standard size in bytes of a UUID.
     const unsigned UuidSize = 16;
 
     // Zero UUID (all bytes are zero).
@@ -27,7 +27,7 @@ public:
     // If it is false, the UUID is initialized to zero.
     explicit PwUuid(bool bCreateNew);
 
-    // Get the 16 UUID bytes
+    // Get the 16 UUID bytes.
     std::string UuidBytes();
 
     friend bool operator ==(const PwUuid& left, const PwUuid& right);

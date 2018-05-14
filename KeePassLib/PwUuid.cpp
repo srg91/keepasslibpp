@@ -3,6 +3,7 @@
 //
 
 #include "PwUuid.hpp"
+#include "PwEnums.hpp"
 
 #include <algorithm>
 #include <chrono>
