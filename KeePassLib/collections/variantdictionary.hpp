@@ -3,6 +3,8 @@
 #include <cstdint>
 #include <string>
 #include <unordered_map>
+#include <variant>
+#include <vector>
 
 
 class VariantDictionary {
@@ -23,17 +25,7 @@ class VariantDictionary {
 
     struct Variant {
         VdType type;
-
-        union value {
-            uint32_t UInt32;
-            bool Bool;
-            int32_t Int32;
-            int64_t Int64;
-            std::string String;
-            // TODO: ByteArray???
-            std::vector<uint8_t> ByteArray;
-            ~Value();
-        };
+        std::variant<bool, uint32_t, int32_t, int64_t, std::string> value;
     };
 
 public:

@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <variant>
 #include <vector>
 using namespace std;
 
@@ -33,14 +34,19 @@ union A {
 };
 
 int main() {
+    std::variant<bool, int> x = true;
+    cout << "Bool: " << get<bool>(x) << endl;
+    x = 5;
+    cout << "Int: " << get<int>(x) << endl;
 //    auto zero1 = PwUuid::Zero;
 //    auto zero2 = PwUuid::Zero;
 
-    A a = {"123456"};
+//    A a = {"123456"};
+
 //    cout << "Z: " << zero1 << endl;
-    for (unsigned i = 0; i < 100; i++) {
-        cout << PwUuid(true) << endl;
-    }
+//    for (unsigned i = 0; i < 100; i++) {
+//        cout << PwUuid(true) << endl;
+//    }
 
     //    unsigned n = 500000;
 //    vector<string> cases = {
