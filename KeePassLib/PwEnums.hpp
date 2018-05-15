@@ -1,5 +1,7 @@
 #pragma once
 
+#include <bitset>
+
 /*
  * Compression algorithm specifiers.
  */
@@ -139,21 +141,41 @@ enum class MemProtCmpMode {
 };
 
 // TODO: Enum class with | or |= operators?
-namespace PwCompareOptions {
-    enum PwCompareOptions {
-        None = 0x0,
-        NullEmptyEquivStd = 0x1,
-        IgnoreParentGroup = 0x2,
-        IgnoreLastAccess = 0x4,
-        IgnoreLastMod = 0x8,
-        IgnoreHistory = 0x10,
-        IgnoreLastBackup = 0x20,
-        // For groups:
-        PropertiesOnly = 0x40,
+//namespace PwCompareOptions {
+//    enum PwCompareOptions {
+//        None = 0x0,
+//        NullEmptyEquivStd = 0x1,
+//        IgnoreParentGroup = 0x2,
+//        IgnoreLastAccess = 0x4,
+//        IgnoreLastMod = 0x8,
+//        IgnoreHistory = 0x10,
+//        IgnoreLastBackup = 0x20,
+//        // For groups:
+//        PropertiesOnly = 0x40,
+//
+//        IgnoreTimes = (IgnoreLastAccess | IgnoreLastMod)
+//    };
+//}
 
-        IgnoreTimes = (IgnoreLastAccess | IgnoreLastMod)
-    };
-}
+// TODO: Use bitset like in this article:
+// https://habr.com/post/334988/
+enum class PwCompareOptions {
+    None,
+
+    // Empty standard string fields are considered to be the
+    // same as non-existing standard string fields.
+    // This doesn't affect custom string comparisons.
+    NullEmptyEquivStd,
+    IgnoreParentGroup,
+    IgnoreLastAccess,
+    IgnoreLastMod,
+    IgnoreHistory,
+    IgnoreLastBackup,
+    ProPropertiesOnly,
+    // virtual
+    Count,
+    // TODO: IgnoreTimes = (IgnoreLastAccess | IgnoreLastMod)
+};
 
 // TODO: Get rit of it
 // IOAccessType

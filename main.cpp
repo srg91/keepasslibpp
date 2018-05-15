@@ -25,10 +25,18 @@ inline string StreamToHex(const string& input) {
     return s.str();
 }
 
+union A {
+    string A;
+    int B;
+
+    ~A() {}
+};
+
 int main() {
 //    auto zero1 = PwUuid::Zero;
 //    auto zero2 = PwUuid::Zero;
 
+    A a = {"123456"};
 //    cout << "Z: " << zero1 << endl;
     for (unsigned i = 0; i < 100; i++) {
         cout << PwUuid(true) << endl;
