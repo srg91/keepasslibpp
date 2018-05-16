@@ -23,16 +23,39 @@ class VariantDictionary {
         ByteArray = 0x42,
     };
 
-    struct Variant {
-        VdType type;
-        std::variant<bool, uint32_t, int32_t, int64_t, std::string> value;
-    };
+//    struct Variant {
+//        VdType type;
+//        std::variant<bool, uint32_t, int32_t, int64_t, std::string> value;
+//    };
+    using VariantValue = std::variant<bool, uint32_t, int32_t, int64_t, std::string>;
+    std::unordered_map<std::string, VariantValue> m_d;
 
+    template<typename T> bool get(const std::string& strName, T& t) const;
+    template<typename T> void set(const std::string& strName, const T& t);
 public:
+    bool empty();
+    size_t size();
+    bool erase(const std::string& strName);
 
+    uint32_t GetUInt32(const std::string& strName, uint32_t uDefault);
+    void SetUInt32(const std::string& strName, uint32_t uValue);
 };
 
+template<typename T>
+bool VariantDictionary::get(const std::string& strName, T& t) const {
+    if (strName.empty()) return false;
+    if (m_d.find(strName) == m_d.end()) return false;
+    auto vv = m_d.at(strName);
+    try {
+        t = std::get<T>(vv);
+    } catch (const std::bad_variant_access&) {
+        return false;
+    }
+    return true;
+}
 
-
-
-
+template<typename T>
+void VariantDictionary::set(const std::string& strName, const T& t) {
+    if (strName.empty()) return;
+    m_d[strName] = t;
+}

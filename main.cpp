@@ -1,4 +1,5 @@
 #include "KeePassLib/PwUuid.hpp"
+#include "KeePassLib/collections/variantdictionary.hpp"
 
 #include <chrono>
 #include <iomanip>
@@ -38,6 +39,10 @@ int main() {
     cout << "Bool: " << get<bool>(x) << endl;
     x = 5;
     cout << "Int: " << get<int>(x) << endl;
+
+    VariantDictionary vd;
+    vd.SetUInt32("key", 5u);
+    cout << "Value of key: " << vd.GetUInt32("key", 0) << endl;
 //    auto zero1 = PwUuid::Zero;
 //    auto zero2 = PwUuid::Zero;
 
