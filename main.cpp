@@ -35,14 +35,18 @@ union A {
 };
 
 int main() {
-    std::variant<bool, int> x = true;
-    cout << "Bool: " << get<bool>(x) << endl;
-    x = 5;
-    cout << "Int: " << get<int>(x) << endl;
+// nodes are physically extracted from OldContacts, duplicates are skipped
+/* newContacts =
+  {"antonio", "1234"},
+  {"franco", "34412"},
+  {"gpad", "8991234"},
+  {"marco", "23123"}
+*/
 
     VariantDictionary vd;
     vd.SetUInt32("key", 5u);
     cout << "Value of key: " << vd.GetUInt32("key", 0) << endl;
+
 //    auto zero1 = PwUuid::Zero;
 //    auto zero2 = PwUuid::Zero;
 
