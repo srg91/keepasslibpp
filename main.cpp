@@ -42,10 +42,16 @@ int main() {
   {"gpad", "8991234"},
   {"marco", "23123"}
 */
+//    int a = 123456;
+//    char bytes[sizeof a];
+//    std::copy(static_cast<const char*>(static_cast<const void*>(&a)),
+//              static_cast<const char*>(static_cast<const void*>(&a)) + sizeof a,
+//              bytes);
+//    cout << "Bytes: " << bytes << "Hello" << endl;
 
-    VariantDictionary vd;
-    vd.SetUInt32("key", 5u);
-    cout << "Value of key: " << vd.GetUInt32("key", 0) << endl;
+//    VariantDictionary vd;
+//    vd.SetUInt32("key", 5u);
+//    cout << "Value of key: " << vd.GetUInt32("key", 0) << endl;
 
 //    auto zero1 = PwUuid::Zero;
 //    auto zero2 = PwUuid::Zero;
