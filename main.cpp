@@ -4,6 +4,7 @@
 #include <chrono>
 #include <iomanip>
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <variant>
 #include <vector>
@@ -34,7 +35,14 @@ union A {
     ~A() {}
 };
 
+#include "KeePassLib/utility/memutil.hpp"
+
 int main() {
+    ofstream f("D:/file.txt");
+    const char* h = "hello my name vasya";
+    MemUtil::Write<const char*>(f, h);
+    MemUtil::Write(f, 5);
+    f.close();
 // nodes are physically extracted from OldContacts, duplicates are skipped
 /* newContacts =
   {"antonio", "1234"},
