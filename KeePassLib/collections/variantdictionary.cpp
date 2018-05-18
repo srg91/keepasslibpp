@@ -6,6 +6,7 @@
 #include <sstream>
 #include <string>
 #include <unordered_map>
+#include <vector>
 using namespace std;
 
 VariantDictionary::VariantDictionary(const VariantDictionary &vd) {
@@ -95,16 +96,25 @@ string VariantDictionary::GetString(const string &strName) const {
     return "";
 }
 
-void VariantDictionary::SetString(const string &strName, std::string strValue) {
+void VariantDictionary::SetString(const string &strName, const std::string& strValue) {
     this->set<string>(strName, strValue);
 }
 
-const char* VariantDictionary::GetByteArray(const string &strName) const {
-    const char* pb;
-    if (this->get<const char*>(strName, pb)) return pb;
-    return nullptr;
+std::string VariantDictionary::GetByteArray(const std::string &strName) const {
+    VariantDictionary::byte_array_type v;
+    if (this->get<VariantDictionary::byte_array_type>(strName, v)) return string(v.begin(), v.end());
+    return "";
 }
 
-void VariantDictionary::SetByteArray(const std::string &strName, const char *pbValue) {
-    this->set<const char*>(strName, pbValue);
+void VariantDictionary::SetByteArray(const std::string &strName, const std::string& value) {
+    this->set<VariantDictionary::byte_array_type>(strName, VariantDictionary::byte_array_type(value.begin(), value.end()));
 }
+//const char* VariantDictionary::GetByteArray(const string &strName) const {
+//    const char* pb;
+//    if (this->get<const char*>(strName, pb)) return pb;
+//    return nullptr;
+//}
+//
+//void VariantDictionary::SetByteArray(const std::string &strName, const char *pbValue) {
+//    this->set<const char*>(strName, pbValue);
+//}

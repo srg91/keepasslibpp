@@ -4,12 +4,14 @@
 #include <string>
 #include <unordered_map>
 #include <variant>
+#include <vector>
 
 class VariantDictionary {
 public:
+    using byte_array_type = std::vector<uint8_t>;
+
     VariantDictionary() {};
     VariantDictionary(const VariantDictionary& vd);
-
 
     bool Empty();
     size_t Size();
@@ -38,10 +40,12 @@ public:
     uint64_t GetUInt64(const std::string& strName, uint64_t uDefault) const;
     void SetUInt64(const std::string& strName, uint64_t uValue);
     std::string GetString(const std::string& strName) const;
-    void SetString(const std::string& strName, std::string strValue);
+    void SetString(const std::string& strName, const std::string& strValue);
+    std::string GetByteArray(const std::string& strName) const;
+    void SetByteArray(const std::string& strName, const std::string& value);
     // TODO: Do we need byte array?
-    const char* GetByteArray(const std::string& strName) const;
-    void SetByteArray(const std::string& strName, const char* pbValue);
+//    const char* GetByteArray(const std::string& strName) const;
+//    void SetByteArray(const std::string& strName, const char* pbValue);
     // TODO: Think about byte array
 private:
     const uint16_t VdVersion = 0x0100;
@@ -65,7 +69,10 @@ private:
 //        std::variant<bool, uint32_t, int32_t, int64_t, std::string> value;
 //    };
     // TODO: C++17 feachure
-    using VariantValue = std::variant<bool, int32_t, int64_t, uint32_t, uint64_t, std::string, const char*>;
+    using VariantValue = std::variant<
+        bool, int32_t, int64_t, uint32_t, uint64_t,
+        std::string, byte_array_type
+    >;
     std::unordered_map<std::string, VariantValue> m_d;
 
     template<typename T> bool get(const std::string& strName, T& t) const;
@@ -75,7 +82,6 @@ private:
 template<typename T>
 bool VariantDictionary::get(const std::string& strName, T& t) const {
     if (strName.empty()) return false;
-    if (m_d.find(strName) == m_d.end()) return false;
     try {
         auto vv = m_d.at(strName);
         t = std::get<T>(vv);

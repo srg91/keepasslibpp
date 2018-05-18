@@ -2,6 +2,7 @@
 #include "KeePassLib/collections/variantdictionary.hpp"
 
 #include <chrono>
+#include <cstdint>
 #include <iomanip>
 #include <iostream>
 #include <fstream>
@@ -39,8 +40,8 @@ union A {
 
 int main() {
     ofstream f("D:/file.txt");
-    const char* h = "hello my name vasya";
-    MemUtil::Write<const char*>(f, h);
+    string s = {1, 2, 3, 0, 0, 0};
+    MemUtil::Write<std::string>(f, s);
     MemUtil::Write(f, 5);
     f.close();
 // nodes are physically extracted from OldContacts, duplicates are skipped

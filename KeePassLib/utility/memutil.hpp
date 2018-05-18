@@ -1,8 +1,10 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 #include <iostream>
 #include <string>
+#include <vector>
 #include <utility>
 
 namespace MemUtil {
@@ -21,8 +23,5 @@ namespace MemUtil {
     // TODO: Make it more simple?
     template <typename>
     void Write(std::ostream &stream, const std::string& value) { stream << value; }
-
-    template <typename>
-    void Write(std::ostream &stream, const char* value) { stream << value; }
 }
 
