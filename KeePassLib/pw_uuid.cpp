@@ -2,8 +2,8 @@
 // Created by srg91 on 16.04.2018.
 //
 
-#include "PwUuid.hpp"
-#include "PwEnums.hpp"
+#include "pw_uuid.hpp"
+#include "pw_enums.hpp"
 
 #include <algorithm>
 #include <chrono>

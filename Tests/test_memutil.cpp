@@ -19,7 +19,7 @@ void AssertEqual(T left, U right) {
 
 void TestWriteLE() {
     ostringstream stream;
-    MemUtil::Write(stream, 5);
+    MemUtil::Write(stream, 5, sizeof(5));
     string out = stream.str();
     ofstream f("D:/file.txt");
     f << out;

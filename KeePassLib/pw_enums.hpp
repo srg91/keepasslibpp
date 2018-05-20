@@ -158,6 +158,7 @@ enum class MemProtCmpMode {
 //}
 
 // TODO: Use bitset like in this article:
+// TODO: Static class with method
 // https://habr.com/post/334988/
 enum class PwCompareOptions {
     None,
@@ -177,10 +178,10 @@ enum class PwCompareOptions {
     // TODO: IgnoreTimes = (IgnoreLastAccess | IgnoreLastMod)
 };
 
-// TODO: Get rit of it
+// TODO: Get rid of it
 // IOAccessType
 
-// TODO: Get rit of it
+// TODO: Get rid of it
 namespace AppRunFlags {
     enum AppRunFlags {
         None = 0,

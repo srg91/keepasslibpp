@@ -17,7 +17,7 @@ class PwUuid {
     void setZero();
 public:
     // Standard size in bytes of a UUID.
-    const unsigned UuidSize = 16;
+    const unsigned UuidSize = 16u;
 
     // Zero UUID (all bytes are zero).
     static const PwUuid Zero;

@@ -1,4 +1,4 @@
-#include "KeePassLib/PwUuid.hpp"
+#include "KeePassLib/pw_uuid.hpp"
 #include "KeePassLib/collections/variantdictionary.hpp"
 
 #include <chrono>
@@ -40,9 +40,17 @@ union A {
 
 int main() {
     ofstream f("D:/file.txt");
-    string s = {1, 2, 3, 0, 0, 0};
-    MemUtil::Write<std::string>(f, s);
-    MemUtil::Write(f, 5);
+    VariantDictionary vd;
+    vd.SetString("String", "hello, people");
+    vd.SetInt32("Int32", 5);
+    vd.SetBool("Bool", true);
+    vd.SetUInt32("UInt32", 6);
+    vd.SetByteArray("ByteArray", {0x00, 0x00, 0x05, 0x00, 0x03});
+
+    VariantDictionary::Serialize(f, vd);
+//    string s = "123456";
+//    MemUtil::Write<std::string>(f, s);
+//    MemUtil::Write(f, 6);
     f.close();
 // nodes are physically extracted from OldContacts, duplicates are skipped
 /* newContacts =

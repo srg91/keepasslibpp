@@ -1,4 +1,5 @@
 #include "variantdictionary.hpp"
+#include "utility/memutil.hpp"
 
 // TODO: Should I copy libs already defined in header?
 #include <cstdint>
@@ -31,13 +32,82 @@ bool VariantDictionary::Erase(const string& strName) {
     m_d.erase(strName);
 }
 
-string VariantDictionary::Serialize(const VariantDictionary &vd) {
-    ostringstream stream;
+void VariantDictionary::Serialize(std::ostream& stream, const VariantDictionary &vd) {
+    MemUtil::Write<uint16_t>(stream, VdVersion);
 
+    // TODO: C++17 feature
+    for (const auto& [key, value_variant] : vd.m_d) {
+        // TODO: Make it MOOOOOOOOOOOOOOOORE simpler
+        VdType type = guess_type<VariantDictionary>(value_variant);
+
+        MemUtil::Write(stream, static_cast<uint8_t>(type));
+        MemUtil::Write<int32_t>(stream, key.size());
+        MemUtil::Write<string>(stream, key);
+
+        serialize_value(stream, type, value_variant);
+    }
+    MemUtil::Write<uint8_t>(stream, static_cast<uint8_t>(VdType::None));
+}
+
+void VariantDictionary::serialize_value(std::ostream& stream, VdType type, const VariantValue& variant_value) {
+    // TODO: Make it simpler
+    switch (type) {
+        case VdType::Bool: {
+            auto value = std::get<bool>(variant_value);
+            int32_t size = sizeof(value);
+            MemUtil::Write(stream, size);
+            MemUtil::Write(stream, value);
+            return;
+        }
+        case VdType::Int32: {
+            auto value = std::get<int32_t>(variant_value);
+            int32_t size = sizeof(value);
+            MemUtil::Write(stream, size);
+            MemUtil::Write(stream, value);
+            return;
+        }
+        case VdType::Int64: {
+            auto value = std::get<int64_t>(variant_value);
+            int32_t size = sizeof(value);
+            MemUtil::Write(stream, size);
+            MemUtil::Write(stream, value);
+            return;
+        }
+        case VdType::UInt32: {
+            auto value = std::get<uint32_t>(variant_value);
+            int32_t size = sizeof(value);
+            MemUtil::Write(stream, size);
+            MemUtil::Write(stream, value);
+            return;
+        }
+        case VdType::UInt64: {
+            auto value = std::get<uint64_t>(variant_value);
+            int32_t size = sizeof(value);
+            MemUtil::Write(stream, size);
+            MemUtil::Write(stream, value);
+            return;
+        }
+        case VdType::String: {
+            auto& value = std::get<std::string>(variant_value);
+            auto size = static_cast<int32_t>(value.size());
+            MemUtil::Write(stream, size);
+            MemUtil::Write(stream, value);
+            return;
+        }
+        case VdType::ByteArray: {
+            // TODO: make it simplier
+            auto& value = std::get<byte_array_type>(variant_value);
+            auto size = static_cast<int32_t>(value.size());
+            MemUtil::Write(stream, size);
+            MemUtil::Write(stream, string(value.begin(), value.end()));
+            return;
+        }
+    }
 }
 
 VariantDictionary VariantDictionary::Deserialize(const std::string &pb) {
-
+    VariantDictionary vd;
+    return vd;
 }
 
 bool VariantDictionary::GetBool(const string &strName, bool bDefault) const {
@@ -109,12 +179,3 @@ std::string VariantDictionary::GetByteArray(const std::string &strName) const {
 void VariantDictionary::SetByteArray(const std::string &strName, const std::string& value) {
     this->set<VariantDictionary::byte_array_type>(strName, VariantDictionary::byte_array_type(value.begin(), value.end()));
 }
-//const char* VariantDictionary::GetByteArray(const string &strName) const {
-//    const char* pb;
-//    if (this->get<const char*>(strName, pb)) return pb;
-//    return nullptr;
-//}
-//
-//void VariantDictionary::SetByteArray(const std::string &strName, const char *pbValue) {
-//    this->set<const char*>(strName, pbValue);
-//}
