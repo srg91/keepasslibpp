@@ -39,15 +39,16 @@ union A {
 #include "KeePassLib/utility/memutil.hpp"
 
 int main() {
-    ofstream f("D:/file.txt");
-    VariantDictionary vd;
-    vd.SetString("String", "hello, people");
-    vd.SetInt32("Int32", 5);
-    vd.SetBool("Bool", true);
-    vd.SetUInt32("UInt32", 6);
-    vd.SetByteArray("ByteArray", {0x00, 0x00, 0x05, 0x00, 0x03});
+    ifstream f("D:/file.txt");
+//    VariantDictionary vd;
+//    vd.SetString("String", "hello, people");
+//    vd.SetInt32("Int32", 5);
+//    vd.SetBool("Bool", true);
+//    vd.SetUInt32("UInt32", 6);
+//    vd.SetByteArray("ByteArray", {0x00, 0x00, 0x05, 0x00, 0x03});
 
-    VariantDictionary::Serialize(f, vd);
+//    VariantDictionary::Serialize(f, vd);
+    auto vd = VariantDictionary::Deserialize(f);
 //    string s = "123456";
 //    MemUtil::Write<std::string>(f, s);
 //    MemUtil::Write(f, 6);

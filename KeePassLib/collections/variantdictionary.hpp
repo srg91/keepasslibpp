@@ -30,7 +30,7 @@ public:
     // TODO: make it general methods?
     // TODO: Make it stream
     static void Serialize(std::ostream& stream, const VariantDictionary& vd);
-    static VariantDictionary Deserialize(const std::string& pb);
+    static VariantDictionary Deserialize(std::istream& stream);
 
     // TODO: Is this a code-duplication? Can we make this more simple?
     // Make String and ByteArray as partial spec

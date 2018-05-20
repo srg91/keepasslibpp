@@ -105,8 +105,35 @@ void VariantDictionary::serialize_value(std::ostream& stream, VdType type, const
     }
 }
 
-VariantDictionary VariantDictionary::Deserialize(const std::string &pb) {
+VariantDictionary VariantDictionary::Deserialize(istream& stream) {
     VariantDictionary vd;
+
+    auto uVersion = MemUtil::Read<uint16_t>(stream);
+    if ((uVersion & VdmCritical) > (VdVersion & VdmCritical))
+        // TODO: Make it FileNewVerReq
+        throw invalid_argument("FileNewVerReq");
+
+    while (true) {
+        auto type = static_cast<VdType>(MemUtil::Read<uint8_t>(stream));
+        // if (type < 0) throw EndOfStreamException
+        if (type == VdType::None) break;
+
+//        auto cbName = static_cast<size_t>(MemUtil::Read<int32_t>(stream));
+//        // TODO: static_cast here?
+//        string strName = MemUtil::ReadString(stream, cbName);
+//        if (strName.size() != cbName) throw invalid_argument("EndOfStreamException") ;
+//
+//        auto cbValue = static_cast<size_t>(MemUtil::Read<int32_t>(stream));
+//
+//        // more simple
+//        switch (type) {
+//            case VdType::Bool:
+//                auto value = MemUtil::Read<bool>(stream);
+//
+//                break;
+//        }
+
+    }
     return vd;
 }
 
