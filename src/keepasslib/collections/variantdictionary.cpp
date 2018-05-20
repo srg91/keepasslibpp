@@ -1,5 +1,5 @@
 #include "variantdictionary.hpp"
-#include "utility/memutil.hpp"
+#include "keepasslib/utility/memutil.hpp"
 
 // TODO: Should I copy libs already defined in header?
 #include <cstdint>

@@ -1,5 +1,5 @@
-#include "test_memutil.hpp"
-#include "utility/memutil.hpp"
+#include "tests/keepasslib/utility/test_memutil.hpp"
+#include "keepasslib/utility/memutil.hpp"
 
 #include <cassert>
 #include <iostream>
