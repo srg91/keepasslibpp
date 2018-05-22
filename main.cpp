@@ -1,4 +1,4 @@
-#include "KeePassLib/pw_uuid.hpp"
+#include "pw_uuid.hpp"
 #include "KeePassLib/collections/variantdictionary.hpp"
 
 #include <chrono>

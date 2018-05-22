@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(KeePassLib)
+project(keepasslib)
 
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_CXX_STANDARD 17)
@@ -9,17 +9,26 @@ set(CMAKE_CXX_STANDARD 17)
 #else()
 #endif()
 
+# Add additional libriaries
+# find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 find_package(Boost)
+include_directories(${Boost_INCLUDE_DIR})
 
-file(GLOB_RECURSE SOURCES src/keepasslib/*.cpp src/keepasslib/*.hpp)
+# TODO: Check is boost exists
+# Configure project
+add_subdirectory(src)
+
+# Configure tests
+add_subdirectory(test)
+
+#file(GLOB_RECURSE SOURCES src/keepasslib/*.cpp src/keepasslib/*.hpp)
 # if you wanna dll
 #add_library(keepasslib SHARED ${SOURCES})
-add_library(keepasslib ${SOURCES})
-target_include_directories(keepasslib PRIVATE src)
-
-file(GLOB_RECURSE TEST_SOURCES src/tests/*.cpp src/tests/*.hpp)
-add_executable(test_keepasslib ${SOURCES} ${TEST_SOURCES})
-target_include_directories(test_keepasslib PRIVATE src)
-target_include_directories(test_keepasslib PRIVATE ${Boost_INCLUDE_DIRS})
-target_link_libraries(test_keepasslib ${Boost_LIBRARIES})
-
+#add_library(keepasslib ${SOURCES})
+#target_include_directories(keepasslib PRIVATE src)
+#file(GLOB_RECURSE TEST_SOURCES src/tests/*.cpp src/tests/*.hpp)
+#add_executable(test_keepasslib ${SOURCES} ${TEST_SOURCES})
+#target_include_directories(test_keepasslib PRIVATE src)
+#target_include_directories(test_keepasslib PRIVATE ${Boost_INCLUDE_DIRS})
+#target_link_libraries(test_keepasslib ${Boost_LIBRARIES})
+#

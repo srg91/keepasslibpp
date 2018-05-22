@@ -2,8 +2,7 @@
 // Created by srg91 on 16.04.2018.
 //
 
-#include "keepasslib/pw_uuid.hpp"
-#include "keepasslib/pw_enums.hpp"
+#include "pw_uuid.hpp"
 
 #include <algorithm>
 #include <chrono>
