@@ -11,15 +11,17 @@ set(CMAKE_CXX_STANDARD 17)
 
 # Add additional libriaries
 # find_package(Boost REQUIRED COMPONENTS unit_test_framework)
-find_package(Boost COMPONENTS unit_test_framework system)
-include_directories(${Boost_INCLUDE_DIR})
+#find_package(Boost COMPONENTS unit_test_framework system)
+#include_directories(${Boost_INCLUDE_DIR})
 
 # TODO: Check is boost exists
 # Configure project
 add_subdirectory(src)
 
 # Configure tests
-add_subdirectory(test)
+if (${CMAKE_BUILD_TYPE} STREQUAL Test)
+    add_subdirectory(test)
+endif()
 
 #file(GLOB_RECURSE SOURCES src/keepasslib/*.cpp src/keepasslib/*.hpp)
 # if you wanna dll
