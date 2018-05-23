@@ -11,7 +11,12 @@
 using namespace std;
 
 int main() {
-    PwUuid u, u2;
-    cout << (u != u2);
+    try {
+        PwUuid u(string(5, 0));
+        cout << u << endl;
+    } catch (const invalid_argument& e) {
+        cerr << "Failed: " << e.what() << endl;
+        return 1;
+    }
     return 0;
 }

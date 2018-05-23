@@ -67,6 +67,7 @@ void PwUuid::createNew() {
 void PwUuid::checkSize(const string& s) const {
     if (s.size() != PwUuid::UuidSize) {
         ostringstream es;
+        // TODO: implement print hex string
         es << "string " << '"' << s << '"' << " has incorrect size: "
            << s.size() << " != " << PwUuid::UuidSize;
         throw invalid_argument(es.str());

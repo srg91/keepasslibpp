@@ -19,10 +19,10 @@ BOOST_AUTO_TEST_SUITE(test_pw_uuid)
 
     BOOST_AUTO_TEST_CASE(test_length) {
         std::string no_throw(16, 0);
-        BOOST_CHECK_NO_THROW(PwUuid(no_throw));
+        BOOST_CHECK_NO_THROW(PwUuid(no_throw).ToString());
 
         std::string expect_throw(5, 0);
-        BOOST_CHECK_THROW(PwUuid(expect_throw), std::invalid_argument);
+        BOOST_CHECK_THROW(PwUuid(expect_throw).ToString(), std::invalid_argument);
     }
 
     BOOST_AUTO_TEST_CASE(test_new_uuid) {
