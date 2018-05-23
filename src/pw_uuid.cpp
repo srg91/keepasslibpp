@@ -13,6 +13,9 @@
 #include <sstream>
 #include <string>
 
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+
 using namespace std;
 
 PwUuid::PwUuid() {
@@ -61,7 +64,9 @@ string PwUuid::ToString() const {
 }
 
 void PwUuid::createNew() {
-    bytes = string(16, 0x11);
+    // TODO: cache generator in static attr?
+    auto uuid = boost::uuids::random_generator()();
+    bytes = string(uuid.begin(), uuid.end());
 }
 
 void PwUuid::checkSize(const string& s) const {

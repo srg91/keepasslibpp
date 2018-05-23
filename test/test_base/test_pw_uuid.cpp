@@ -56,6 +56,11 @@ BOOST_AUTO_TEST_SUITE(test_pw_uuid)
         BOOST_CHECK_EQUAL(bytes, expected);
     }
 
+    BOOST_AUTO_TEST_CASE(test_new_uuid_by_rv_uuid) {
+        PwUuid u([]() -> PwUuid { return PwUuid(); }());
+        BOOST_CHECK_NE(u, PwUuid::Zero);
+    }
+
     BOOST_AUTO_TEST_CASE(test_lower_operator) {
         std::string zero_string(16, 0);
         std::string bigger_string = zero_string;
