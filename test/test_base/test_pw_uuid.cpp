@@ -30,7 +30,9 @@ BOOST_AUTO_TEST_SUITE(test_pw_uuid)
         auto bytes = u1.Bytes();
         PwUuid u2(bytes);
         BOOST_CHECK_EQUAL(u1, u2);
-        BOOST_CHECK_EQUAL(bytes.size(), PwUuid::UuidSize);
+
+        const size_t default_size = PwUuid::UuidSize;
+        BOOST_CHECK_EQUAL(bytes.size(), default_size);
     }
 
     BOOST_AUTO_TEST_CASE(test_new_uuid_by_string) {
@@ -80,5 +82,17 @@ BOOST_AUTO_TEST_SUITE(test_pw_uuid)
         std::string bytes = z.Bytes();
         std::string expected(16, 0);
         BOOST_CHECK_EQUAL(bytes, expected);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_to_string) {
+        auto s = PwUuid::Zero.ToString();
+        std::string expected("00000000-0000-0000-0000-000000000000");
+        BOOST_CHECK_EQUAL(s, expected);
+
+        PwUuid u({0x11, 0x11, 0x11, 0x11, 0x22, 0x22, 0x33, 0x33,
+                  0x44, 0x44, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55});
+        s = u.ToString();
+        expected = "11111111-2222-3333-4444-555555555555";
+        BOOST_CHECK_EQUAL(s, expected);
     }
 BOOST_AUTO_TEST_SUITE_END()

@@ -7,54 +7,84 @@
 #include <algorithm>
 #include <chrono>
 #include <iomanip>
+#include <iostream>
 #include <random>
+#include <stdexcept>
 #include <sstream>
 #include <string>
 
 using namespace std;
 
-PwUuid::PwUuid(bool bCreateNew) {
-    if (bCreateNew) createNew(); else setZero();
+PwUuid::PwUuid() {
+    createNew();
 }
 
-const PwUuid PwUuid::Zero = PwUuid(false);
+PwUuid::PwUuid(const PwUuid& u) {
+    bytes = u.bytes;
+}
 
-string PwUuid::UuidBytes() {
-    return m_pbUuid;
+PwUuid::PwUuid(PwUuid&& u) {
+    swap(bytes, u.bytes);
+}
+
+PwUuid::PwUuid(const string& s) {
+    checkSize(s);
+    bytes = s;
+}
+
+PwUuid::PwUuid(string&& s) {
+    checkSize(s);
+    swap(bytes, s);
+}
+
+const PwUuid PwUuid::Zero = string(16, 0);
+
+string PwUuid::Bytes() const {
+    return bytes;
+}
+
+string PwUuid::ToString() const {
+    ostringstream s;
+    s << setfill('0') << hex;
+    for (size_t i = 0; i < bytes.size(); i++) {
+        switch (i) {
+            case 4:
+            case 4 + 2:
+            case 4 + 2 + 2:
+            case 4 + 2 + 2 + 2:
+                s << '-';
+            default:
+                s << setw(2) << static_cast<unsigned>(bytes[i]);
+        }
+    }
+    return s.str();
 }
 
 void PwUuid::createNew() {
-    setZero();
+    bytes = string(16, 0x11);
+}
 
-    // TODO: Add correct UUID generation (with boost or smt else)
-    auto seed = chrono::steady_clock::now().time_since_epoch().count();
-    std::mt19937 gen(seed);
-    uniform_int_distribution<mt19937::result_type> dist16(0, 15);
-    for (auto& c : m_pbUuid) {
-        c = static_cast<char>(dist16(gen));
+void PwUuid::checkSize(const string& s) const {
+    if (s.size() != PwUuid::UuidSize) {
+        ostringstream es;
+        es << "string " << '"' << s << '"' << " has incorrect size: "
+           << s.size() << " != " << PwUuid::UuidSize;
+        throw invalid_argument(es.str());
     }
 }
 
-void PwUuid::setZero() {
-    m_pbUuid = string(UuidSize, 0);
+ostream& operator <<(ostream& stream, const PwUuid& u) {
+    return stream << u.ToString();
+}
+
+bool operator <(const PwUuid& left, const PwUuid& right) {
+    return left.bytes < right.bytes;
 }
 
 bool operator ==(const PwUuid& left, const PwUuid& right) {
-    return left.m_pbUuid == right.m_pbUuid;
+    return left.bytes == right.bytes;
 }
 
 bool operator !=(const PwUuid& left, const PwUuid& right) {
     return !(left == right);
-}
-
-// TODO: Remove it, I think we will need to work only with bytes and don't need to print it
-ostream& operator <<(ostream &o, const PwUuid& u) {
-    const auto flags = o.flags();
-    o << setfill('0') << hex;
-    for (auto c : u.m_pbUuid) {
-        auto i = static_cast<unsigned>(static_cast<unsigned char>(c));
-        o << setw(2) << i;
-    }
-    o.flags(flags);
-    return o;
 }

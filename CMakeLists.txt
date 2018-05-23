@@ -18,6 +18,10 @@ set(CMAKE_CXX_STANDARD 17)
 # Configure project
 add_subdirectory(src)
 
+include_directories(src)
+add_executable(main main.cpp ${SOURCES})
+target_link_libraries(main keepasslib)
+
 # Configure tests
 if (${CMAKE_BUILD_TYPE} STREQUAL Test)
     # TODO: Is there way to do this in more beautifull way?
