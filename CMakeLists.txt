@@ -20,6 +20,8 @@ add_subdirectory(src)
 
 # Configure tests
 if (${CMAKE_BUILD_TYPE} STREQUAL Test)
+    # TODO: Is there way to do this in more beautifull way?
+    include_directories(src)
     add_subdirectory(test)
 endif()
 

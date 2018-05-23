@@ -10,26 +10,41 @@
 class PwUuid {
     // TODO: Is this a good way to use string for this?
     // Never "" after constructor
-    std::string m_pbUuid;
+    std::string bytes;
 
     // Create a new, random UUID.
     void createNew();
-    void setZero();
 public:
     // Standard size in bytes of a UUID.
-    const unsigned UuidSize = 16u;
+    static const unsigned UuidSize = 16u;
 
+    // TODO: Rename to Nil?
     // Zero UUID (all bytes are zero).
     static const PwUuid Zero;
 
-    // Construct a new UUID instance.
-    // If bCreateNew parameter is true, a new UUID is generated.
-    // If it is false, the UUID is initialized to zero.
-    explicit PwUuid(bool bCreateNew);
+    // Construct a new UUID instance with random value.
+    PwUuid();
+
+    // Construct a new UUID from another UUID.
+    PwUuid(const PwUuid& u);
+    PwUuid(const PwUuid&& u);
+
+    // TODO: Guess which category iterator is
+    // Construct a new UUID instance by range of values.
+    template <typename It>
+    explicit PwUuid(It begin, It end);
+
+    // Construct a new UUID by another object.
+    PwUuid(const std::string& s);
+    PwUuid(const std::string&& s);
 
     // Get the 16 UUID bytes.
-    std::string UuidBytes();
+    std::string Bytes();
+    // TODO: Optional separators?
+    // Get the 32 hexadecimal digits in five groups separated by hyphens.
+    std::string ToString();
 
+    friend bool operator <(const PwUuid& left, const PwUuid& right);
     friend bool operator ==(const PwUuid& left, const PwUuid& right);
     friend bool operator !=(const PwUuid& left, const PwUuid& right);
     // TODO: Remove me?
