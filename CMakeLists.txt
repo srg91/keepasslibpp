@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(keepasslib)
 
-#set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_CXX_STANDARD 17)
 
 # if we want some options for msvc
@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 # Add additional libriaries
 # find_package(Boost REQUIRED COMPONENTS unit_test_framework)
-find_package(Boost)
+find_package(Boost COMPONENTS unit_test_framework system)
 include_directories(${Boost_INCLUDE_DIR})
 
 # TODO: Check is boost exists
