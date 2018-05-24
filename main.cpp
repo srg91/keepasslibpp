@@ -14,16 +14,23 @@
 
 using namespace std;
 
+PwUuid U;
+
+PwUuid&& foo() {
+    return std::move(U);
+}
+
 int main() {
+    PwUuid u;
+
     unsigned n = 1'000'000;
     auto start = chrono::steady_clock::now();
     for (unsigned i = 0; i < n; i++) {
-        auto u = PwUuid();
+        auto v(foo());
     }
     auto end = chrono::steady_clock::now();
     auto ns = chrono::duration_cast<chrono::nanoseconds>(end - start);
     cout << "Count: " << (ns / n).count() << " ns/op" << endl;
-    PwUuid u;
     cout << "UUID: " << u << endl;
     return 0;
 }

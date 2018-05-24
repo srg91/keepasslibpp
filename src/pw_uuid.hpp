@@ -52,6 +52,8 @@ public:
     // TODO: Optional separators?
     // Get the 32 hexadecimal digits in five groups separated by hyphens.
     std::string ToString() const;
+    // Hash of current UUID
+    inline size_t Hash() const { return boost::uuids::hash_value(uuid); };
 
     friend bool operator <(const PwUuid& left, const PwUuid& right);
     friend bool operator ==(const PwUuid& left, const PwUuid& right);
@@ -86,4 +88,14 @@ template <typename It>
 PwUuid::PwUuid(It begin, It end) {
     checkSize(begin, end);
     std::copy(begin, end, uuid.begin());
+}
+
+namespace std {
+    template<>
+    struct hash<PwUuid>
+    {
+        std::size_t operator()(const PwUuid& u) const {
+            return u.Hash();
+        }
+    };
 }

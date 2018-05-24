@@ -8,6 +8,8 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <unordered_map>
+#include <unordered_set>
 
 BOOST_AUTO_TEST_SUITE(test_pw_uuid)
     BOOST_AUTO_TEST_CASE(test_equal_operator) {
@@ -111,5 +113,41 @@ BOOST_AUTO_TEST_SUITE(test_pw_uuid)
         s = u.ToString();
         expected = "11111111-2222-3333-4444-555555555555";
         BOOST_CHECK_EQUAL(s, expected);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_add_to_map) {
+        std::map<PwUuid, std::string> m;
+        int n = 10;
+        for (int i = 0; i < n; i++) {
+            m[PwUuid()] = "some value";
+        }
+        BOOST_CHECK_EQUAL(m.size(), n);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_add_to_unordered_map) {
+        std::unordered_map<PwUuid, std::string> m;
+        int n = 10;
+        for (int i = 0; i < n; i++) {
+            m[PwUuid()] = "some value";
+        }
+        BOOST_CHECK_EQUAL(m.size(), n);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_add_to_set) {
+        std::set<PwUuid> s;
+        int n = 10;
+        for (int i = 0; i < n; i++) {
+            s.insert(PwUuid());
+        }
+        BOOST_CHECK_EQUAL(s.size(), n);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_add_to_unordered_set) {
+        std::unordered_set<PwUuid> s;
+        int n = 10;
+        for (int i = 0; i < n; i++) {
+            s.insert(PwUuid());
+        }
+        BOOST_CHECK_EQUAL(s.size(), n);
     }
 BOOST_AUTO_TEST_SUITE_END()
