@@ -8,15 +8,22 @@
 #include <sstream>
 #include <variant>
 #include <vector>
+
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/random_generator.hpp>
+
 using namespace std;
 
 int main() {
-    try {
-        PwUuid u(string(5, 0));
-        cout << u << endl;
-    } catch (const invalid_argument& e) {
-        cerr << "Failed: " << e.what() << endl;
-        return 1;
+    unsigned n = 1'000'000;
+    auto start = chrono::steady_clock::now();
+    for (unsigned i = 0; i < n; i++) {
+        auto u = PwUuid();
     }
+    auto end = chrono::steady_clock::now();
+    auto ns = chrono::duration_cast<chrono::nanoseconds>(end - start);
+    cout << "Count: " << (ns / n).count() << " ns/op" << endl;
+    PwUuid u;
+    cout << "UUID: " << u << endl;
     return 0;
 }

@@ -4,13 +4,19 @@
 #include <stdexcept>
 #include <string>
 
+#include <boost/uuid/random_generator.hpp>
+
 /*
  * Represents an UUID of a password entry or group. Once created,
  * PwUuid objects aren't modifiable anymore (immutable).
  */
 class PwUuid {
     // Never empty after constructor
+//    std::string bytes;
     std::string bytes;
+
+    // Boost random generator.
+    static boost::uuids::random_generator uuid_generator;
 
     // Create a new, random UUID.
     void createNew();

@@ -14,7 +14,7 @@
 #include <string>
 
 #include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/random_generator.hpp>
 
 using namespace std;
 
@@ -40,6 +40,7 @@ PwUuid::PwUuid(string&& s) {
     swap(bytes, s);
 }
 
+boost::uuids::random_generator PwUuid::uuid_generator = boost::uuids::random_generator();
 const PwUuid PwUuid::Zero = string(16, 0);
 
 string PwUuid::Bytes() const {
@@ -57,15 +58,15 @@ string PwUuid::ToString() const {
             case 4 + 2 + 2 + 2:
                 s << '-';
             default:
-                s << setw(2) << static_cast<unsigned>(bytes[i]);
+                s << setw(2) << static_cast<unsigned>(static_cast<unsigned char>(bytes[i]));
         }
     }
     return s.str();
 }
 
 void PwUuid::createNew() {
-    // TODO: cache generator in static attr?
-    auto uuid = boost::uuids::random_generator()();
+    // TODO: Add length check
+    auto uuid = PwUuid::uuid_generator();
     bytes = string(uuid.begin(), uuid.end());
 }
 
