@@ -15,61 +15,44 @@
 #include <utility>
 
 #include <boost/uuid/uuid.hpp>
-#include <boost/uuid/random_generator.hpp>
+#include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/nil_generator.hpp>
 
 using namespace std;
 
-PwUuid::PwUuid() {
-    createNew();
-}
+//PwUuid::PwUuid() {
+//    createNew();
+//}
 
 PwUuid::PwUuid(const PwUuid& u) {
-    bytes = u.bytes;
+    uuid = u.uuid;
 }
 
 PwUuid::PwUuid(PwUuid&& u) {
-    bytes.swap(u.bytes);
+    swap(uuid, u.uuid);
 }
 
 PwUuid::PwUuid(const string& s) {
     checkSize(s);
-    copy(s.begin(), s.end(), bytes.begin());
+    copy(s.begin(), s.end(), uuid.begin());
 }
 
 PwUuid::PwUuid(string&& s) {
     checkSize(s);
-    move(s.begin(), s.end(), bytes.begin());
+    move(s.begin(), s.end(), uuid.begin());
 }
 
-boost::uuids::random_generator PwUuid::uuid_generator = boost::uuids::random_generator();
-const PwUuid PwUuid::Zero = string(16, 0);
+PwUuid::uuid_generator_t PwUuid::uuid_generator = PwUuid::uuid_generator_t{};
+const PwUuid PwUuid::Zero = boost::uuids::nil_generator()();
 
 string PwUuid::Bytes() const {
-    return string(bytes.begin(), bytes.end());
-//    return bytes;
+    return string(uuid.begin(), uuid.end());
 }
 
 string PwUuid::ToString() const {
     ostringstream s;
-    s << setfill('0') << hex;
-    for (size_t i = 0; i < bytes.size(); i++) {
-        switch (i) {
-            case 4:
-            case 4 + 2:
-            case 4 + 2 + 2:
-            case 4 + 2 + 2 + 2:
-                s << '-';
-            default:
-                s << setw(2) << static_cast<unsigned>(bytes[i]);
-        }
-    }
+    s << uuid;
     return s.str();
-}
-
-void PwUuid::createNew() {
-    // TODO: Add length check
-    auto uuid = PwUuid::uuid_generator();
-    copy(uuid.begin(), uuid.end(), bytes.begin());
 }
 
 void PwUuid::checkSize(const string& s) const {
@@ -87,11 +70,11 @@ ostream& operator <<(ostream& stream, const PwUuid& u) {
 }
 
 bool operator <(const PwUuid& left, const PwUuid& right) {
-    return left.bytes < right.bytes;
+    return left.uuid < right.uuid;
 }
 
 bool operator ==(const PwUuid& left, const PwUuid& right) {
-    return left.bytes == right.bytes;
+    return left.uuid == right.uuid;
 }
 
 bool operator !=(const PwUuid& left, const PwUuid& right) {

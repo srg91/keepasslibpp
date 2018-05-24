@@ -2,6 +2,7 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include <algorithm>
 #include <cstdint>
 #include <set>
 #include <stdexcept>
@@ -18,10 +19,10 @@ BOOST_AUTO_TEST_SUITE(test_pw_uuid)
     }
 
     BOOST_AUTO_TEST_CASE(test_length) {
-        std::string no_throw(16, 0);
+        std::string no_throw(PwUuid::UuidSize, 0);
         BOOST_CHECK_NO_THROW(PwUuid(no_throw).ToString());
 
-        std::string expect_throw(5, 0);
+        std::string expect_throw(PwUuid::UuidSize + 5, 0);
         BOOST_CHECK_THROW(PwUuid(expect_throw).ToString(), std::invalid_argument);
     }
 
@@ -33,6 +34,17 @@ BOOST_AUTO_TEST_SUITE(test_pw_uuid)
 
         const size_t default_size = PwUuid::UuidSize;
         BOOST_CHECK_EQUAL(bytes.size(), default_size);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_new_uuid_by_uuid) {
+        PwUuid::uuid_t expected_uuid;
+        std::string expected = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+                                0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
+        std::copy(expected.begin(), expected.end(), expected_uuid.begin());
+
+        PwUuid u(expected_uuid);
+        auto bytes = u.Bytes();
+        BOOST_CHECK_EQUAL(bytes, expected);
     }
 
     BOOST_AUTO_TEST_CASE(test_new_uuid_by_string) {
@@ -94,8 +106,8 @@ BOOST_AUTO_TEST_SUITE(test_pw_uuid)
         std::string expected("00000000-0000-0000-0000-000000000000");
         BOOST_CHECK_EQUAL(s, expected);
 
-        PwUuid u({0x11, 0x11, 0x11, 0x11, 0x22, 0x22, 0x33, 0x33,
-                  0x44, 0x44, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55});
+        PwUuid u(std::string({0x11, 0x11, 0x11, 0x11, 0x22, 0x22, 0x33, 0x33,
+                              0x44, 0x44, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55}));
         s = u.ToString();
         expected = "11111111-2222-3333-4444-555555555555";
         BOOST_CHECK_EQUAL(s, expected);

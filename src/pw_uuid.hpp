@@ -5,7 +5,9 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
+#include <boost/uuid/uuid.hpp>
 #include <boost/uuid/random_generator.hpp>
 
 /*
@@ -14,15 +16,20 @@
  */
 class PwUuid {
 public:
+    // Underlying uuid type
+    using uuid_t = boost::uuids::uuid;
+    // Underlying uuid generator type
+    using uuid_generator_t = boost::uuids::random_generator;
+
     // Standard size in bytes of a UUID.
-    static const size_t UuidSize = 16u;
+    static const size_t UuidSize = uuid_t::static_size();
 
     // TODO: Rename to Nil?
     // Zero UUID (all bytes are zero).
     static const PwUuid Zero;
 
     // Construct a new UUID instance with random value.
-    PwUuid();
+    PwUuid() : uuid(uuid_generator()) {};
 
     // Construct a new UUID from another UUID.
     PwUuid(const PwUuid& u);
@@ -33,7 +40,11 @@ public:
     template <typename It>
     explicit PwUuid(It begin, It end);
 
+    // TODO: Fix ambiguous in aggregate initialization
+    // TODO: (In cases like u = {1, 2, 3, ...};
     // Construct a new UUID by another object.
+    PwUuid(const uuid_t& u) : uuid(u) {};
+    PwUuid(uuid_t&& u) : uuid(std::forward<decltype(u)>(u)) {};
     PwUuid(const std::string& s);
     PwUuid(std::string&& s);
 
@@ -47,14 +58,11 @@ public:
     friend bool operator ==(const PwUuid& left, const PwUuid& right);
     friend bool operator !=(const PwUuid& left, const PwUuid& right);
 private:
-    // Never empty after constructor
-    std::array<std::uint8_t, UuidSize> bytes;
+    // Never empty after constructor.
+    uuid_t uuid;
 
     // Boost random generator.
-    static boost::uuids::random_generator uuid_generator;
-
-    // Create a new, random UUID.
-    void createNew();
+    static uuid_generator_t uuid_generator;
 
     // Checks is the string length equals UuidSize.
     void checkSize(const std::string& s) const;
@@ -78,5 +86,5 @@ void PwUuid::checkSize(It begin, It end) const {
 template <typename It>
 PwUuid::PwUuid(It begin, It end) {
     checkSize(begin, end);
-    std::copy(begin, end, bytes.begin());
+    std::copy(begin, end, uuid.begin());
 }
