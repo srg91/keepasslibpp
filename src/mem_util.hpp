@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cstddef>
 #include <cstdint>
 #include <iostream>
@@ -55,6 +56,11 @@ namespace MemUtil {
     template <typename>
     void Write(std::ostream& stream, const std::string& value) {
         Write<std::string>(stream, value, value.size());
+    }
+
+    std::string Write(uint32_t value, std::size_t value_size) {
+        auto it = reinterpret_cast<const char *>(&value);
+        return std::string(it, it + value_size);
     }
 }
 
