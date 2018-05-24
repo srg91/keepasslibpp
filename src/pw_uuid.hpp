@@ -24,9 +24,8 @@ public:
     // Standard size in bytes of a UUID.
     static const size_t UuidSize = uuid_t::static_size();
 
-    // TODO: Rename to Nil?
-    // Zero UUID (all bytes are zero).
-    static const PwUuid Zero;
+    // Nil UUID (all bytes are zero).
+    static const PwUuid Nil;
 
     // Construct a new UUID instance with random value.
     PwUuid() : uuid(uuid_generator()) {};

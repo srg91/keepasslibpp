@@ -43,7 +43,7 @@ PwUuid::PwUuid(string&& s) {
 }
 
 PwUuid::uuid_generator_t PwUuid::uuid_generator = PwUuid::uuid_generator_t{};
-const PwUuid PwUuid::Zero = boost::uuids::nil_generator()();
+const PwUuid PwUuid::Nil = boost::uuids::nil_generator()();
 
 string PwUuid::Bytes() const {
     return string(uuid.begin(), uuid.end());

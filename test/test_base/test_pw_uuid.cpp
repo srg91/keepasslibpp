@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_SUITE(test_pw_uuid)
 
     BOOST_AUTO_TEST_CASE(test_new_uuid_by_rv_uuid) {
         PwUuid u([]() -> PwUuid { return PwUuid(); }());
-        BOOST_CHECK_NE(u, PwUuid::Zero);
+        BOOST_CHECK_NE(u, PwUuid::Nil);
     }
 
     BOOST_AUTO_TEST_CASE(test_lower_operator) {
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_SUITE(test_pw_uuid)
 
     BOOST_AUTO_TEST_CASE(test_zero) {
         PwUuid z = std::string(16, 0);
-        BOOST_CHECK_EQUAL(PwUuid::Zero, z);
+        BOOST_CHECK_EQUAL(PwUuid::Nil, z);
 
         std::string bytes = z.Bytes();
         std::string expected(16, 0);
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_SUITE(test_pw_uuid)
     }
 
     BOOST_AUTO_TEST_CASE(test_to_string) {
-        auto s = PwUuid::Zero.ToString();
+        auto s = PwUuid::Nil.ToString();
         std::string expected("00000000-0000-0000-0000-000000000000");
         BOOST_CHECK_EQUAL(s, expected);
 
