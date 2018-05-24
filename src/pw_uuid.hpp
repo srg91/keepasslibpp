@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+#include <cstdint>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -11,19 +13,6 @@
  * PwUuid objects aren't modifiable anymore (immutable).
  */
 class PwUuid {
-    // Never empty after constructor
-//    std::string bytes;
-    std::string bytes;
-
-    // Boost random generator.
-    static boost::uuids::random_generator uuid_generator;
-
-    // Create a new, random UUID.
-    void createNew();
-
-    // Checks is the string length equals UuidSize.
-    void checkSize(const std::string& s) const;
-    template <typename It> void checkSize(It begin, It end) const;
 public:
     // Standard size in bytes of a UUID.
     static const size_t UuidSize = 16u;
@@ -57,6 +46,19 @@ public:
     friend bool operator <(const PwUuid& left, const PwUuid& right);
     friend bool operator ==(const PwUuid& left, const PwUuid& right);
     friend bool operator !=(const PwUuid& left, const PwUuid& right);
+private:
+    // Never empty after constructor
+    std::array<std::uint8_t, UuidSize> bytes;
+
+    // Boost random generator.
+    static boost::uuids::random_generator uuid_generator;
+
+    // Create a new, random UUID.
+    void createNew();
+
+    // Checks is the string length equals UuidSize.
+    void checkSize(const std::string& s) const;
+    template <typename It> void checkSize(It begin, It end) const;
 };
 
 std::ostream& operator <<(std::ostream& stream, const PwUuid& u);
@@ -76,5 +78,5 @@ void PwUuid::checkSize(It begin, It end) const {
 template <typename It>
 PwUuid::PwUuid(It begin, It end) {
     checkSize(begin, end);
-    bytes = std::string(begin, end);
+    std::copy(begin, end, bytes.begin());
 }

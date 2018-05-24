@@ -4,14 +4,15 @@
 
 #include "pw_uuid.hpp"
 
+#include <array>
 #include <algorithm>
-#include <chrono>
 #include <iomanip>
 #include <iostream>
 #include <random>
 #include <stdexcept>
 #include <sstream>
 #include <string>
+#include <utility>
 
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/random_generator.hpp>
@@ -27,24 +28,25 @@ PwUuid::PwUuid(const PwUuid& u) {
 }
 
 PwUuid::PwUuid(PwUuid&& u) {
-    swap(bytes, u.bytes);
+    bytes.swap(u.bytes);
 }
 
 PwUuid::PwUuid(const string& s) {
     checkSize(s);
-    bytes = s;
+    copy(s.begin(), s.end(), bytes.begin());
 }
 
 PwUuid::PwUuid(string&& s) {
     checkSize(s);
-    swap(bytes, s);
+    move(s.begin(), s.end(), bytes.begin());
 }
 
 boost::uuids::random_generator PwUuid::uuid_generator = boost::uuids::random_generator();
 const PwUuid PwUuid::Zero = string(16, 0);
 
 string PwUuid::Bytes() const {
-    return bytes;
+    return string(bytes.begin(), bytes.end());
+//    return bytes;
 }
 
 string PwUuid::ToString() const {
@@ -58,7 +60,7 @@ string PwUuid::ToString() const {
             case 4 + 2 + 2 + 2:
                 s << '-';
             default:
-                s << setw(2) << static_cast<unsigned>(static_cast<unsigned char>(bytes[i]));
+                s << setw(2) << static_cast<unsigned>(bytes[i]);
         }
     }
     return s.str();
@@ -67,7 +69,7 @@ string PwUuid::ToString() const {
 void PwUuid::createNew() {
     // TODO: Add length check
     auto uuid = PwUuid::uuid_generator();
-    bytes = string(uuid.begin(), uuid.end());
+    copy(uuid.begin(), uuid.end(), bytes.begin());
 }
 
 void PwUuid::checkSize(const string& s) const {
