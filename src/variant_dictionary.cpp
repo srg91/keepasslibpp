@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <vector>
 using namespace std;
+using namespace keepasslib;
 
 VariantDictionary::VariantDictionary(const VariantDictionary &vd) {
     // TODO: make begin / end public?
@@ -33,20 +34,20 @@ bool VariantDictionary::Erase(const string& strName) {
 }
 
 void VariantDictionary::Serialize(std::ostream& stream, const VariantDictionary &vd) {
-    MemUtil::Write<uint16_t>(stream, VdVersion);
+    mem_util::Write<uint16_t>(stream, VdVersion);
 
     // TODO: C++17 feature
     for (const auto& [key, value_variant] : vd.m_d) {
         // TODO: Make it MOOOOOOOOOOOOOOOORE simpler
         VdType type = guess_type<VariantDictionary>(value_variant);
 
-        MemUtil::Write(stream, static_cast<uint8_t>(type));
-        MemUtil::Write<int32_t>(stream, key.size());
-        MemUtil::Write<string>(stream, key);
+        mem_util::Write(stream, static_cast<uint8_t>(type));
+        mem_util::Write<int32_t>(stream, key.size());
+        mem_util::Write<string>(stream, key);
 
         serialize_value(stream, type, value_variant);
     }
-    MemUtil::Write<uint8_t>(stream, static_cast<uint8_t>(VdType::None));
+    mem_util::Write<uint8_t>(stream, static_cast<uint8_t>(VdType::None));
 }
 
 void VariantDictionary::serialize_value(std::ostream& stream, VdType type, const VariantValue& variant_value) {
@@ -55,51 +56,51 @@ void VariantDictionary::serialize_value(std::ostream& stream, VdType type, const
         case VdType::Bool: {
             auto value = std::get<bool>(variant_value);
             int32_t size = sizeof(value);
-            MemUtil::Write(stream, size);
-            MemUtil::Write(stream, value);
+            mem_util::Write(stream, size);
+            mem_util::Write(stream, value);
             return;
         }
         case VdType::Int32: {
             auto value = std::get<int32_t>(variant_value);
             int32_t size = sizeof(value);
-            MemUtil::Write(stream, size);
-            MemUtil::Write(stream, value);
+            mem_util::Write(stream, size);
+            mem_util::Write(stream, value);
             return;
         }
         case VdType::Int64: {
             auto value = std::get<int64_t>(variant_value);
             int32_t size = sizeof(value);
-            MemUtil::Write(stream, size);
-            MemUtil::Write(stream, value);
+            mem_util::Write(stream, size);
+            mem_util::Write(stream, value);
             return;
         }
         case VdType::UInt32: {
             auto value = std::get<uint32_t>(variant_value);
             int32_t size = sizeof(value);
-            MemUtil::Write(stream, size);
-            MemUtil::Write(stream, value);
+            mem_util::Write(stream, size);
+            mem_util::Write(stream, value);
             return;
         }
         case VdType::UInt64: {
             auto value = std::get<uint64_t>(variant_value);
             int32_t size = sizeof(value);
-            MemUtil::Write(stream, size);
-            MemUtil::Write(stream, value);
+            mem_util::Write(stream, size);
+            mem_util::Write(stream, value);
             return;
         }
         case VdType::String: {
             auto& value = std::get<std::string>(variant_value);
             auto size = static_cast<int32_t>(value.size());
-            MemUtil::Write(stream, size);
-            MemUtil::Write(stream, value);
+            mem_util::Write(stream, size);
+            mem_util::Write(stream, value);
             return;
         }
         case VdType::ByteArray: {
             // TODO: make it simplier
             auto& value = std::get<byte_array_type>(variant_value);
             auto size = static_cast<int32_t>(value.size());
-            MemUtil::Write(stream, size);
-            MemUtil::Write(stream, string(value.begin(), value.end()));
+            mem_util::Write(stream, size);
+            mem_util::Write(stream, string(value.begin(), value.end()));
             return;
         }
     }
@@ -108,27 +109,27 @@ void VariantDictionary::serialize_value(std::ostream& stream, VdType type, const
 VariantDictionary VariantDictionary::Deserialize(istream& stream) {
     VariantDictionary vd;
 
-    auto uVersion = MemUtil::Read<uint16_t>(stream);
+    auto uVersion = mem_util::Read<uint16_t>(stream);
     if ((uVersion & VdmCritical) > (VdVersion & VdmCritical))
         // TODO: Make it FileNewVerReq
         throw invalid_argument("FileNewVerReq");
 
     while (true) {
-        auto type = static_cast<VdType>(MemUtil::Read<uint8_t>(stream));
+        auto type = static_cast<VdType>(mem_util::Read<uint8_t>(stream));
         // if (type < 0) throw EndOfStreamException
         if (type == VdType::None) break;
 
-//        auto cbName = static_cast<size_t>(MemUtil::Read<int32_t>(stream));
+//        auto cbName = static_cast<size_t>(mem_util::Read<int32_t>(stream));
 //        // TODO: static_cast here?
-//        string strName = MemUtil::ReadString(stream, cbName);
+//        string strName = mem_util::ReadString(stream, cbName);
 //        if (strName.size() != cbName) throw invalid_argument("EndOfStreamException") ;
 //
-//        auto cbValue = static_cast<size_t>(MemUtil::Read<int32_t>(stream));
+//        auto cbValue = static_cast<size_t>(mem_util::Read<int32_t>(stream));
 //
 //        // more simple
 //        switch (type) {
 //            case VdType::Bool:
-//                auto value = MemUtil::Read<bool>(stream);
+//                auto value = mem_util::Read<bool>(stream);
 //
 //                break;
 //        }

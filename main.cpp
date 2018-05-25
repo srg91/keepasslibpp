@@ -13,6 +13,7 @@
 #include <boost/uuid/random_generator.hpp>
 
 using namespace std;
+using namespace keepasslib;
 
 PwUuid U;
 
@@ -26,7 +27,7 @@ int main() {
     unsigned n = 1'000'000;
     auto start = chrono::steady_clock::now();
     for (unsigned i = 0; i < n; i++) {
-        auto v(foo());
+        u = PwUuid();
     }
     auto end = chrono::steady_clock::now();
     auto ns = chrono::duration_cast<chrono::nanoseconds>(end - start);

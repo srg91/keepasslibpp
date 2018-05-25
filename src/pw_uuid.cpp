@@ -19,10 +19,7 @@
 #include <boost/uuid/nil_generator.hpp>
 
 using namespace std;
-
-//PwUuid::PwUuid() {
-//    createNew();
-//}
+using namespace keepasslib;
 
 PwUuid::PwUuid(const PwUuid& u) {
     uuid = u.uuid;
@@ -65,18 +62,20 @@ void PwUuid::checkSize(const string& s) const {
     }
 }
 
-ostream& operator <<(ostream& stream, const PwUuid& u) {
-    return stream << u.ToString();
-}
+namespace keepasslib {
+    ostream& operator <<(ostream& stream, const PwUuid& u) {
+        return stream << u.ToString();
+    }
 
-bool operator <(const PwUuid& left, const PwUuid& right) {
-    return left.uuid < right.uuid;
-}
+    bool operator <(const PwUuid& left, const PwUuid& right) {
+        return left.uuid < right.uuid;
+    }
 
-bool operator ==(const PwUuid& left, const PwUuid& right) {
-    return left.uuid == right.uuid;
-}
+    bool operator ==(const PwUuid& left, const PwUuid& right) {
+        return left.uuid == right.uuid;
+    }
 
-bool operator !=(const PwUuid& left, const PwUuid& right) {
-    return !(left == right);
+    bool operator !=(const PwUuid& left, const PwUuid& right) {
+        return !(left == right);
+    }
 }
