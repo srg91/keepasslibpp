@@ -1,9 +1,7 @@
 #pragma once
 
+namespace keepasslib {
+    class kdfparameters {
 
-class kdfparameters {
-
-};
-
-
-
+    };
+}
