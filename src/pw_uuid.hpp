@@ -54,7 +54,7 @@ namespace keepasslib {
         // Get the 32 hexadecimal digits in five groups separated by hyphens.
         std::string ToString() const;
         // Hash of current UUID
-        inline size_t Hash() const { return boost::uuids::hash_value(uuid); };
+        inline std::size_t Hash() const { return boost::uuids::hash_value(uuid); };
 
         PwUuid& operator=(const PwUuid& u) {
             uuid = u.uuid;
