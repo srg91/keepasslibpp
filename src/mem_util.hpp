@@ -8,6 +8,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 #include <vector>
 #include <utility>
 
@@ -52,10 +53,7 @@ namespace keepasslib {
         template <typename T>
         void Write(std::ostream& stream, T value, std::size_t value_size) {
             auto it = reinterpret_cast<const char *>(&value);
-
-            for (std::size_t i = 0; i < value_size; i++) {
-                stream << *(it + i);
-            }
+            std::copy(it, it + value_size, std::ostream_iterator<char>(stream));
         }
 
         template <typename>
@@ -76,10 +74,22 @@ namespace keepasslib {
             Write<std::string>(stream, value, value.size());
         }
 
-        std::string Write(uint32_t value, std::size_t value_size) {
+        template <
+            typename T,
+            typename = std::enable_if_t<std::is_trivial<T>::value>
+        >
+        std::string Write(T value, std::size_t value_size) {
             auto it = reinterpret_cast<const char *>(&value);
             return std::string(it, it + value_size);
         }
-    }
+
+        template <
+            typename T,
+            typename = std::enable_if_t<std::is_trivial<T>::value>
+        >
+        std::string Write(T value) {
+            return Write(value, sizeof(value));
+        }
+    };
 }
 

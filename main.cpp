@@ -18,7 +18,13 @@ using namespace std;
 using namespace keepasslib;
 
 int main() {
-    cout << static_cast<int>(static_cast<char>(0xfd)) << endl;
+//    string s = "1234567";
+//    std::copy(
+//        s.begin(),
+//        s.end(),
+//        std::ostreambuf_iterator<string::value_type>(cout)
+//    );
+
 //    istringstream source("hello, world");
 //    string dest;
 //    unsigned n = 1;

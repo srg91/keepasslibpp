@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_SUITE(test_mem_util)
         BOOST_CHECK_EQUAL(positive_result, positive_expected);
 
         auto negative_result = mem_util::Read<std::uint32_t>(s);
-        uint32_t negative_expected = 0xb669fd2e;
+        auto negative_expected = static_cast<uint32_t>(-1234567890);
         BOOST_CHECK_EQUAL(negative_result, negative_expected);
     }
 
@@ -140,19 +140,81 @@ BOOST_AUTO_TEST_SUITE(test_mem_util)
         BOOST_CHECK_THROW(long_statement(), std::invalid_argument);
     }
 
-    BOOST_AUTO_TEST_CASE(test_write_to_stream) {
+    BOOST_AUTO_TEST_CASE(test_write_bool_to_stream) {
         std::ostringstream s;
-
-        std::uint32_t v = 0x11223344;
-        mem_util::Write(s, v);
-
-        std::string expected = {0x44, 0x33, 0x22, 0x11};
+        mem_util::Write<bool>(s, false);
+        mem_util::Write<bool>(s, true);
+        std::string expected = {0x00, 0x01};
         BOOST_CHECK_EQUAL(s.str(), expected);
     }
-    BOOST_AUTO_TEST_CASE(test_write_to_string) {
-        std::uint32_t v = 0x11223344;
-        std::string result = mem_util::Write(v, sizeof(v));
-        std::string expected = {0x44, 0x33, 0x22, 0x11};
+
+    BOOST_AUTO_TEST_CASE(test_write_int32_to_stream) {
+        std::ostringstream s;
+        mem_util::Write<int32_t>(s, 0x12345678);
+        std::string expected = {0x78, 0x56, 0x34, 0x12};
+        BOOST_CHECK_EQUAL(s.str(), expected);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_write_int64_to_stream) {
+        std::ostringstream s;
+        mem_util::Write<int64_t>(s, 0x1234567887654321);
+        std::string expected = {0x21, 0x43, 0x65, -0x79, 0x78, 0x56, 0x34, 0x12};
+        BOOST_CHECK_EQUAL(s.str(), expected);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_write_uint32_to_stream) {
+        std::ostringstream s;
+        mem_util::Write(s, static_cast<uint32_t>(-1234567890));
+        std::string expected = {0x2e, -0x03, 0x69, -0x4a};
+        BOOST_CHECK_EQUAL(s.str(), expected);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_write_uint64_to_stream) {
+        std::ostringstream s;
+        mem_util::Write(s, static_cast<uint64_t>(-1234567890987654321));
+        std::string expected = {0x4f, -0x1d, -0x6d, 0x4e, 0x0b, -0x11, -0x23, -0x12};
+        BOOST_CHECK_EQUAL(s.str(), expected);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_write_string_to_stream) {
+        std::ostringstream s;
+        std::string expected = "Hello, World!";
+        mem_util::Write(s, expected);
+        BOOST_CHECK_EQUAL(s.str(), expected);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_write_bool_to_string) {
+        BOOST_CHECK_EQUAL(
+            mem_util::Write(false),
+            std::string({0x00})
+        );
+        BOOST_CHECK_EQUAL(
+            mem_util::Write(true),
+            std::string({0x01})
+        );
+    }
+
+    BOOST_AUTO_TEST_CASE(test_write_int32_to_string) {
+        std::string result = mem_util::Write<int32_t>(0x12345678);
+        std::string expected = {0x78, 0x56, 0x34, 0x12};
+        BOOST_CHECK_EQUAL(result, expected);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_write_int64_to_string) {
+        std::string result = mem_util::Write<int64_t>(0x1234567887654321);
+        std::string expected = {0x21, 0x43, 0x65, -0x79, 0x78, 0x56, 0x34, 0x12};
+        BOOST_CHECK_EQUAL(result, expected);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_write_uint32_to_string) {
+        std::string result = mem_util::Write(static_cast<uint32_t>(-1234567890));
+        std::string expected = {0x2e, -0x03, 0x69, -0x4a};
+        BOOST_CHECK_EQUAL(result, expected);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_write_uint64_to_string) {
+        std::string result = mem_util::Write(static_cast<uint64_t>(-1234567890987654321));
+        std::string expected = {0x4f, -0x1d, -0x6d, 0x4e, 0x0b, -0x11, -0x23, -0x12};
         BOOST_CHECK_EQUAL(result, expected);
     }
 BOOST_AUTO_TEST_SUITE_END()
