@@ -89,6 +89,11 @@ BOOST_AUTO_TEST_SUITE(test_mem_util)
         BOOST_CHECK_EQUAL(int32_result, 0x12345678);
     }
 
+    BOOST_AUTO_TEST_CASE(test_read_from_stream) {
+        std::istringstream s;
+        mem_util::Read<std::uint32_t>(s);
+    }
+
     BOOST_AUTO_TEST_CASE(test_read_bool_from_string) {
         BOOST_CHECK_NO_THROW([](){
             std::string s("0x01");

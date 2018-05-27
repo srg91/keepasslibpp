@@ -15,6 +15,7 @@
 namespace keepasslib {
     namespace mem_util {
         // TODO: Think about endianness
+        // TODO: Raise exception if there is no enough bytes
         template <typename T>
         T Read(std::istream& stream) {
             T value;
