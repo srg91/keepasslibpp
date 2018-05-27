@@ -19,9 +19,6 @@ using namespace std;
 using namespace keepasslib;
 
 int main() {
-    std::vector<std::uint8_t> v(
-        {'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd'}
-    );
 //    string s = "1234567";
 //    std::copy(
 //        s.begin(),

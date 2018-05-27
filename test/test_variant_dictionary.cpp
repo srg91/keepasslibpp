@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <iostream>
 #include <sstream>
-#include <unordered_map>
+#include <type_traits>
 
 using namespace keepasslib;
 
@@ -351,5 +351,35 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
 
         vd.Clear();
         BOOST_CHECK(vd.Empty());
+    }
+
+    BOOST_AUTO_TEST_CASE(test_equal) {
+        VariantDictionary left, right;
+        left["string"] = std::string("hello, world");
+        left["int32"] = std::int32_t(123456);
+
+        right["string"] = std::string("hello, world");
+        right["int32"] = std::int32_t(123456);
+
+        BOOST_CHECK(left == right);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_index) {
+        VariantDictionary vd;
+        vd["bool"] = true;
+        BOOST_CHECK(!vd.Empty());
+        BOOST_CHECK_EQUAL(vd.Size(), 1);
+
+        bool result;
+        BOOST_CHECK(vd.Get("bool", result));
+        BOOST_CHECK(result);
+
+        auto mapped_value = vd["bool"];
+        BOOST_CHECK(
+            std::is_same<
+                decltype(mapped_value),
+                VariantDictionary::mapped_type
+            >::value
+        );
     }
 BOOST_AUTO_TEST_SUITE_END()
