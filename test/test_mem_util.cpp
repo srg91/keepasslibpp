@@ -73,6 +73,22 @@ BOOST_AUTO_TEST_SUITE(test_mem_util)
         BOOST_CHECK_EQUAL(result, expected);
     }
 
+    BOOST_AUTO_TEST_CASE(test_read_multiple_from_stream) {
+        std::istringstream s({
+            0x01,
+            'h', 'e', 'l', 'l', 'o',
+            0x78, 0x56, 0x34, 0x12,
+        });
+
+        auto bool_result = mem_util::Read<bool>(s);
+        auto string_result = mem_util::Read<std::string>(s, 5);
+        auto int32_result = mem_util::Read<std::int32_t>(s);
+
+        BOOST_CHECK(bool_result);
+        BOOST_CHECK_EQUAL(string_result, "hello");
+        BOOST_CHECK_EQUAL(int32_result, 0x12345678);
+    }
+
     BOOST_AUTO_TEST_CASE(test_read_bool_from_string) {
         BOOST_CHECK_NO_THROW([](){
             std::string s("0x01");
