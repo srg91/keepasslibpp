@@ -3,6 +3,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <cstdint>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <type_traits>
@@ -27,7 +28,17 @@ struct VariantDictionarySerializationFixture {
 
         sample_bytes = {
             // vd version
-            0x01, 0x00,
+            0x00, 0x01,
+            // bytes type
+            0x42,
+            // bytes key size
+            0x05, 0x00, 0x00, 0x00,
+            // bytes key
+            'b', 'y', 't', 'e', 's',
+            // bytes value size
+            0x0c, 0x00, 0x00, 0x00,
+            // bytes value
+            'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd',
             // bool type
             0x08,
             // false bool key size
@@ -38,16 +49,6 @@ struct VariantDictionarySerializationFixture {
             0x01, 0x00, 0x00, 0x00,
             // false value
             0x00,
-            // bytes type
-            0x42,
-            // bytes key size
-            0x05, 0x00, 0x00, 0x00,
-            // bytes key
-            's', 't', 'r', 'i', 'n', 'g',
-            // bytes value size
-            0x0c, 0x00, 0x00, 0x00,
-            // bytes value
-            'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd',
             // int32 type
             0x0c,
             // int32 key size
@@ -213,12 +214,15 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
         vd.Set<bool>("key", true);
 
         std::string result = vd.Serialize();
+        // TODO: Cut version and end None?
         std::string expected = {
+            0x00, 0x01,
             0x08,
             0x03, 0x00, 0x00, 0x00,
             'k', 'e', 'y',
             0x01, 0x00, 0x00, 0x00,
             0x01,
+            0x00,
         };
         BOOST_CHECK_EQUAL(result, expected);
     }
@@ -229,12 +233,27 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
 
         std::string result = vd.Serialize();
         std::string expected = {
+            0x00, 0x01,
             0x0c,
             0x03, 0x00, 0x00, 0x00,
             'k', 'e', 'y',
             0x04, 0x00, 0x00, 0x00,
-            0x78, 0x45, 0x23, 0x12,
+            0x78, 0x56, 0x34, 0x12,
+            0x00,
         };
+        std::ostringstream s;
+        for (const auto& c : result) {
+            s << std::hex << std::setfill('0') << std::setw(2)
+              << static_cast<unsigned>(static_cast<unsigned char>(c));
+        }
+        std::ostringstream d;
+        for (const auto& c : expected) {
+            d << std::hex << std::setfill('0') << std::setw(2)
+              << static_cast<unsigned>(static_cast<unsigned char>(c));
+        }
+        BOOST_TEST_MESSAGE(s.str());
+        BOOST_TEST_MESSAGE(d.str());
+
         BOOST_CHECK_EQUAL(result, expected);
     }
 
@@ -244,11 +263,13 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
 
         std::string result = vd.Serialize();
         std::string expected = {
+            0x00, 0x01,
             0x0d,
             0x03, 0x00, 0x00, 0x00,
             'k', 'e', 'y',
             0x08, 0x00, 0x00, 0x00,
             0x21, 0x43, 0x65, -0x79, 0x78, 0x56, 0x34, 0x12,
+            0x00,
         };
         BOOST_CHECK_EQUAL(result, expected);
     }
@@ -259,11 +280,13 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
 
         std::string result = vd.Serialize();
         std::string expected = {
+            0x00, 0x01,
             0x04,
             0x03, 0x00, 0x00, 0x00,
             'k', 'e', 'y',
             0x04, 0x00, 0x00, 0x00,
-            0x78, 0x45, 0x23, 0x12,
+            0x78, 0x56, 0x34, 0x12,
+            0x00,
         };
         BOOST_CHECK_EQUAL(result, expected);
     }
@@ -274,11 +297,13 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
 
         std::string result = vd.Serialize();
         std::string expected = {
+            0x00, 0x01,
             0x05,
             0x03, 0x00, 0x00, 0x00,
             'k', 'e', 'y',
             0x08, 0x00, 0x00, 0x00,
             0x21, 0x43, 0x65, -0x79, 0x78, 0x56, 0x34, 0x12,
+            0x00,
         };
         BOOST_CHECK_EQUAL(result, expected);
     }
@@ -289,11 +314,13 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
 
         std::string result = vd.Serialize();
         std::string expected = {
+            0x00, 0x01,
             0x18,
             0x03, 0x00, 0x00, 0x00,
             'k', 'e', 'y',
             0x05, 0x00, 0x00, 0x00,
             'h', 'e', 'l', 'l', 'o',
+            0x00,
         };
         BOOST_CHECK_EQUAL(result, expected);
     }
@@ -306,11 +333,13 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
 
         std::string result = vd.Serialize();
         std::string expected = {
+            0x00, 0x01,
             0x42,
             0x03, 0x00, 0x00, 0x00,
             'k', 'e', 'y',
             0x05, 0x00, 0x00, 0x00,
             'h', 'e', 'l', 'l', 'o',
+            0x00,
         };
         BOOST_CHECK_EQUAL(result, expected);
     }

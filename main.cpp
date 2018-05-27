@@ -1,4 +1,5 @@
 //#include "pw_uuid.hpp"
+#include "variant_dictionary.hpp"
 
 #include <algorithm>
 #include <chrono>
@@ -23,20 +24,39 @@ using namespace std;
 
 using vt = boost::variant<int, bool>;
 
+using my_int = int;
+
 struct visitor_t : public boost::static_visitor<>
 {
     void operator()(int i) const {
         cout << "found int i: " << i << endl;
     }
-    void operator()(bool b) const {
-        cout << "found bool b: " << b << endl;
-    }
+//    void operator()(std::int32_t j) const {
+//        cout << "found my_int j: " << j << endl;
+//    }
 };
 
 int main() {
-    vt v = true;
-    auto vv = visitor_t();
-    v.apply_visitor(vv);
+    ofstream f("d:/myvd.txt");
+
+    keepasslib::VariantDictionary sample_dict;
+    sample_dict["true_bool"] = true;
+    sample_dict["false_bool"] = false;
+    sample_dict["int32"] = std::int32_t(0x12345678);
+    sample_dict["int64"] = std::int64_t(0x1234567887654321);
+    sample_dict["uint32"] = std::uint32_t(0x12345678);
+    sample_dict["uint64"] = std::uint64_t(0x1234567887654321);
+    sample_dict["string"] = std::string("hello, world");
+    sample_dict["bytes"] = keepasslib::VariantDictionary::bytes(
+        {'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd'}
+    );
+
+    f << sample_dict.Serialize();
+    f.close();
+
+//    vt v = true;
+//    auto vv = visitor_t();
+//    v.apply_visitor(vv);
 //    string s = "1234567";
 //    std::copy(
 //        s.begin(),

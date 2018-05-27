@@ -67,7 +67,6 @@ namespace keepasslib {
 
         std::map<key_type, mapped_type> dict;
 
-        // TODO: Can we move this to cpp?
         struct guess_type_visitor : public boost::static_visitor<serialization_type>
         {
             // TODO: Or many small operators?
@@ -98,16 +97,33 @@ namespace keepasslib {
             std::ostream& stream;
             explicit write_value_visitor(std::ostream& stream) : stream(stream) {}
 
+            // TODO: Rework this!!
+            template <typename T>
+            std::size_t guess_size(const T& value) const {
+                return sizeof(T);
+            }
+
+            // TODO: Rework this!!
+            std::size_t guess_size(const std::string& value) const {
+                return value.size();
+            }
+
+            // TODO: Rework this!!
+            std::size_t guess_size(const bytes& value) const {
+                return value.size();
+            }
+
             template <typename T>
             void operator ()(const T& value) const {
-                std::size_t value_size;
-//                if (std::is_trivial<T>::value) {
-                    value_size = sizeof(value);
-//                } else {
-//                    value_size = value.size();
-//                }
-                mem_util::Write(stream, static_cast<std::int32_t>(value_size));
+                auto value_size = static_cast<std::int32_t>(guess_size(value));
+                mem_util::Write(stream, value_size);
                 mem_util::Write(stream, value);
+            }
+
+            void operator ()(const bytes& value) const {
+                auto value_size = static_cast<std::int32_t>(guess_size(value));
+                mem_util::Write(stream, value_size);
+                mem_util::Write(stream, std::string(value.begin(), value.end()));
             }
 
         };
