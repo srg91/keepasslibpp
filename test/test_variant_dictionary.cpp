@@ -93,18 +93,13 @@ struct VariantDictionarySerializationFixture {
             0x08, 0x00, 0x00, 0x00,
             // uint64 value
             0x21, 0x43, 0x65, -0x79, 0x78, 0x56, 0x34, 0x12,
+            // none type (=end)
+            0x00,
         };
     }
 };
 
 BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
-    BOOST_AUTO_TEST_CASE(test_empty_dictionary)
-    {
-        VariantDictionary vd;
-        BOOST_CHECK(vd.Empty());
-        BOOST_CHECK_EQUAL(vd.Size(), 0);
-    }
-
     BOOST_FIXTURE_TEST_CASE(test_serialization_to_string,
                             VariantDictionarySerializationFixture) {
         std::string result = sample_dict.Serialize();
@@ -133,5 +128,107 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
         auto vd = VariantDictionary::Deserialize(stream);
         // TODO: Implement << operator?
         BOOST_CHECK(vd == sample_dict);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_set_bool) {
+        VariantDictionary vd;
+        vd.Set<bool>("key", true);
+
+        std::string result = vd.Serialize();
+        std::string expected = {
+            0x08,
+            0x03, 0x00, 0x00, 0x00,
+            'k', 'e', 'y',
+            0x01, 0x00, 0x00, 0x00,
+            0x01,
+        };
+        BOOST_CHECK_EQUAL(result, expected);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_set_int32) {
+        VariantDictionary vd;
+        vd.Set<std::int32_t>("key", 0x12345678);
+
+        std::string result = vd.Serialize();
+        std::string expected = {
+            0x0c,
+            0x03, 0x00, 0x00, 0x00,
+            'k', 'e', 'y',
+            0x04, 0x00, 0x00, 0x00,
+            0x78, 0x45, 0x23, 0x12,
+        };
+        BOOST_CHECK_EQUAL(result, expected);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_set_string) {
+        VariantDictionary vd;
+        vd.Set<std::string>("key", "hello");
+
+        std::string result = vd.Serialize();
+        std::string expected = {
+            0x18,
+            0x03, 0x00, 0x00, 0x00,
+            'k', 'e', 'y',
+            0x05, 0x00, 0x00, 0x00,
+            'h', 'e', 'l', 'l', 'o',
+        };
+        BOOST_CHECK_EQUAL(result, expected);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_set_bytes) {
+        VariantDictionary vd;
+
+        VariantDictionary::bytes bytes = {'h', 'e', 'l', 'l', 'o'};
+        vd.Set("key", bytes);
+
+        std::string result = vd.Serialize();
+        std::string expected = {
+            0x42,
+            0x03, 0x00, 0x00, 0x00,
+            'k', 'e', 'y',
+            0x05, 0x00, 0x00, 0x00,
+            'h', 'e', 'l', 'l', 'o',
+        };
+        BOOST_CHECK_EQUAL(result, expected);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_empty_dictionary) {
+        VariantDictionary vd;
+        BOOST_CHECK(vd.Empty());
+        BOOST_CHECK_EQUAL(vd.Size(), 0);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_non_empty_dictionary) {
+        VariantDictionary vd;
+        vd.Set<std::int32_t>("some int", 123456);
+        vd.Set<std::string>("some string", "hello, world");
+        vd.Set<bool>("some bool", true);
+        BOOST_CHECK(!vd.Empty());
+        BOOST_CHECK_EQUAL(vd.Size(), 3);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_erase) {
+        VariantDictionary vd;
+        vd.Set<std::int32_t>("some int", 123456);
+        BOOST_CHECK_EQUAL(vd.Size(), 1);
+
+        vd.Erase("some int");
+        BOOST_CHECK(vd.Empty());
+
+        vd.Set<std::int32_t>("some int", 123456);
+        vd.Set<std::string>("some string", "hello, world");
+        BOOST_CHECK_EQUAL(vd.Size(), 2);
+        vd.Erase("some string");
+        BOOST_CHECK_EQUAL(vd.Size(), 1);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_clear) {
+        VariantDictionary vd;
+        vd.Set<std::int32_t>("some int", 123456);
+        vd.Set<std::string>("some string", "hello, world");
+        BOOST_CHECK(!vd.Empty());
+
+        vd.Clear();
+        BOOST_CHECK(vd.Empty());
     }
 BOOST_AUTO_TEST_SUITE_END()

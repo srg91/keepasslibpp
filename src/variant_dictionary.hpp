@@ -6,39 +6,34 @@
 #include <iostream>
 #include <string>
 #include <utility>
+#include <vector>
 
 namespace keepasslib {
-    // TODO: Rename (like SerelializationTypeMap or smth else)
-    // TODO: And move under VD class
-    enum class VDST : std::int8_t {
-        None = 0x00,
-        UInt32 = 0x04,
-        UInt64 = 0x05,
-        Bool = 0x08,
-        Int32 = 0x0C,
-        Int64 = 0x0D,
-        String = 0x18,
-        ByteArray = 0x42,
-    };
-
     // TODO: Use template for container (in src use unordered, but map in tests)
     class VariantDictionary {
     public:
+        using bytes = std::vector<std::uint8_t>;
+
         using key_type = std::string;
         using mapped_type = boost::variant<
             bool, std::int32_t, std::int64_t, std::uint32_t, std::uint64_t,
-            std::string // TODO: byte array type
+            std::string, bytes
         >;
         using value_type = std::pair<key_type, mapped_type>;
 
         bool Empty() const;
         std::size_t Size() const;
-        bool Erase(const std::string& key);
+        void Erase(const std::string& key);
+        void Clear();
 
         template <typename T>
-        T Get(const std::string& key) const;
+        bool Get(const std::string& key, T& value) const;
+        template <typename>
+        bool Get(const std::string& key, std::string& value) const;
+        template <typename>
+        bool Get(const std::string& key, bytes& value) const;
         template <typename T>
-        T Set(const std::string& key, const T& value);
+        void Set(const std::string& key, const T& value);
 
         std::string Serialize() const;
         std::ostream& Serialize(std::ostream& stream) const;
