@@ -26,6 +26,8 @@ struct VariantDictionarySerializationFixture {
         );
 
         sample_bytes = {
+            // vd version
+            0x01, 0x00,
             // bool type
             0x08,
             // false bool key size
@@ -375,11 +377,10 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
         BOOST_CHECK(result);
 
         auto mapped_value = vd["bool"];
-        BOOST_CHECK(
-            std::is_same<
-                decltype(mapped_value),
-                VariantDictionary::mapped_type
-            >::value
-        );
+        bool is_same_types = std::is_same<
+            decltype(mapped_value),
+            VariantDictionary::mapped_type
+        >::value;
+        BOOST_CHECK(is_same_types);
     }
 BOOST_AUTO_TEST_SUITE_END()

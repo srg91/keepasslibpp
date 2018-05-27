@@ -1,4 +1,4 @@
-#include "pw_uuid.hpp"
+//#include "pw_uuid.hpp"
 
 #include <algorithm>
 #include <chrono>
@@ -9,16 +9,34 @@
 #include <iterator>
 #include <map>
 #include <sstream>
+#include <type_traits>
 #include <variant>
 #include <vector>
 
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/random_generator.hpp>
+//#include <boost/uuid/uuid.hpp>
+//#include <boost/uuid/random_generator.hpp>
+#include <boost/variant/variant.hpp>
+#include <boost/variant/get.hpp>
 
 using namespace std;
-using namespace keepasslib;
+//using namespace keepasslib;
+
+using vt = boost::variant<int, bool>;
+
+struct visitor_t : public boost::static_visitor<>
+{
+    void operator()(int i) const {
+        cout << "found int i: " << i << endl;
+    }
+    void operator()(bool b) const {
+        cout << "found bool b: " << b << endl;
+    }
+};
 
 int main() {
+    vt v = true;
+    auto vv = visitor_t();
+    v.apply_visitor(vv);
 //    string s = "1234567";
 //    std::copy(
 //        s.begin(),
