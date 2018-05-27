@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <iostream>
 #include <iterator>
+#include <map>
 #include <sstream>
 #include <variant>
 #include <vector>
@@ -18,6 +19,7 @@ using namespace std;
 using namespace keepasslib;
 
 int main() {
+    std::map<int, int> m;
 //    string s = "1234567";
 //    std::copy(
 //        s.begin(),
