@@ -31,7 +31,7 @@ namespace keepasslib {
         void Clear();
 
         template <typename T>
-        bool Get(const std::string& key, T& value) const;
+        bool Get(const std::string& key, T& value) const noexcept ;
 //        template <typename>
 //        bool Get(const std::string& key, std::string& value) const;
 //        template <typename>
@@ -50,9 +50,9 @@ namespace keepasslib {
 
         friend bool operator ==(const VariantDictionary& left, const VariantDictionary& right);
     private:
-        uint16_t vd_version = 0x0100;
-        uint16_t vdm_critical = 0xff00;
-        uint16_t vdm_info = 0x00ff;
+        static const uint16_t vd_version = 0x0100;
+        static const uint16_t vdm_critical = 0xff00;
+        static const uint16_t vdm_info = 0x00ff;
 
         enum class serialization_type : std::int8_t {
             None = 0x00,
@@ -130,7 +130,7 @@ namespace keepasslib {
     };
 
     template <typename T>
-    bool VariantDictionary::Get(const std::string& key, T& value) const {
+    bool VariantDictionary::Get(const std::string& key, T& value) const noexcept {
         if (key.empty()) return false;
         try {
             auto vv = dict.at(key);

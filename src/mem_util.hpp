@@ -28,9 +28,13 @@ namespace keepasslib {
         T Read(std::istream& stream, std::size_t size) {
             T result;
             std::copy_n(
-                std::istreambuf_iterator<typename T::value_type>(stream), size,
+//                std::istreambuf_iterator<typename T::value_type>(stream), size,
+                std::istreambuf_iterator<char>(stream), size,
                 std::back_inserter(result)
             );
+            // TODO: Review, why we cant catch it in tests
+            // TODO: Review, why we need to skip last copied symbol
+            stream.ignore(1);
             return result;
         }
 

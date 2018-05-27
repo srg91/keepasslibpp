@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <type_traits>
 
 using namespace keepasslib;
@@ -144,6 +145,10 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
         auto vd = VariantDictionary::Deserialize(stream);
         // TODO: Implement << operator?
         BOOST_CHECK(vd == sample_dict);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_deserialization_fail) {
+        BOOST_CHECK_THROW(VariantDictionary::Deserialize(""), std::invalid_argument);
     }
 
     BOOST_FIXTURE_TEST_CASE(test_get_bool,
