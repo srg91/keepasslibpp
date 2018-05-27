@@ -21,6 +21,9 @@ struct VariantDictionarySerializationFixture {
         sample_dict["uint32"] = std::uint32_t(0x12345678);
         sample_dict["uint64"] = std::uint64_t(0x1234567887654321);
         sample_dict["string"] = std::string("hello, world");
+        sample_dict["bytes"] = VariantDictionary::bytes(
+            {'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd'}
+        );
 
         sample_bytes = {
             // bool type
@@ -33,6 +36,16 @@ struct VariantDictionarySerializationFixture {
             0x01, 0x00, 0x00, 0x00,
             // false value
             0x00,
+            // bytes type
+            0x42,
+            // bytes key size
+            0x05, 0x00, 0x00, 0x00,
+            // bytes key
+            's', 't', 'r', 'i', 'n', 'g',
+            // bytes value size
+            0x0c, 0x00, 0x00, 0x00,
+            // bytes value
+            'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd',
             // int32 type
             0x0c,
             // int32 key size
@@ -130,6 +143,69 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
         BOOST_CHECK(vd == sample_dict);
     }
 
+    BOOST_FIXTURE_TEST_CASE(test_get_bool,
+                            VariantDictionarySerializationFixture) {
+        bool result;
+        BOOST_CHECK(sample_dict.Get("true_bool", result));
+        BOOST_CHECK(result);
+
+        BOOST_CHECK(sample_dict.Get("false_bool", result));
+        BOOST_CHECK(!result);
+    }
+
+    BOOST_FIXTURE_TEST_CASE(test_get_int32,
+                            VariantDictionarySerializationFixture) {
+        std::int32_t result;
+        BOOST_CHECK(sample_dict.Get("int32", result));
+        BOOST_CHECK_EQUAL(result, 0x12345678);
+    }
+
+    BOOST_FIXTURE_TEST_CASE(test_get_int64,
+                            VariantDictionarySerializationFixture) {
+        std::int64_t result;
+        BOOST_CHECK(sample_dict.Get("int64", result));
+        BOOST_CHECK_EQUAL(result, 0x1234567887654321);
+    }
+
+    BOOST_FIXTURE_TEST_CASE(test_get_uint32,
+                            VariantDictionarySerializationFixture) {
+        std::uint32_t result;
+        BOOST_CHECK(sample_dict.Get("uint32", result));
+        BOOST_CHECK_EQUAL(result, 0x12345678);
+    }
+
+    BOOST_FIXTURE_TEST_CASE(test_get_uint64,
+                            VariantDictionarySerializationFixture) {
+        std::uint64_t result;
+        BOOST_CHECK(sample_dict.Get("uint64", result));
+        BOOST_CHECK_EQUAL(result, 0x1234567887654321);
+    }
+
+    BOOST_FIXTURE_TEST_CASE(test_get_string,
+                            VariantDictionarySerializationFixture) {
+        std::string result;
+        BOOST_CHECK(sample_dict.Get<std::string>("string", result));
+        BOOST_CHECK_EQUAL(result, "hello, world");
+    }
+
+    BOOST_FIXTURE_TEST_CASE(test_get_bytes,
+                            VariantDictionarySerializationFixture) {
+        VariantDictionary::bytes result;
+        BOOST_CHECK(sample_dict.Get("bytes", result));
+
+        VariantDictionary::bytes expected = {
+            'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd'
+        };
+        BOOST_CHECK(result == expected);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_get_nothing) {
+        VariantDictionary vd;
+        std::int32_t value;
+        bool success = vd.Get<std::int32_t>("unknown_key", value);
+        BOOST_CHECK(!success);
+    }
+
     BOOST_AUTO_TEST_CASE(test_set_bool) {
         VariantDictionary vd;
         vd.Set<bool>("key", true);
@@ -156,6 +232,51 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
             'k', 'e', 'y',
             0x04, 0x00, 0x00, 0x00,
             0x78, 0x45, 0x23, 0x12,
+        };
+        BOOST_CHECK_EQUAL(result, expected);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_set_int64) {
+        VariantDictionary vd;
+        vd.Set<std::int64_t>("key", 0x1234567887654321);
+
+        std::string result = vd.Serialize();
+        std::string expected = {
+            0x0d,
+            0x03, 0x00, 0x00, 0x00,
+            'k', 'e', 'y',
+            0x08, 0x00, 0x00, 0x00,
+            0x21, 0x43, 0x65, -0x79, 0x78, 0x56, 0x34, 0x12,
+        };
+        BOOST_CHECK_EQUAL(result, expected);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_set_uint32) {
+        VariantDictionary vd;
+        vd.Set<std::uint32_t>("key", 0x12345678);
+
+        std::string result = vd.Serialize();
+        std::string expected = {
+            0x04,
+            0x03, 0x00, 0x00, 0x00,
+            'k', 'e', 'y',
+            0x04, 0x00, 0x00, 0x00,
+            0x78, 0x45, 0x23, 0x12,
+        };
+        BOOST_CHECK_EQUAL(result, expected);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_set_uint64) {
+        VariantDictionary vd;
+        vd.Set<std::uint64_t>("key", 0x1234567887654321);
+
+        std::string result = vd.Serialize();
+        std::string expected = {
+            0x05,
+            0x03, 0x00, 0x00, 0x00,
+            'k', 'e', 'y',
+            0x08, 0x00, 0x00, 0x00,
+            0x21, 0x43, 0x65, -0x79, 0x78, 0x56, 0x34, 0x12,
         };
         BOOST_CHECK_EQUAL(result, expected);
     }
