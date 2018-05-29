@@ -4,6 +4,10 @@ project(keepasslib)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_CXX_STANDARD 14)
 
+if (${CMAKE_BUILD_TYPE} STREQUAL Release)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+endif()
+
 # if we want some options for msvc
 #if (MSVC)
 #else()

@@ -16,7 +16,7 @@ namespace keepasslib {
     namespace mem_util {
         // TODO: Think about endianness
         // TODO: Raise exception if there is no enough bytes
-        template <typename T>
+        template <typename T, typename = std::enable_if_t<std::is_trivial<T>::value>>
         T Read(std::istream& stream) {
             T value;
             std::size_t value_size = sizeof(value);
@@ -28,18 +28,15 @@ namespace keepasslib {
         template <typename T>
         T Read(std::istream& stream, std::size_t size) {
             T result;
-            std::copy_n(
-//                std::istreambuf_iterator<typename T::value_type>(stream), size,
-                std::istreambuf_iterator<char>(stream), size,
-                std::back_inserter(result)
-            );
-            // TODO: Review, why we cant catch it in tests
-            // TODO: Review, why we need to skip last copied symbol
-            stream.ignore(1);
+            result.reserve(size);
+
+            auto it = std::istreambuf_iterator<char>(stream);
+            std::copy_n(it, size, std::back_inserter(result));
+            it++; // because copy_n moves iter n - 1 times
             return result;
         }
 
-        template <typename T>
+        template <typename T, typename = std::enable_if_t<std::is_trivial<T>::value>>
         T Read(const std::string& s) {
             std::size_t value_size = sizeof(T);
             if (s.size() != value_size) {
