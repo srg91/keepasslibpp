@@ -1,4 +1,5 @@
 //#include "pw_uuid.hpp"
+#include "mem_util.hpp"
 #include "variant_dictionary.hpp"
 
 #include <algorithm>
@@ -37,97 +38,9 @@ struct visitor_t : public boost::static_visitor<>
 };
 
 int main() {
-    std::string v = {
-        // vd version
-        0x00, 0x01,
-        // bytes type
-        0x42,
-        // bytes key size
-        0x05, 0x00, 0x00, 0x00,
-        // bytes key
-        'b', 'y', 't', 'e', 's',
-        // bytes value size
-        0x0c, 0x00, 0x00, 0x00,
-        // bytes value
-        'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd',
-        // bool type
-        0x08,
-        // false bool key size
-        0x0a, 0x00, 0x00, 0x00,
-        // false bool key
-        'f', 'a', 'l', 's', 'e', '_', 'b', 'o', 'o', 'l',
-        // false value size
-        0x01, 0x00, 0x00, 0x00,
-        // false value
-        0x00,
-        // int32 type
-        0x0c,
-        // int32 key size
-        0x05, 0x00, 0x00, 0x00,
-        // int32 key
-        'i', 'n', 't', '3', '2',
-        // int32 value size
-        0x04, 0x00, 0x00, 0x00,
-        // int32 value
-        0x78, 0x56, 0x34, 0x12,
-        // int64 type
-        0x0d,
-        // int64 key size
-        0x05, 0x00, 0x00, 0x00,
-        // int64 key
-        'i', 'n', 't', '6', '4',
-        // int64 value size
-        0x08, 0x00, 0x00, 0x00,
-        // int64 value
-        0x21, 0x43, 0x65, -0x79, 0x78, 0x56, 0x34, 0x12,
-        // string type
-        0x18,
-        // string key size
-        0x06, 0x00, 0x00, 0x00,
-        // string key
-        's', 't', 'r', 'i', 'n', 'g',
-        // string value size
-        0x0c, 0x00, 0x00, 0x00,
-        // string value
-        'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd',
-        // bool type
-        0x08,
-        // true bool key size
-        0x09, 0x00, 0x00, 0x00,
-        // true bool key
-        't', 'r', 'u', 'e', '_', 'b', 'o', 'o', 'l',
-        // true value size
-        0x01, 0x00, 0x00, 0x00,
-        // true value
-        0x01,
-        // uint32 type
-        0x04,
-        // uint32 key size
-        0x06, 0x00, 0x00, 0x00,
-        // uint32 key
-        'u', 'i', 'n', 't', '3', '2',
-        // uint32 value size
-        0x04, 0x00, 0x00, 0x00,
-        // uint32 value
-        0x78, 0x56, 0x34, 0x12,
-        // uint64 type
-        0x05,
-        // uint64 key size
-        0x06, 0x00, 0x00, 0x00,
-        // uint64 key
-        'u', 'i', 'n', 't', '6', '4',
-        // uint64 value size
-        0x08, 0x00, 0x00, 0x00,
-        // uint64 value
-        0x21, 0x43, 0x65, -0x79, 0x78, 0x56, 0x34, 0x12,
-        // none type (=end)
-        0x00,
-    };
-    istringstream s(v);
-    auto vd = keepasslib::VariantDictionary::Deserialize(s);
-    cout << vd.Size() << endl;
-    bool nt;
-    if (vd.Get<bool>("true_bool", nt)) cout << "true bool: " << nt << endl;
+    ostringstream s;
+    keepasslib::mem_util::Write(s, std::string("Hello, world"));
+    cout << s.str() << endl;
 //    ofstream f("d:/myvd.txt");
 //
 //    keepasslib::VariantDictionary sample_dict;

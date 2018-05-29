@@ -52,13 +52,12 @@ namespace keepasslib {
         }
 
         // TODO: Think about endianness
-        template <typename T>
+        template <typename T, typename = std::enable_if_t<std::is_trivial<T>::value>>
         void Write(std::ostream& stream, T value, std::size_t value_size) {
             auto it = reinterpret_cast<const char *>(&value);
             std::copy(it, it + value_size, std::ostream_iterator<char>(stream));
         }
 
-        template <typename>
         void Write(std::ostream& stream, const std::string& value, std::size_t) {
             stream << value;
         }
@@ -66,14 +65,16 @@ namespace keepasslib {
         // TODO: We expect always Little Endian
         // TODO: Add check for big-endian?
         // TODO: Add function which writing size before?
-        template <typename T>
+        template <
+            typename T,
+            typename = std::enable_if_t<std::is_trivial<T>::value>
+        >
         void Write(std::ostream& stream, T value) {
             Write<T>(stream, value, sizeof(value));
         }
 
-        template <typename>
         void Write(std::ostream& stream, const std::string& value) {
-            Write<std::string>(stream, value, value.size());
+            Write(stream, value, value.size());
         }
 
         template <
@@ -90,7 +91,7 @@ namespace keepasslib {
             typename = std::enable_if_t<std::is_trivial<T>::value>
         >
         std::string Write(T value) {
-            return Write(value, sizeof(value));
+            return Write<T>(value, sizeof(value));
         }
     };
 }
