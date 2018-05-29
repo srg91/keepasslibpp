@@ -14,6 +14,8 @@
 
 namespace keepasslib {
     namespace mem_util {
+        using bytes = std::vector<std::uint8_t>;
+
         // TODO: Think about endianness
         // TODO: Raise exception if there is no enough bytes
         template <typename T, typename = std::enable_if_t<std::is_trivial<T>::value>>
@@ -58,29 +60,31 @@ namespace keepasslib {
             std::copy(it, it + value_size, std::ostream_iterator<char>(stream));
         }
 
-        void Write(std::ostream& stream, const std::string& value, std::size_t) {
+        inline void Write(std::ostream& stream, const std::string& value, std::size_t) {
             stream << value;
+        }
+
+        inline void Write(std::ostream& stream, const bytes& value, std::size_t size) {
+            std::copy_n(value.begin(), size, std::ostreambuf_iterator<char>(stream));
         }
 
         // TODO: We expect always Little Endian
         // TODO: Add check for big-endian?
         // TODO: Add function which writing size before?
-        template <
-            typename T,
-            typename = std::enable_if_t<std::is_trivial<T>::value>
-        >
+        template <typename T, typename = std::enable_if_t<std::is_trivial<T>::value>>
         void Write(std::ostream& stream, T value) {
             Write<T>(stream, value, sizeof(value));
         }
 
-        void Write(std::ostream& stream, const std::string& value) {
+        inline void Write(std::ostream& stream, const std::string& value) {
             Write(stream, value, value.size());
         }
 
-        template <
-            typename T,
-            typename = std::enable_if_t<std::is_trivial<T>::value>
-        >
+        inline void Write(std::ostream& stream, const bytes& value) {
+            Write(stream, value, value.size());
+        }
+
+        template <typename T, typename = std::enable_if_t<std::is_trivial<T>::value>>
         std::string Write(T value, std::size_t value_size) {
             auto it = reinterpret_cast<const char *>(&value);
             return std::string(it, it + value_size);
@@ -95,4 +99,3 @@ namespace keepasslib {
         }
     };
 }
-

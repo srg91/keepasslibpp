@@ -16,12 +16,10 @@ namespace keepasslib {
     // TODO: Use template for container (in src use unordered, but map in tests)
     class VariantDictionary {
     public:
-        using bytes = std::vector<std::uint8_t>;
-
         using key_type = std::string;
         using mapped_type = boost::variant<
             bool, std::int32_t, std::int64_t, std::uint32_t, std::uint64_t,
-            std::string, bytes
+            std::string, mem_util::bytes
         >;
         using value_type = std::pair<key_type, mapped_type>;
 
@@ -52,7 +50,7 @@ namespace keepasslib {
     private:
         static const uint16_t vd_version = 0x0100;
         static const uint16_t vdm_critical = 0xff00;
-        static const uint16_t vdm_info = 0x00ff;
+//        static const uint16_t vdm_info = 0x00ff;
 
         enum class serialization_type : std::int8_t {
             None = 0x00,
@@ -84,7 +82,7 @@ namespace keepasslib {
                     return serialization_type::UInt64;
                 } else if (std::is_same<T, std::string>::value) {
                     return serialization_type::String;
-                } else if (std::is_same<T, bytes>::value) {
+                } else if (std::is_same<T, mem_util::bytes>::value) {
                     return serialization_type::ByteArray;
                 } else {
                     return serialization_type::None;
@@ -109,7 +107,7 @@ namespace keepasslib {
             }
 
             // TODO: Rework this!!
-            std::size_t guess_size(const bytes& value) const {
+            std::size_t guess_size(const mem_util::bytes& value) const {
                 return value.size();
             }
 
@@ -120,10 +118,10 @@ namespace keepasslib {
                 mem_util::Write(stream, value);
             }
 
-            void operator ()(const bytes& value) const {
+            void operator ()(const mem_util::bytes& value) const {
                 auto value_size = static_cast<std::int32_t>(guess_size(value));
                 mem_util::Write(stream, value_size);
-                mem_util::Write(stream, std::string(value.begin(), value.end()));
+                mem_util::Write(stream, value);
             }
 
         };

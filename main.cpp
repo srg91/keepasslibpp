@@ -38,10 +38,12 @@ struct visitor_t : public boost::static_visitor<>
 };
 
 int main() {
-    ostringstream s;
-    keepasslib::mem_util::Write(s, std::string("Hello, world"));
-    cout << s.str() << endl;
+//    ostringstream s;
+//    keepasslib::mem_util::Write(s, std::string("Hello, world"));
+//    cout << s.str() << endl;
 //    ofstream f("d:/myvd.txt");
+//    cout << std::is_trivial<std::basic_string<char>>::value << endl;
+    keepasslib::mem_util::Write(cout, std::string("Hello, world"));
 //
 //    keepasslib::VariantDictionary sample_dict;
 //    sample_dict["true_bool"] = true;

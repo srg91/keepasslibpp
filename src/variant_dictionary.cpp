@@ -89,7 +89,7 @@ VariantDictionary VariantDictionary::Deserialize(std::istream& stream) {
                 value = mem_util::Read<std::string>(stream, value_size);
                 break;
             case serialization_type::ByteArray:
-                value = mem_util::Read<bytes>(stream, value_size);
+                value = mem_util::Read<mem_util::bytes>(stream, value_size);
                 break;
             default:
                 // TODO: Add custom exception

@@ -1,3 +1,4 @@
+#include "mem_util.hpp"
 #include "variant_dictionary.hpp"
 
 #include <boost/test/unit_test.hpp>
@@ -23,7 +24,7 @@ struct VariantDictionarySerializationFixture {
         sample_dict["uint32"] = std::uint32_t(0x12345678);
         sample_dict["uint64"] = std::uint64_t(0x1234567887654321);
         sample_dict["string"] = std::string("hello, world");
-        sample_dict["bytes"] = VariantDictionary::bytes(
+        sample_dict["bytes"] = mem_util::bytes(
             {'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd'}
         );
 
@@ -198,10 +199,10 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
 
     BOOST_FIXTURE_TEST_CASE(test_get_bytes,
                             VariantDictionarySerializationFixture) {
-        VariantDictionary::bytes result;
+        mem_util::bytes result;
         BOOST_CHECK(sample_dict.Get("bytes", result));
 
-        VariantDictionary::bytes expected = {
+        mem_util::bytes expected = {
             'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd'
         };
         BOOST_CHECK(result == expected);
@@ -333,7 +334,7 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
     BOOST_AUTO_TEST_CASE(test_set_bytes) {
         VariantDictionary vd;
 
-        VariantDictionary::bytes bytes = {'h', 'e', 'l', 'l', 'o'};
+        mem_util::bytes bytes = {'h', 'e', 'l', 'l', 'o'};
         vd.Set("key", bytes);
 
         std::string result = vd.Serialize();
