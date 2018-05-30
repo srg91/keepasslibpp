@@ -1,6 +1,7 @@
 #pragma once
 
 #include "mem_util.hpp"
+#include "typedefs.hpp"
 
 #include <boost/variant/get.hpp>
 #include <boost/variant/variant.hpp>
@@ -20,7 +21,7 @@ namespace keepasslib {
         using key_type = std::string;
         using mapped_type = boost::variant<
             bool, std::int32_t, std::int64_t, std::uint32_t, std::uint64_t,
-            std::string, mem_util::bytes
+            std::string, types::bytes
         >;
         using value_type = std::pair<key_type, mapped_type>;
 
@@ -81,7 +82,7 @@ namespace keepasslib {
                     return serialization_type::UInt64;
                 } else if (std::is_same<T, std::string>::value) {
                     return serialization_type::String;
-                } else if (std::is_same<T, mem_util::bytes>::value) {
+                } else if (std::is_same<T, types::bytes>::value) {
                     return serialization_type::ByteArray;
                 } else {
                     return serialization_type::None;
@@ -106,7 +107,7 @@ namespace keepasslib {
             }
 
             // TODO: Rework this!!
-            std::size_t guess_size(const mem_util::bytes& value) const {
+            std::size_t guess_size(const types::bytes& value) const {
                 return value.size();
             }
 
@@ -117,7 +118,7 @@ namespace keepasslib {
                 mem_util::Write(stream, value);
             }
 
-            void operator ()(const mem_util::bytes& value) const {
+            void operator ()(const types::bytes& value) const {
                 auto value_size = static_cast<std::int32_t>(guess_size(value));
                 mem_util::Write(stream, value_size);
                 mem_util::Write(stream, value);

@@ -1,14 +1,17 @@
 #pragma once
 
+#include "typedefs.hpp"
+
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/random_generator.hpp>
+
 #include <array>
 #include <cstdint>
+#include <iomanip>
 #include <iostream>
 #include <stdexcept>
 #include <string>
 #include <utility>
-
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/random_generator.hpp>
 
 namespace keepasslib {
     /*
@@ -47,9 +50,13 @@ namespace keepasslib {
         PwUuid(uuid_t&& u) : uuid(std::forward<decltype(u)>(u)) {};
         PwUuid(const std::string& s);
         PwUuid(std::string&& s);
+        PwUuid(const types::bytes& b);
+        PwUuid(types::bytes&& b);
 
         // Get the 16 UUID bytes.
-        std::string Bytes() const;
+        types::bytes Bytes() const;
+        // Get the 16 UUID bytes string.
+        std::string ByteString() const;
         // TODO: Optional separators?
         // Get the 32 hexadecimal digits in five groups separated by hyphens.
         std::string ToString() const;
@@ -75,11 +82,26 @@ namespace keepasslib {
         static uuid_generator_t uuid_generator;
 
         // Checks is the string length equals UuidSize.
-        void checkSize(const std::string& s) const;
+        template <typename T> void checkSize(const T& s) const;
         template <typename It> void checkSize(It begin, It end) const;
     };
 
     std::ostream& operator <<(std::ostream& stream, const PwUuid& u);
+
+    template <typename T>
+    void PwUuid::checkSize(const T& s) const {
+        if (s.size() != PwUuid::UuidSize) {
+            std::ostringstream es;
+            es << "value " << '"';
+            es << std::hex << std::setfill('0');
+            for (const auto i : s) {
+                es << std::setw(2) << static_cast<unsigned>(static_cast<unsigned char>(i));
+            }
+            es << '"' << " has incorrect size: "
+               << std::dec << s.size() << " != " << PwUuid::UuidSize;
+            throw std::invalid_argument(es.str());
+        }
+    }
 
     template <typename It>
     void PwUuid::checkSize(It begin, It end) const {

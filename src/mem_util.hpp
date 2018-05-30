@@ -1,5 +1,7 @@
 #pragma once
 
+#include "typedefs.hpp"
+
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
@@ -15,8 +17,6 @@
 
 namespace keepasslib {
     namespace mem_util {
-        using bytes = std::vector<std::uint8_t>;
-
         template <typename T, typename U>
         inline void assert_read_enough(T actual, U expected) {
             if (actual != expected) {
@@ -73,7 +73,7 @@ namespace keepasslib {
             stream << value;
         }
 
-        inline void Write(std::ostream& stream, const bytes& value) {
+        inline void Write(std::ostream& stream, const types::bytes& value) {
             std::copy(value.begin(), value.end(), std::ostreambuf_iterator<char>(stream));
         }
 

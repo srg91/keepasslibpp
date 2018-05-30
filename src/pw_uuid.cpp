@@ -3,13 +3,13 @@
 //
 
 #include "pw_uuid.hpp"
+#include "typedefs.hpp"
 
 #include <array>
 #include <algorithm>
 #include <iomanip>
 #include <iostream>
 #include <random>
-#include <stdexcept>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -39,27 +39,31 @@ PwUuid::PwUuid(string&& s) {
     move(s.begin(), s.end(), uuid.begin());
 }
 
+PwUuid::PwUuid(const types::bytes& b) {
+    checkSize(b);
+    copy(b.begin(), b.end(), uuid.begin());
+}
+
+PwUuid::PwUuid(types::bytes&& b) {
+    checkSize(b);
+    move(b.begin(), b.end(), uuid.begin());
+}
+
 PwUuid::uuid_generator_t PwUuid::uuid_generator = PwUuid::uuid_generator_t{};
 const PwUuid PwUuid::Nil = boost::uuids::nil_generator()();
 
-string PwUuid::Bytes() const {
-    return string(uuid.begin(), uuid.end());
+types::bytes PwUuid::Bytes() const {
+    return types::bytes(uuid.begin(), uuid.end());
+}
+
+std::string PwUuid::ByteString() const {
+    return std::string(uuid.begin(), uuid.end());
 }
 
 string PwUuid::ToString() const {
     ostringstream s;
     s << uuid;
     return s.str();
-}
-
-void PwUuid::checkSize(const string& s) const {
-    if (s.size() != PwUuid::UuidSize) {
-        ostringstream es;
-        // TODO: implement print hex string
-        es << "string " << '"' << s << '"' << " has incorrect size: "
-           << s.size() << " != " << PwUuid::UuidSize;
-        throw invalid_argument(es.str());
-    }
 }
 
 namespace keepasslib {
