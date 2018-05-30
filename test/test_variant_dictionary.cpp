@@ -1,3 +1,4 @@
+#include "exception.hpp"
 #include "mem_util.hpp"
 #include "variant_dictionary.hpp"
 
@@ -148,8 +149,105 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
         BOOST_CHECK(vd == sample_dict);
     }
 
-    BOOST_AUTO_TEST_CASE(test_deserialization_fail, *boost::unit_test::enable_if<false>()) {
-        BOOST_CHECK_THROW(VariantDictionary::Deserialize(""), std::invalid_argument);
+    BOOST_AUTO_TEST_CASE(test_deserialization_empty_dictionary) {
+        std::string s = {0x00, 0x01, 0x00};
+        auto vd = VariantDictionary::Deserialize(s);
+        BOOST_CHECK(vd.Empty());
+        BOOST_CHECK_EQUAL(vd.Size(), 0);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_deserialization_empty_file) {
+        BOOST_CHECK_THROW(VariantDictionary::Deserialize(""), exception::FileCorruptedError);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_deserialization_newest_file) {
+        // Newest version - 0x02
+        auto statement_newest_version = []{
+            std::string s = {0x00, 0x02};
+            VariantDictionary::Deserialize(s);
+        };
+        BOOST_CHECK_THROW(statement_newest_version(), exception::NewVersionRequiredError);
+
+        // Unknown type - 0x03 with key "key" and value 0x01
+        auto statement_new_unknown_type = []{
+            std::string s = {
+                0x00, 0x01,
+                0x03,
+                0x03, 0x00, 0x00, 0x00,
+                'k', 'e', 'y',
+                0x01, 0x00, 0x00, 0x00,
+                0x01,
+                0x00
+            };
+            VariantDictionary::Deserialize(s);
+        };
+        BOOST_CHECK_THROW(statement_new_unknown_type(), exception::NewVersionRequiredError);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_deserialization_corrupted_type) {
+        auto statement_corrupted_type = []{
+            std::string s = {0x00, 0x01, -0x01};
+            VariantDictionary::Deserialize(s);
+        };
+        BOOST_CHECK_THROW(statement_corrupted_type(), exception::FileCorruptedError);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_deserialization_unexpected_end_on_type) {
+        std::string s = {
+            0x00, 0x01,
+            0x08,
+            0x04, 0x00, 0x00, 0x00,
+            'b', 'o', 'o', 'l',
+            0x01, 0x00, 0x00, 0x00,
+            0x01
+            // 0x00 is expected
+        };
+        BOOST_CHECK_THROW(VariantDictionary::Deserialize(s), exception::FileCorruptedError);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_deserialization_unexpected_end_on_reading) {
+        auto statement_failed_on_type = []{
+            std::string s = {0x00, 0x01};
+            VariantDictionary::Deserialize(s);
+        };
+        BOOST_CHECK_THROW(statement_failed_on_type(), exception::FileCorruptedError);
+
+        auto statement_failed_on_key_size = []{
+            std::string s = {0x00, 0x01, 0x08, 0x04};
+            VariantDictionary::Deserialize(s);
+        };
+        BOOST_CHECK_THROW(statement_failed_on_key_size(), exception::FileCorruptedError);
+
+        auto statement_failed_on_key = []{
+            std::string s = {0x00, 0x01, 0x08, 0x04, 0x00, 0x00, 0x00, 'k', 'e', 'y'};
+            VariantDictionary::Deserialize(s);
+        };
+        BOOST_CHECK_THROW(statement_failed_on_key(), exception::FileCorruptedError);
+
+        auto statement_failed_on_value_size = []{
+            std::string s = {
+                0x00, 0x01,
+                0x08,
+                0x04, 0x00, 0x00, 0x00,
+                'b', 'o', 'o', 'l',
+                0x04
+            };
+            VariantDictionary::Deserialize(s);
+        };
+        BOOST_CHECK_THROW(statement_failed_on_value_size(), exception::FileCorruptedError);
+
+        auto statement_failed_on_value = []{
+            std::string s = {
+                0x00, 0x01,
+                0x18,
+                0x03, 0x00, 0x00, 0x00,
+                's', 't', 'r',
+                0x04, 0x00, 0x00, 0x00,
+                'v', 'a', 'l'
+            };
+            VariantDictionary::Deserialize(s);
+        };
+        BOOST_CHECK_THROW(statement_failed_on_value(), exception::FileCorruptedError);
     }
 
     BOOST_FIXTURE_TEST_CASE(test_get_bool,

@@ -30,7 +30,7 @@ add_executable(main main.cpp ${SOURCES})
 target_link_libraries(main keepasslib)
 
 # Configure tests
-if (${CMAKE_BUILD_TYPE} STREQUAL Test)
+if (${CMAKE_BUILD_TYPE} STREQUAL Test OR ${CMAKE_BUILD_TYPE} STREQUAL Debug)
     # TODO: Is there way to do this in more beautifull way?
     include_directories(src)
     add_subdirectory(test)

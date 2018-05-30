@@ -1,3 +1,4 @@
+#include "exception.hpp"
 #include "mem_util.hpp"
 #include "variant_dictionary.hpp"
 
@@ -52,14 +53,24 @@ std::string VariantDictionary::Serialize() const {
 
 VariantDictionary VariantDictionary::Deserialize(std::istream& stream) {
     VariantDictionary vd;
+    try {
+        deserialize(stream, vd);
+    } catch (std::length_error&) {
+        // TODO: Add error message?
+        throw exception::FileCorruptedError();
+    }
+    return vd;
+}
+
+void VariantDictionary::deserialize(std::istream& stream, keepasslib::VariantDictionary& vd) {
     auto version = mem_util::Read<std::uint16_t>(stream);
-    // TODO: Add custom exception
     if ((version & vdm_critical) > (vd_version & vdm_critical))
-        throw std::invalid_argument("FileNewVerReq");
+        // TODO: Add error message?
+        throw exception::NewVersionRequiredError();
 
     for (;;) {
-        // TODO: Add custom exception
-        if (stream.peek() < 0) throw std::invalid_argument("FileCorrupted");
+        // TODO: Add error message?
+        if (stream.peek() < 0) throw exception::FileCorruptedError();
         auto value_type = static_cast<serialization_type>(mem_util::Read<std::int8_t>(stream));
         if (value_type == serialization_type::None) break;
 
@@ -67,7 +78,6 @@ VariantDictionary VariantDictionary::Deserialize(std::istream& stream) {
         auto key = mem_util::Read<std::string>(stream, static_cast<std::size_t>(key_size));
         auto value_size = static_cast<std::size_t>(mem_util::Read<std::int32_t>(stream));
 
-        // TODO: Check what value + size are read correctly
         mapped_type value;
         switch (value_type) {
             case serialization_type::Bool:
@@ -92,15 +102,14 @@ VariantDictionary VariantDictionary::Deserialize(std::istream& stream) {
                 value = mem_util::Read<mem_util::bytes>(stream, value_size);
                 break;
             default:
-                // TODO: Add custom exception
-                throw std::invalid_argument("unknown type");
+                // TODO: Add error message?
+                throw exception::NewVersionRequiredError();
         }
         vd[key] = value;
 
-        // TODO: Check is not eof, if eof - failed
+        // TODO: Add error message?
+        if (!stream) throw exception::FileCorruptedError();
     }
-
-    return vd;
 }
 
 VariantDictionary VariantDictionary::Deserialize(const std::string& bytes) {

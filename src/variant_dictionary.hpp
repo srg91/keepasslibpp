@@ -9,6 +9,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -30,10 +31,6 @@ namespace keepasslib {
 
         template <typename T>
         bool Get(const std::string& key, T& value) const noexcept ;
-//        template <typename>
-//        bool Get(const std::string& key, std::string& value) const;
-//        template <typename>
-//        bool Get(const std::string& key, bytes& value) const;
         template <typename T>
         void Set(const std::string& key, const T& value);
 
@@ -64,6 +61,8 @@ namespace keepasslib {
         };
 
         std::map<key_type, mapped_type> dict;
+
+        static void deserialize(std::istream& stream, VariantDictionary& vd);
 
         struct guess_type_visitor : public boost::static_visitor<serialization_type>
         {
@@ -96,7 +95,7 @@ namespace keepasslib {
             explicit write_value_visitor(std::ostream& stream) : stream(stream) {}
 
             // TODO: Rework this!!
-            template <typename T>
+            template <typename T, typename = std::enable_if_t<std::is_trivial<T>::value>>
             std::size_t guess_size(const T& value) const {
                 return sizeof(T);
             }
