@@ -1,4 +1,5 @@
 #include "pw_uuid.hpp"
+#include "typedefs.hpp"
 
 #include <boost/test/unit_test.hpp>
 
@@ -32,12 +33,16 @@ BOOST_AUTO_TEST_SUITE(test_pw_uuid)
 
     BOOST_AUTO_TEST_CASE(test_new_uuid) {
         PwUuid u1;
-        auto bytes = u1.ByteString();
-        PwUuid u2(bytes);
+        auto byte_string = u1.ByteString();
+        PwUuid u2(byte_string);
         BOOST_CHECK_EQUAL(u1, u2);
 
+        PwUuid u3(u2.Bytes());
+        BOOST_CHECK_EQUAL(u1, u3);
+        BOOST_CHECK_EQUAL(u2, u3);
+
         const size_t default_size = PwUuid::UuidSize;
-        BOOST_CHECK_EQUAL(bytes.size(), default_size);
+        BOOST_CHECK_EQUAL(byte_string.size(), default_size);
     }
 
     BOOST_AUTO_TEST_CASE(test_new_uuid_by_uuid) {
@@ -47,16 +52,24 @@ BOOST_AUTO_TEST_SUITE(test_pw_uuid)
         std::copy(expected.begin(), expected.end(), expected_uuid.begin());
 
         PwUuid u(expected_uuid);
-        auto bytes = u.ByteString();
-        BOOST_CHECK_EQUAL(bytes, expected);
+        auto byte_string = u.ByteString();
+        BOOST_CHECK_EQUAL(byte_string, expected);
     }
 
     BOOST_AUTO_TEST_CASE(test_new_uuid_by_string) {
         std::string expected = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
                                 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
         PwUuid u(expected);
-        auto bytes = u.ByteString();
-        BOOST_CHECK_EQUAL(bytes, expected);
+        auto byte_string = u.ByteString();
+        BOOST_CHECK_EQUAL(byte_string, expected);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_new_uuid_by_bytes) {
+        types::bytes expected = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+                                 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
+        PwUuid u(expected);
+        auto bytes = u.Bytes();
+        BOOST_CHECK(bytes == expected);
     }
 
     BOOST_AUTO_TEST_CASE(test_new_uuid_by_iter) {
