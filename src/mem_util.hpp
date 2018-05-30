@@ -17,37 +17,42 @@ namespace keepasslib {
     namespace mem_util {
         using bytes = std::vector<std::uint8_t>;
 
+        template <typename T, typename U>
+        inline void assert_read_enough(T actual, U expected) {
+            if (actual != expected) {
+                std::ostringstream errs("keepasslib::mem_util::Read: "
+                                        "not enough bytes: ");
+                errs << "expected " << expected << " != " << actual;
+                throw std::length_error(errs.str());
+            }
+        }
+
         // TODO: Think about endianness
-        // TODO: Raise exception if there is no enough bytes
         template <typename T, typename = std::enable_if_t<std::is_trivial<T>::value>>
         T Read(std::istream& stream) {
             T value;
             std::size_t value_size = sizeof(value);
             auto it = reinterpret_cast<char *>(&value);
             stream.read(it, value_size);
+            assert_read_enough(stream.gcount(), value_size);
             return value;
         };
 
         template <typename T>
         T Read(std::istream& stream, std::size_t size) {
-            T result;
-            result.reserve(size);
-
-            auto it = std::istreambuf_iterator<char>(stream);
-            std::copy_n(it, size, std::back_inserter(result));
-            it++; // because copy_n moves iter n - 1 times
-            return result;
+            T value;
+            value.resize(size);
+            stream.read(reinterpret_cast<char *>(&value[0]), size);
+            assert_read_enough(stream.gcount(), size);
+            return value;
         }
 
+        // TODO: Think about endianness
         template <typename T, typename = std::enable_if_t<std::is_trivial<T>::value>>
         T Read(const std::string& s) {
             std::size_t value_size = sizeof(T);
-            if (s.size() != value_size) {
-                std::ostringstream errs("invalid string size: ");
-                errs << "expected " << value_size << " != " << s.size();
-                throw std::invalid_argument(errs.str());
-            }
-            // TODO: Think about endianness
+            assert_read_enough(s.size(), value_size);
+
             T value;
             auto it = reinterpret_cast<char *>(&value);
             std::copy(s.begin(), s.end(), it);

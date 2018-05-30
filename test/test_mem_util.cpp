@@ -89,11 +89,6 @@ BOOST_AUTO_TEST_SUITE(test_mem_util)
         BOOST_CHECK_EQUAL(int32_result, 0x12345678);
     }
 
-    BOOST_AUTO_TEST_CASE(test_read_from_stream) {
-        std::istringstream s;
-        mem_util::Read<std::uint32_t>(s);
-    }
-
     BOOST_AUTO_TEST_CASE(test_read_bool_from_string) {
         BOOST_CHECK_NO_THROW([](){
             std::string s("0x01");
@@ -147,18 +142,32 @@ BOOST_AUTO_TEST_SUITE(test_mem_util)
         BOOST_CHECK_NO_THROW(statement());
     }
 
-    BOOST_AUTO_TEST_CASE(test_read_int32_with_incorrect_size) {
+    BOOST_AUTO_TEST_CASE(test_read_int32_from_empty_stream) {
+        auto empty_stream_statement = []{
+            std::istringstream s;
+            mem_util::Read<std::int32_t>(s);
+        };
+        BOOST_CHECK_THROW(empty_stream_statement(), std::length_error);
+
+        auto short_stream_statement = []{
+            std::istringstream s({0x78, 0x56});
+            mem_util::Read<std::int32_t>(s);
+        };
+        BOOST_CHECK_THROW(short_stream_statement(), std::length_error);
+    }
+
+    BOOST_AUTO_TEST_CASE(test_read_int32_with_incorrect_string_size) {
         auto short_statement = []{
             std::string s = {0x78, 0x56, 0x34};
             mem_util::Read<std::int32_t>(s);
         };
-        BOOST_CHECK_THROW(short_statement(), std::invalid_argument);
+        BOOST_CHECK_THROW(short_statement(), std::length_error);
 
         auto long_statement = []{
             std::string s = {0x78, 0x56, 0x34, 0x12, 0x11};
             mem_util::Read<std::int32_t>(s);
         };
-        BOOST_CHECK_THROW(long_statement(), std::invalid_argument);
+        BOOST_CHECK_THROW(long_statement(), std::length_error);
     }
 
     BOOST_AUTO_TEST_CASE(test_write_bool_to_stream) {

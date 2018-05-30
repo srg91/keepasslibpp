@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
         BOOST_CHECK(vd == sample_dict);
     }
 
-    BOOST_AUTO_TEST_CASE(test_deserialization_fail) {
+    BOOST_AUTO_TEST_CASE(test_deserialization_fail, *boost::unit_test::enable_if<false>()) {
         BOOST_CHECK_THROW(VariantDictionary::Deserialize(""), std::invalid_argument);
     }
 

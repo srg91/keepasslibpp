@@ -38,9 +38,12 @@ struct visitor_t : public boost::static_visitor<>
 };
 
 int main() {
-    std::istringstream s("\x0f\x00");
-    auto v = keepasslib::mem_util::Read<std::int32_t>(s);
-    cout << "V: " << v;
+//    std::istringstream s("asdf123");
+//    std::vector<std::uint8_t> v;
+//    v.resize(7);
+//    s.read(reinterpret_cast<char *>(&v[0]), 7);
+//    std::cout << v[3];
+
 //    ostringstream s;
 //    keepasslib::mem_util::Write(s, std::string("Hello, world"));
 //    cout << s.str() << endl;
@@ -73,6 +76,19 @@ int main() {
 //        std::ostreambuf_iterator<string::value_type>(cout)
 //    );
 
+    ifstream f("e:\\srg91\\downloads\\Kick-Ass.2010.DUB.no.censors.XviD.AC3.BDRip._by.ZNG505_.avi", ios::in | ios::binary);
+
+    f.seekg(0, ios::end);
+    auto size = f.tellg();
+    f.seekg(0, ios::beg);
+    auto start = chrono::steady_clock::now();
+    auto s = keepasslib::mem_util::Read<std::string>(f, static_cast<std::size_t>(size));
+//    stringstream s;
+//    s << f.rdbuf();
+    auto end = chrono::steady_clock::now();
+    auto time = chrono::duration_cast<chrono::milliseconds>(end - start);
+    cout << "size: " << s.size() << endl;
+    cout << "time: " << time.count() << " ms" << endl;
 //    istringstream source("hello, world");
 //    string dest;
 //    unsigned n = 1;
