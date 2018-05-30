@@ -6,6 +6,7 @@
 #include <iostream>
 #include <iterator>
 #include <sstream>
+#include <exception>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
@@ -53,35 +54,22 @@ namespace keepasslib {
             return value;
         }
 
-        // TODO: Think about endianness
-        template <typename T, typename = std::enable_if_t<std::is_trivial<T>::value>>
-        void Write(std::ostream& stream, T value, std::size_t value_size) {
-            auto it = reinterpret_cast<const char *>(&value);
-            std::copy(it, it + value_size, std::ostream_iterator<char>(stream));
-        }
-
-        inline void Write(std::ostream& stream, const std::string& value, std::size_t) {
-            stream << value;
-        }
-
-        inline void Write(std::ostream& stream, const bytes& value, std::size_t size) {
-            std::copy_n(value.begin(), size, std::ostreambuf_iterator<char>(stream));
-        }
-
         // TODO: We expect always Little Endian
         // TODO: Add check for big-endian?
         // TODO: Add function which writing size before?
         template <typename T, typename = std::enable_if_t<std::is_trivial<T>::value>>
         void Write(std::ostream& stream, T value) {
-            Write<T>(stream, value, sizeof(value));
+            auto value_size = sizeof(T);
+            auto it = reinterpret_cast<const char *>(&value);
+            std::copy(it, it + value_size, std::ostream_iterator<char>(stream));
         }
 
         inline void Write(std::ostream& stream, const std::string& value) {
-            Write(stream, value, value.size());
+            stream << value;
         }
 
         inline void Write(std::ostream& stream, const bytes& value) {
-            Write(stream, value, value.size());
+            std::copy(value.begin(), value.end(), std::ostreambuf_iterator<char>(stream));
         }
 
         template <typename T, typename = std::enable_if_t<std::is_trivial<T>::value>>
