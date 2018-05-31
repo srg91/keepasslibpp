@@ -9,6 +9,13 @@ using namespace keepasslib;
 
 const std::string KdfParameters::uuid_key = "$UUID";
 
+PwUuid KdfParameters::extractUuid() {
+    types::bytes uuid_bytes;
+    if (!Get<types::bytes>(uuid_key, uuid_bytes))
+        throw exception::FileCorruptedError();
+    return uuid_bytes;
+}
+
 std::string KdfParameters::SerializeExt() const {
     return VariantDictionary::Serialize();
 }
