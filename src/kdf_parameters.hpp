@@ -14,6 +14,14 @@ namespace keepasslib {
         explicit KdfParameters(const PwUuid& uuid) : kdf_uuid(uuid) {
             Set<types::bytes>(uuid_key, uuid.Bytes());
         };
+        KdfParameters(VariantDictionary&& vd) : VariantDictionary(std::forward<VariantDictionary>(vd)) {
+            types::bytes uuid_bytes;
+            if (Get<types::bytes>(uuid_key, uuid_bytes)) {
+                kdf_uuid = PwUuid(uuid_bytes);
+            } else {
+                throw exception::FileCorruptedError();
+            }
+        }
         const PwUuid& KdfUuid() { return kdf_uuid; }
 
         std::string SerializeExt() const;
@@ -22,6 +30,6 @@ namespace keepasslib {
         static KdfParameters DeserializeExt(const std::string& bytes);
     private:
         static const std::string uuid_key;
-        const PwUuid kdf_uuid;
+        PwUuid kdf_uuid;
     };
 }

@@ -13,16 +13,16 @@ bool VariantDictionary::Empty() const {
     return dict.empty();
 }
 
+VariantDictionary::size_type VariantDictionary::Count(const VariantDictionary::key_type& key) const {
+    return dict.count(key);
+}
+
 std::size_t VariantDictionary::Size() const {
     return dict.size();
 }
 
 void VariantDictionary::Erase(const std::string& key) {
     dict.erase(key);
-}
-
-void VariantDictionary::CopyTo(VariantDictionary& vd) {
-    vd.dict = dict;
 }
 
 void VariantDictionary::Clear() {

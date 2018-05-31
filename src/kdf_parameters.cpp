@@ -18,18 +18,7 @@ std::ostream& KdfParameters::SerializeExt(std::ostream& stream) const {
 }
 
 KdfParameters KdfParameters::DeserializeExt(std::istream& stream) {
-    auto vd = VariantDictionary::Deserialize(stream);
-
-    types::bytes kdf_uuid;
-    if (vd.Get<types::bytes>(KdfParameters::uuid_key, kdf_uuid)) {
-        KdfParameters kp(kdf_uuid);
-        // TODO: Is any good way to copy?
-        vd.CopyTo(kp);
-        return kp;
-    } else {
-        // TODO: raise another exception
-        throw exception::FileCorruptedError();
-    }
+    return VariantDictionary::Deserialize(stream);
 }
 
 KdfParameters KdfParameters::DeserializeExt(const std::string& bytes) {

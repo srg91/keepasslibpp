@@ -516,4 +516,13 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
         >::value;
         BOOST_CHECK(is_same_types);
     }
+
+    BOOST_AUTO_TEST_CASE(test_count) {
+        VariantDictionary vd;
+        BOOST_CHECK_EQUAL(vd.Count("bool"), 0);
+
+        vd["bool"] = true;
+        BOOST_CHECK_EQUAL(vd.Count("bool"), 1);
+        BOOST_CHECK_EQUAL(vd.Count("another"), 0);
+    }
 BOOST_AUTO_TEST_SUITE_END()

@@ -25,6 +25,8 @@ namespace keepasslib {
         >;
         using value_type = std::pair<key_type, mapped_type>;
 
+        using size_type = std::map<key_type, mapped_type>::size_type;
+
         using iterator = std::map<key_type, mapped_type>::iterator;
         using const_iterator = std::map<key_type, mapped_type>::const_iterator;
 
@@ -33,12 +35,13 @@ namespace keepasslib {
         iterator end() { return dict.end(); }
         const_iterator end() const { return dict.end(); }
 
+        VariantDictionary() {};
+        VariantDictionary(VariantDictionary&& vd) : dict(std::move(vd.dict)) {};
+
         bool Empty() const;
+        size_type Count(const key_type& key) const;
         std::size_t Size() const;
         void Erase(const std::string& key);
-
-        // TODO: Is any good way to copy?
-        void CopyTo(VariantDictionary& vd);
         void Clear();
 
         template <typename T>
