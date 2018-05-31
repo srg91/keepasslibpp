@@ -21,6 +21,10 @@ void VariantDictionary::Erase(const std::string& key) {
     dict.erase(key);
 }
 
+void VariantDictionary::CopyTo(VariantDictionary& vd) {
+    vd.dict = dict;
+}
+
 void VariantDictionary::Clear() {
     dict.clear();
 }

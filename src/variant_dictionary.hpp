@@ -25,9 +25,20 @@ namespace keepasslib {
         >;
         using value_type = std::pair<key_type, mapped_type>;
 
+        using iterator = std::map<key_type, mapped_type>::iterator;
+        using const_iterator = std::map<key_type, mapped_type>::const_iterator;
+
+        iterator begin() { return dict.begin(); }
+        const_iterator begin() const { return dict.begin(); }
+        iterator end() { return dict.end(); }
+        const_iterator end() const { return dict.end(); }
+
         bool Empty() const;
         std::size_t Size() const;
         void Erase(const std::string& key);
+
+        // TODO: Is any good way to copy?
+        void CopyTo(VariantDictionary& vd);
         void Clear();
 
         template <typename T>
@@ -38,8 +49,8 @@ namespace keepasslib {
         std::string Serialize() const;
         std::ostream& Serialize(std::ostream& stream) const;
 
-        static VariantDictionary Deserialize(const std::string& bytes);
         static VariantDictionary Deserialize(std::istream& stream);
+        static VariantDictionary Deserialize(const std::string& bytes);
 
         mapped_type& operator [](const key_type& index);
         const mapped_type& operator [](const key_type& index) const;
