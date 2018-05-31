@@ -12,7 +12,7 @@ const std::string KdfParameters::uuid_key = "$UUID";
 PwUuid KdfParameters::extractUuid() {
     types::bytes uuid_bytes;
     if (!Get<types::bytes>(uuid_key, uuid_bytes))
-        throw exception::FileCorruptedError();
+        throw exception::InvalidKdfParametersError();
     return uuid_bytes;
 }
 

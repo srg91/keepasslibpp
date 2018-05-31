@@ -20,6 +20,7 @@ namespace keepasslib {
             , kdf_uuid(extractUuid()) {}
         const PwUuid& KdfUuid() { return kdf_uuid; }
 
+        // TODO: rename?
         std::string SerializeExt() const;
         std::ostream& SerializeExt(std::ostream& stream) const;
         static KdfParameters DeserializeExt(std::istream& stream);
