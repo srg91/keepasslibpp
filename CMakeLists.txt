@@ -17,6 +17,10 @@ endif()
 find_package(Boost REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
 
+# TODO: Can we lib to libgcrypt20?
+find_package(OpenSSL REQUIRED)
+include_directories(${OPENSSL_INCLUDE_DIR})
+
 #find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 #find_package(Boost COMPONENTS unit_test_framework system)
 #include_directories(${Boost_INCLUDE_DIR})
@@ -27,7 +31,7 @@ add_subdirectory(src)
 
 include_directories(src)
 add_executable(main main.cpp ${SOURCES})
-target_link_libraries(main keepasslib)
+target_link_libraries(main keepasslib ${OPENSSL_CRYPTO_LIBRARY} libargon2)
 
 # Configure tests
 if (${CMAKE_BUILD_TYPE} STREQUAL Test OR ${CMAKE_BUILD_TYPE} STREQUAL Debug)

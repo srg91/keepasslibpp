@@ -1,6 +1,15 @@
-//#include "pw_uuid.hpp"
+#include "crypto_util.hpp"
+#include "kdf_engine_aes.hpp"
+#include "kdf_engine_argon.hpp"
 #include "mem_util.hpp"
+#include "pw_uuid.hpp"
+#include "kdf_parameters.hpp"
 #include "variant_dictionary.hpp"
+
+//#include <boost/uuid/uuid.hpp>
+//#include <boost/uuid/random_generator.hpp>
+#include <boost/variant/variant.hpp>
+#include <boost/variant/get.hpp>
 
 #include <algorithm>
 #include <chrono>
@@ -15,29 +24,42 @@
 #include <variant>
 #include <vector>
 
-//#include <boost/uuid/uuid.hpp>
-//#include <boost/uuid/random_generator.hpp>
-#include <boost/variant/variant.hpp>
-#include <boost/variant/get.hpp>
-
 using namespace std;
 //using namespace keepasslib;
 
-using vt = boost::variant<int, bool>;
 
-using my_int = int;
-
-struct visitor_t : public boost::static_visitor<>
-{
-    void operator()(int i) const {
-        cout << "found int i: " << i << endl;
+ostream& operator <<(ostream& stream, keepasslib::types::bytes value) {
+    auto o = stream.flags();
+    stream << setfill('0') << hex;
+    for (const auto& c : value) {
+        stream << setw(2) << static_cast<unsigned>(static_cast<unsigned char>(c));
     }
-//    void operator()(std::int32_t j) const {
-//        cout << "found my_int j: " << j << endl;
-//    }
+    stream.setf(o);
+    return stream;
 };
 
 int main() {
+    keepasslib::types::bytes S = {'1', '2', '3', '4', '5', '6', '7', '8'};
+    keepasslib::types::bytes msg = {'H', 'e', 'l', 'l', 'o'};
+
+    keepasslib::AesKdf aes_kdf;
+    keepasslib::KdfParameters aes_kp(aes_kdf.GetUuid());
+    aes_kp.Set<keepasslib::types::bytes>("S", S);
+    aes_kp.Set<std::uint64_t>("R", 6000);
+
+    cout << "AES: " << aes_kdf.Transform(msg, aes_kp) << endl;
+
+    keepasslib::Argon2Kdf argon_kdf;
+    keepasslib::KdfParameters argon_kp(argon_kdf.GetUuid());
+    argon_kp[keepasslib::Argon2Kdf::ParamSalt] = S;
+    argon_kp[keepasslib::Argon2Kdf::ParamParallelism] = std::uint32_t(2);
+    argon_kp[keepasslib::Argon2Kdf::ParamMemory] = std::uint64_t(1024 * 1024);
+    argon_kp[keepasslib::Argon2Kdf::ParamIterations] = std::uint64_t(2);
+    argon_kp[keepasslib::Argon2Kdf::ParamVersion] = std::uint32_t(0x13);
+
+    cout << "Argon2: " << argon_kdf.Transform(msg, argon_kp) << endl;
+
+//    cout << "Hello!" << endl;
 //    std::istringstream s("asdf123");
 //    std::vector<std::uint8_t> v;
 //    v.resize(7);
@@ -76,30 +98,28 @@ int main() {
 //        std::ostreambuf_iterator<string::value_type>(cout)
 //    );
 
-    ifstream f("e:\\srg91\\downloads\\Kick-Ass.2010.DUB.no.censors.XviD.AC3.BDRip._by.ZNG505_.avi", ios::in | ios::binary);
-
-    f.seekg(0, ios::end);
-    auto size = f.tellg();
-    f.seekg(0, ios::beg);
-    auto start = chrono::steady_clock::now();
-    auto s = keepasslib::mem_util::Read<std::string>(f, static_cast<std::size_t>(size));
+//    ifstream f("e:\\srg91\\downloads\\Kick-Ass.2010.DUB.no.censors.XviD.AC3.BDRip._by.ZNG505_.avi", ios::in | ios::binary);
+//
+//    f.seekg(0, ios::end);
+//    auto size = f.tellg();
+//    f.seekg(0, ios::beg);
+//    auto start = chrono::steady_clock::now();
+//    auto s = keepasslib::mem_util::Read<std::string>(f, static_cast<std::size_t>(size));
 //    stringstream s;
 //    s << f.rdbuf();
-    auto end = chrono::steady_clock::now();
-    auto time = chrono::duration_cast<chrono::milliseconds>(end - start);
-    cout << "size: " << s.size() << endl;
-    cout << "time: " << time.count() << " ms" << endl;
+//    auto end = chrono::steady_clock::now();
+//    auto time = chrono::duration_cast<chrono::milliseconds>(end - start);
+//    cout << "size: " << s.size() << endl;
+//    cout << "time: " << time.count() << " ms" << endl;
 //    istringstream source("hello, world");
 //    string dest;
-//    unsigned n = 1;
+
+//    keepasslib::types::bytes dest(32, 0);
+//
+//    unsigned n = 1'000'000;
 //    auto start = chrono::steady_clock::now();
 //    for (unsigned i = 0; i < n; i++) {
-//        dest.resize(12);
-//        source.read(&dest[0], 12);
-//
-////        source.clear();
-////        dest.clear();
-////        copy_n(istreambuf_iterator<char>(source), 12, back_inserter(dest));
+//        openssl::RAND_bytes(&dest[0], static_cast<int>(dest.size()));
 //    }
 //    auto end = chrono::steady_clock::now();
 //    auto ns = chrono::duration_cast<chrono::nanoseconds>(end - start);

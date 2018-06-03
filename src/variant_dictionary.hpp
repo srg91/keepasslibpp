@@ -46,6 +46,7 @@ namespace keepasslib {
 
         template <typename T>
         bool Get(const std::string& key, T& value) const noexcept ;
+
         template <typename T>
         void Set(const std::string& key, const T& value);
 

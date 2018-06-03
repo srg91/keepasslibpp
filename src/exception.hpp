@@ -3,6 +3,7 @@
 #include <exception>
 #include <iomanip>
 #include <sstream>
+#include <string>
 
 namespace keepasslib {
     namespace exception {
@@ -11,6 +12,8 @@ namespace keepasslib {
             NewVersionRequired,
             FileCorrupted,
             InvalidKdfParameters,
+            ArgumentIsNull,
+            ArgumentOutOfRange,
         };
 
         class KeePassLibError: public std:: exception {
@@ -46,6 +49,26 @@ namespace keepasslib {
         public:
             InvalidKdfParametersError()
                 : KeePassLibError(ErrorCode::InvalidKdfParameters) {};
+        };
+
+        // TODO: Rename?
+        class ArgumentNullException: public KeePassLibError {
+        public:
+            ArgumentNullException(const std::string& a)
+                : KeePassLibError(ErrorCode::ArgumentIsNull)
+                , argument(a) {};
+        private:
+            const std::string argument;
+        };
+
+        // TODO: Rename?
+        class ArgumentOutOfRangeException: public KeePassLibError {
+        public:
+            ArgumentOutOfRangeException(const std::string& a)
+                : KeePassLibError(ErrorCode::ArgumentOutOfRange)
+                , argument(a) {};
+        private:
+            const std::string argument;
         };
     }
 }
