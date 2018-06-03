@@ -1,6 +1,6 @@
 #include "exception.hpp"
 #include "kdf_parameters.hpp"
-#include "pw_uuid.hpp"
+#include "uuid.hpp"
 #include "typedefs.hpp"
 #include "variant_dictionary.hpp"
 
@@ -11,7 +11,7 @@
 using namespace keepasslibpp;
 
 struct KdfParametersSerializationFixture {
-    PwUuid kdf_uuid;
+    Uuid kdf_uuid;
     std::string sample_bytes;
     KdfParameters sample_params;
 
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_SUITE(test_kdf_parameters)
 
     BOOST_AUTO_TEST_CASE(test_new_kdf_parameters)
     {
-        PwUuid u;
+        Uuid u;
         KdfParameters kp(u);
         BOOST_CHECK_EQUAL(kp.KdfUuid(), u);
 

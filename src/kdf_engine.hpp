@@ -1,7 +1,7 @@
 #pragma once
 
 #include "kdf_parameters.hpp"
-#include "pw_uuid.hpp"
+#include "uuid.hpp"
 #include "typedefs.hpp"
 
 #include <cstdint>
@@ -10,7 +10,7 @@
 namespace keepasslibpp {
     class KdfEngine {
     public:
-        virtual const PwUuid& GetUuid() const = 0;
+        virtual const Uuid& GetUuid() const = 0;
 
         virtual KdfParameters GetDefaultParameters() const {
             return KdfParameters(GetUuid());

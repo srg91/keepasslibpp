@@ -25,7 +25,7 @@ struct VariantDictionarySerializationFixture {
         sample_dict["uint32"] = std::uint32_t(0x12345678);
         sample_dict["uint64"] = std::uint64_t(0x1234567887654321);
         sample_dict["string"] = std::string("hello, world");
-        sample_dict["byte_vector"] = type::byte_vector(
+        sample_dict["bytes"] = type::byte_vector(
             {'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd'}
         );
 
@@ -298,7 +298,7 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
     BOOST_FIXTURE_TEST_CASE(test_get_bytes,
                             VariantDictionarySerializationFixture) {
         type::byte_vector result;
-        BOOST_CHECK(sample_dict.Get("byte_vector", result));
+        BOOST_CHECK(sample_dict.Get("bytes", result));
 
         type::byte_vector expected = {
             'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd'

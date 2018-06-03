@@ -2,7 +2,7 @@
 #include "kdf_engine_aes.hpp"
 #include "kdf_engine_argon.hpp"
 #include "mem_util.hpp"
-#include "pw_uuid.hpp"
+#include "uuid.hpp"
 #include "kdf_parameters.hpp"
 #include "variant_dictionary.hpp"
 

@@ -16,9 +16,9 @@
 namespace keepasslibpp {
     /*
      * Represents an UUID of a password entry or group. Once created,
-     * PwUuid objects aren't modifiable anymore (immutable).
+     * Uuid objects aren't modifiable anymore (immutable).
      */
-    class PwUuid {
+    class Uuid {
     public:
         // Underlying uuid type
         using uuid_t = boost::uuids::uuid;
@@ -29,29 +29,29 @@ namespace keepasslibpp {
         static const size_t UuidSize = uuid_t::static_size();
 
         // Nil UUID (all byte_vector are zero).
-        static const PwUuid Nil;
+        static const Uuid Nil;
 
         // Construct a new UUID instance with random value.
-        PwUuid() : uuid(uuid_generator()) {};
+        Uuid() : uuid(uuid_generator()) {};
 
         // Construct a new UUID from another UUID.
-        PwUuid(const PwUuid& u);
-        PwUuid(PwUuid&& u);
+        Uuid(const Uuid& u);
+        Uuid(Uuid&& u);
 
         // TODO: Guess which category iterator is
         // Construct a new UUID instance by range of values.
         template <typename It>
-        explicit PwUuid(It begin, It end);
+        explicit Uuid(It begin, It end);
 
         // TODO: Fix ambiguous in aggregate initialization
         // TODO: (In cases like u = {1, 2, 3, ...};
         // Construct a new UUID by another object.
-        PwUuid(const uuid_t& u) : uuid(u) {};
-        PwUuid(uuid_t&& u) : uuid(std::forward<decltype(u)>(u)) {};
-        PwUuid(const std::string& s);
-        PwUuid(std::string&& s);
-        PwUuid(const type::byte_vector& b);
-        PwUuid(type::byte_vector&& b);
+        Uuid(const uuid_t& u) : uuid(u) {};
+        Uuid(uuid_t&& u) : uuid(std::forward<decltype(u)>(u)) {};
+        Uuid(const std::string& s);
+        Uuid(std::string&& s);
+        Uuid(const type::byte_vector& b);
+        Uuid(type::byte_vector&& b);
 
         // Get the 16 UUID byte_vector.
         type::byte_vector Bytes() const;
@@ -63,17 +63,17 @@ namespace keepasslibpp {
         // Hash of current UUID
         inline std::size_t Hash() const { return boost::uuids::hash_value(uuid); };
 
-        PwUuid& operator=(const PwUuid& u) {
+        Uuid& operator=(const Uuid& u) {
             uuid = u.uuid;
         }
 
-        PwUuid& operator=(PwUuid&& u) {
+        Uuid& operator=(Uuid&& u) {
             std::swap(uuid, u.uuid);
         }
 
-        friend bool operator <(const PwUuid& left, const PwUuid& right);
-        friend bool operator ==(const PwUuid& left, const PwUuid& right);
-        friend bool operator !=(const PwUuid& left, const PwUuid& right);
+        friend bool operator <(const Uuid& left, const Uuid& right);
+        friend bool operator ==(const Uuid& left, const Uuid& right);
+        friend bool operator !=(const Uuid& left, const Uuid& right);
     private:
         // Never empty after constructor.
         uuid_t uuid;
@@ -86,11 +86,11 @@ namespace keepasslibpp {
         template <typename It> void checkSize(It begin, It end) const;
     };
 
-    std::ostream& operator <<(std::ostream& stream, const PwUuid& u);
+    std::ostream& operator <<(std::ostream& stream, const Uuid& u);
 
     template <typename T>
-    void PwUuid::checkSize(const T& s) const {
-        if (s.size() != PwUuid::UuidSize) {
+    void Uuid::checkSize(const T& s) const {
+        if (s.size() != Uuid::UuidSize) {
             std::ostringstream es;
             es << "value " << '"';
             es << std::hex << std::setfill('0');
@@ -98,13 +98,13 @@ namespace keepasslibpp {
                 es << std::setw(2) << static_cast<unsigned>(static_cast<unsigned char>(i));
             }
             es << '"' << " has incorrect size: "
-               << std::dec << s.size() << " != " << PwUuid::UuidSize;
+               << std::dec << s.size() << " != " << Uuid::UuidSize;
             throw std::invalid_argument(es.str());
         }
     }
 
     template <typename It>
-    void PwUuid::checkSize(It begin, It end) const {
+    void Uuid::checkSize(It begin, It end) const {
         auto it_size = end - begin;
         if (it_size != UuidSize) {
             std::string message = "invalid interval size: ";
@@ -116,7 +116,7 @@ namespace keepasslibpp {
     }
 
     template <typename It>
-    PwUuid::PwUuid(It begin, It end) {
+    Uuid::Uuid(It begin, It end) {
         checkSize(begin, end);
         std::copy(begin, end, uuid.begin());
     }
@@ -124,9 +124,9 @@ namespace keepasslibpp {
 
 namespace std {
     template<>
-    struct hash<keepasslibpp::PwUuid>
+    struct hash<keepasslibpp::Uuid>
     {
-        std::size_t operator()(const keepasslibpp::PwUuid& u) const {
+        std::size_t operator()(const keepasslibpp::Uuid& u) const {
             return u.Hash();
         }
     };

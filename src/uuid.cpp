@@ -2,7 +2,7 @@
 // Created by srg91 on 16.04.2018.
 //
 
-#include "pw_uuid.hpp"
+#include "uuid.hpp"
 #include "typedefs.hpp"
 
 #include <array>
@@ -21,65 +21,65 @@
 using namespace std;
 using namespace keepasslibpp;
 
-PwUuid::PwUuid(const PwUuid& u) {
+Uuid::Uuid(const Uuid& u) {
     uuid = u.uuid;
 }
 
-PwUuid::PwUuid(PwUuid&& u) {
+Uuid::Uuid(Uuid&& u) {
     swap(uuid, u.uuid);
 }
 
-PwUuid::PwUuid(const string& s) {
+Uuid::Uuid(const string& s) {
     checkSize(s);
     copy(s.begin(), s.end(), uuid.begin());
 }
 
-PwUuid::PwUuid(string&& s) {
+Uuid::Uuid(string&& s) {
     checkSize(s);
     move(s.begin(), s.end(), uuid.begin());
 }
 
-PwUuid::PwUuid(const type::byte_vector& b) {
+Uuid::Uuid(const type::byte_vector& b) {
     checkSize(b);
     copy(b.begin(), b.end(), uuid.begin());
 }
 
-PwUuid::PwUuid(type::byte_vector&& b) {
+Uuid::Uuid(type::byte_vector&& b) {
     checkSize(b);
     move(b.begin(), b.end(), uuid.begin());
 }
 
-PwUuid::uuid_generator_t PwUuid::uuid_generator = PwUuid::uuid_generator_t{};
-const PwUuid PwUuid::Nil = boost::uuids::nil_generator()();
+Uuid::uuid_generator_t Uuid::uuid_generator = Uuid::uuid_generator_t{};
+const Uuid Uuid::Nil = boost::uuids::nil_generator()();
 
-type::byte_vector PwUuid::Bytes() const {
+type::byte_vector Uuid::Bytes() const {
     return type::byte_vector(uuid.begin(), uuid.end());
 }
 
-std::string PwUuid::ByteString() const {
+std::string Uuid::ByteString() const {
     return std::string(uuid.begin(), uuid.end());
 }
 
-string PwUuid::ToString() const {
+string Uuid::ToString() const {
     ostringstream s;
     s << uuid;
     return s.str();
 }
 
 namespace keepasslibpp {
-    ostream& operator <<(ostream& stream, const PwUuid& u) {
+    ostream& operator <<(ostream& stream, const Uuid& u) {
         return stream << u.ToString();
     }
 
-    bool operator <(const PwUuid& left, const PwUuid& right) {
+    bool operator <(const Uuid& left, const Uuid& right) {
         return left.uuid < right.uuid;
     }
 
-    bool operator ==(const PwUuid& left, const PwUuid& right) {
+    bool operator ==(const Uuid& left, const Uuid& right) {
         return left.uuid == right.uuid;
     }
 
-    bool operator !=(const PwUuid& left, const PwUuid& right) {
+    bool operator !=(const Uuid& left, const Uuid& right) {
         return !(left == right);
     }
 }
