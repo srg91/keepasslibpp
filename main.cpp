@@ -25,10 +25,10 @@
 #include <vector>
 
 using namespace std;
-//using namespace keepasslib;
+//using namespace keepasslibpp;
 
 
-ostream& operator <<(ostream& stream, keepasslib::types::bytes value) {
+ostream& operator <<(ostream& stream, keepasslibpp::types::bytes value) {
     auto o = stream.flags();
     stream << setfill('0') << hex;
     for (const auto& c : value) {
@@ -39,23 +39,23 @@ ostream& operator <<(ostream& stream, keepasslib::types::bytes value) {
 };
 
 int main() {
-    keepasslib::types::bytes S = {'1', '2', '3', '4', '5', '6', '7', '8'};
-    keepasslib::types::bytes msg = {'H', 'e', 'l', 'l', 'o'};
+    keepasslibpp::types::bytes S = {'1', '2', '3', '4', '5', '6', '7', '8'};
+    keepasslibpp::types::bytes msg = {'H', 'e', 'l', 'l', 'o'};
 
-    keepasslib::AesKdf aes_kdf;
-    keepasslib::KdfParameters aes_kp(aes_kdf.GetUuid());
-    aes_kp.Set<keepasslib::types::bytes>("S", S);
+    keepasslibpp::AesKdf aes_kdf;
+    keepasslibpp::KdfParameters aes_kp(aes_kdf.GetUuid());
+    aes_kp.Set<keepasslibpp::types::bytes>("S", S);
     aes_kp.Set<std::uint64_t>("R", 6000);
 
     cout << "AES: " << aes_kdf.Transform(msg, aes_kp) << endl;
 
-    keepasslib::Argon2Kdf argon_kdf;
-    keepasslib::KdfParameters argon_kp(argon_kdf.GetUuid());
-    argon_kp[keepasslib::Argon2Kdf::ParamSalt] = S;
-    argon_kp[keepasslib::Argon2Kdf::ParamParallelism] = std::uint32_t(2);
-    argon_kp[keepasslib::Argon2Kdf::ParamMemory] = std::uint64_t(1024 * 1024);
-    argon_kp[keepasslib::Argon2Kdf::ParamIterations] = std::uint64_t(2);
-    argon_kp[keepasslib::Argon2Kdf::ParamVersion] = std::uint32_t(0x13);
+    keepasslibpp::Argon2Kdf argon_kdf;
+    keepasslibpp::KdfParameters argon_kp(argon_kdf.GetUuid());
+    argon_kp[keepasslibpp::Argon2Kdf::ParamSalt] = S;
+    argon_kp[keepasslibpp::Argon2Kdf::ParamParallelism] = std::uint32_t(2);
+    argon_kp[keepasslibpp::Argon2Kdf::ParamMemory] = std::uint64_t(1024 * 1024);
+    argon_kp[keepasslibpp::Argon2Kdf::ParamIterations] = std::uint64_t(2);
+    argon_kp[keepasslibpp::Argon2Kdf::ParamVersion] = std::uint32_t(0x13);
 
     cout << "Argon2: " << argon_kdf.Transform(msg, argon_kp) << endl;
 
@@ -67,13 +67,13 @@ int main() {
 //    std::cout << v[3];
 
 //    ostringstream s;
-//    keepasslib::mem_util::Write(s, std::string("Hello, world"));
+//    keepasslibpp::mem_util::Write(s, std::string("Hello, world"));
 //    cout << s.str() << endl;
 //    ofstream f("d:/myvd.txt");
 //    cout << std::is_trivial<std::basic_string<char>>::value << endl;
-//    keepasslib::mem_util::Write(cout, std::string("Hello, world"));
+//    keepasslibpp::mem_util::Write(cout, std::string("Hello, world"));
 //
-//    keepasslib::VariantDictionary sample_dict;
+//    keepasslibpp::VariantDictionary sample_dict;
 //    sample_dict["true_bool"] = true;
 //    sample_dict["false_bool"] = false;
 //    sample_dict["int32"] = std::int32_t(0x12345678);
@@ -81,7 +81,7 @@ int main() {
 //    sample_dict["uint32"] = std::uint32_t(0x12345678);
 //    sample_dict["uint64"] = std::uint64_t(0x1234567887654321);
 //    sample_dict["string"] = std::string("hello, world");
-//    sample_dict["bytes"] = keepasslib::VariantDictionary::bytes(
+//    sample_dict["bytes"] = keepasslibpp::VariantDictionary::bytes(
 //        {'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd'}
 //    );
 //
@@ -104,7 +104,7 @@ int main() {
 //    auto size = f.tellg();
 //    f.seekg(0, ios::beg);
 //    auto start = chrono::steady_clock::now();
-//    auto s = keepasslib::mem_util::Read<std::string>(f, static_cast<std::size_t>(size));
+//    auto s = keepasslibpp::mem_util::Read<std::string>(f, static_cast<std::size_t>(size));
 //    stringstream s;
 //    s << f.rdbuf();
 //    auto end = chrono::steady_clock::now();
@@ -114,7 +114,7 @@ int main() {
 //    istringstream source("hello, world");
 //    string dest;
 
-//    keepasslib::types::bytes dest(32, 0);
+//    keepasslibpp::types::bytes dest(32, 0);
 //
 //    unsigned n = 1'000'000;
 //    auto start = chrono::steady_clock::now();

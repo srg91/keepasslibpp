@@ -6,7 +6,7 @@
 #include <cstdint>
 
 
-using namespace keepasslib;
+using namespace keepasslibpp;
 
 const std::size_t CryptoUtil::Sha256DigestLength = SHA256_DIGEST_LENGTH;
 

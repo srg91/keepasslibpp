@@ -2,7 +2,7 @@
 
 #include <bitset>
 
-namespace keepasslib {
+namespace keepasslibpp {
     /*
      * Compression algorithm specifiers.
      */

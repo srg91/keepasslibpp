@@ -2,6 +2,6 @@
 
 #include <cstdint>
 
-namespace keepasslib {
+namespace keepasslibpp {
     const std::uint64_t DefaultKeyEncryptionRounds = 60000;
 }

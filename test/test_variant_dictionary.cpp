@@ -11,7 +11,7 @@
 #include <stdexcept>
 #include <type_traits>
 
-using namespace keepasslib;
+using namespace keepasslibpp;
 
 struct VariantDictionarySerializationFixture {
     std::string sample_bytes;

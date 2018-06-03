@@ -8,7 +8,7 @@
 
 #include <sstream>
 
-using namespace keepasslib;
+using namespace keepasslibpp;
 
 struct KdfParametersSerializationFixture {
     PwUuid kdf_uuid;

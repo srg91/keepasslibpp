@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <string>
 
-namespace keepasslib {
+namespace keepasslibpp {
     class AesKdf : KdfEngine {
     public:
         static const std::string ParamRounds;

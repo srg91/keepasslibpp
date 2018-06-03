@@ -14,7 +14,7 @@
 #include <utility>
 #include <vector>
 
-namespace keepasslib {
+namespace keepasslibpp {
     // TODO: Use template for container (in src use unordered, but map in tests)
     class VariantDictionary {
     public:

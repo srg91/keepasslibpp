@@ -6,7 +6,7 @@
 #include <sstream>
 #include <string>
 
-using namespace keepasslib;
+using namespace keepasslibpp;
 
 BOOST_AUTO_TEST_SUITE(test_mem_util)
     BOOST_AUTO_TEST_CASE(test_read_bool_from_stream) {

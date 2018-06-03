@@ -19,7 +19,7 @@
 #include <boost/uuid/nil_generator.hpp>
 
 using namespace std;
-using namespace keepasslib;
+using namespace keepasslibpp;
 
 PwUuid::PwUuid(const PwUuid& u) {
     uuid = u.uuid;
@@ -66,7 +66,7 @@ string PwUuid::ToString() const {
     return s.str();
 }
 
-namespace keepasslib {
+namespace keepasslibpp {
     ostream& operator <<(ostream& stream, const PwUuid& u) {
         return stream << u.ToString();
     }

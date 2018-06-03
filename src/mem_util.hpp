@@ -15,12 +15,12 @@
 #include <vector>
 #include <utility>
 
-namespace keepasslib {
+namespace keepasslibpp {
     namespace mem_util {
         template <typename T, typename U>
         inline void assert_read_enough(T actual, U expected) {
             if (actual != expected) {
-                std::ostringstream errs("keepasslib::mem_util::Read: "
+                std::ostringstream errs("keepasslibpp::mem_util::Read: "
                                         "not enough bytes: ");
                 errs << "expected " << expected << " != " << actual;
                 throw std::length_error(errs.str());

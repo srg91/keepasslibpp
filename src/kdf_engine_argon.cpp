@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <numeric>
 
-using namespace keepasslib;
+using namespace keepasslibpp;
 
 const std::string Argon2Kdf::ParamSalt = "S";
 const std::string Argon2Kdf::ParamParallelism = "P";
@@ -48,12 +48,12 @@ KdfParameters Argon2Kdf::GetDefaultParameters() const {
     return kp;
 }
 
-void Argon2Kdf::Randomize(keepasslib::KdfParameters& kp) const {
+void Argon2Kdf::Randomize(keepasslibpp::KdfParameters& kp) const {
     // TODO: Sha256DigestLength?
     kp[ParamSalt] = CryptoUtil::GetRandomBytes(CryptoUtil::Sha256DigestLength);
 }
 
-types::bytes Argon2Kdf::Transform(keepasslib::types::bytes msg, const keepasslib::KdfParameters& kp) const {
+types::bytes Argon2Kdf::Transform(keepasslibpp::types::bytes msg, const keepasslibpp::KdfParameters& kp) const {
     std::uint32_t version;
     if (!kp.Get<std::uint32_t>(ParamVersion, version))
         throw exception::ArgumentNullException("version");
@@ -100,10 +100,10 @@ types::bytes Argon2Kdf::Transform(keepasslib::types::bytes msg, const keepasslib
     );
 }
 
-types::bytes Argon2Kdf::transformKey(keepasslib::types::bytes msg, keepasslib::types::bytes salt,
+types::bytes Argon2Kdf::transformKey(keepasslibpp::types::bytes msg, keepasslibpp::types::bytes salt,
                                      std::uint32_t parallelism, std::uint64_t memory, std::uint64_t iterations,
                                      std::size_t result_size, std::uint32_t version,
-                                     keepasslib::types::bytes secret_key, keepasslib::types::bytes assoc_data) const {
+                                     keepasslibpp::types::bytes secret_key, keepasslibpp::types::bytes assoc_data) const {
     // TODO: use secret key?
     // TODO: use assoc_data?
     // TODO: check version?

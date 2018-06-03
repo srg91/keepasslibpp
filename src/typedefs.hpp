@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <vector>
 
-namespace keepasslib {
+namespace keepasslibpp {
     namespace types {
         using bytes = std::vector<std::uint8_t>;
     }

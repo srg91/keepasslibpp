@@ -2,7 +2,7 @@
 
 #include "typedefs.hpp"
 
-namespace keepasslib {
+namespace keepasslibpp {
     struct CryptoUtil {
         static const std::size_t Sha256DigestLength;
 

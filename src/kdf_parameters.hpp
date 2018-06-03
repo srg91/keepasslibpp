@@ -8,7 +8,7 @@
 #include <iostream>
 #include <string>
 
-namespace keepasslib {
+namespace keepasslibpp {
     class KdfParameters final : public VariantDictionary {
     public:
         KdfParameters() = delete;

@@ -13,7 +13,7 @@
 #include <string>
 #include <utility>
 
-namespace keepasslib {
+namespace keepasslibpp {
     /*
      * Represents an UUID of a password entry or group. Once created,
      * PwUuid objects aren't modifiable anymore (immutable).
@@ -124,9 +124,9 @@ namespace keepasslib {
 
 namespace std {
     template<>
-    struct hash<keepasslib::PwUuid>
+    struct hash<keepasslibpp::PwUuid>
     {
-        std::size_t operator()(const keepasslib::PwUuid& u) const {
+        std::size_t operator()(const keepasslibpp::PwUuid& u) const {
             return u.Hash();
         }
     };

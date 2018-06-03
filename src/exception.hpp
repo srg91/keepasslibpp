@@ -5,7 +5,7 @@
 #include <sstream>
 #include <string>
 
-namespace keepasslib {
+namespace keepasslibpp {
     namespace exception {
         // TODO: move this to enums
         enum class ErrorCode {
@@ -23,7 +23,7 @@ namespace keepasslib {
 
             virtual std::string what() {
                 std::ostringstream s;
-                s << "keepasslib::keepasslib_error: catch error with code ";
+                s << "keepasslibpp::keepasslib_error: catch error with code ";
                 s << "0x" << std::hex << std::setfill('0') << std::setw(2);
                 s << static_cast<unsigned>(code);
                 return s.str();

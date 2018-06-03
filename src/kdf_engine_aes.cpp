@@ -9,7 +9,7 @@
 
 #include <cstdint>
 
-using namespace keepasslib;
+using namespace keepasslibpp;
 
 // uint64
 const std::string AesKdf::ParamRounds = "R";

@@ -7,7 +7,7 @@
 #include <iostream>
 #include <sstream>
 
-using namespace keepasslib;
+using namespace keepasslibpp;
 
 bool VariantDictionary::Empty() const {
     return dict.empty();
@@ -67,7 +67,7 @@ VariantDictionary VariantDictionary::Deserialize(std::istream& stream) {
     return vd;
 }
 
-void VariantDictionary::deserialize(std::istream& stream, keepasslib::VariantDictionary& vd) {
+void VariantDictionary::deserialize(std::istream& stream, keepasslibpp::VariantDictionary& vd) {
     auto version = mem_util::Read<std::uint16_t>(stream);
     if ((version & vdm_critical) > (vd_version & vdm_critical))
         // TODO: Add error message?
@@ -126,11 +126,11 @@ VariantDictionary::mapped_type& VariantDictionary::operator [](const VariantDict
     return dict[index];
 }
 
-const VariantDictionary::mapped_type& VariantDictionary::operator [](const keepasslib::VariantDictionary::key_type& index) const {
+const VariantDictionary::mapped_type& VariantDictionary::operator [](const keepasslibpp::VariantDictionary::key_type& index) const {
     return dict.at(index);
 }
 
-namespace keepasslib {
+namespace keepasslibpp {
     bool operator ==(const VariantDictionary& left, const VariantDictionary& right) {
         return left.dict == right.dict;
     }

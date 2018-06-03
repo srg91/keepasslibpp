@@ -5,7 +5,7 @@
 #include <sstream>
 #include <string>
 
-using namespace keepasslib;
+using namespace keepasslibpp;
 
 const std::string KdfParameters::uuid_key = "$UUID";
 

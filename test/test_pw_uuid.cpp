@@ -12,7 +12,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-using namespace keepasslib;
+using namespace keepasslibpp;
 
 BOOST_AUTO_TEST_SUITE(test_pw_uuid)
     BOOST_AUTO_TEST_CASE(test_equal_operator) {

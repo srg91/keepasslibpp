@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <string>
 
-namespace keepasslib {
+namespace keepasslibpp {
     class KdfEngine {
     public:
         virtual const PwUuid& GetUuid() const = 0;
