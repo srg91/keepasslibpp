@@ -21,9 +21,9 @@ namespace keepasslibpp {
         KdfParameters GetDefaultParameters() const override;
 
         void Randomize(KdfParameters& kp) const override;
-        types::bytes Transform(types::bytes msg, const KdfParameters& kp) const override;
+        type::byte_vector Transform(type::byte_vector msg, const KdfParameters& kp) const override;
     private:
-        PwUuid uuid = types::bytes({0xef, 0x63, 0x6d, 0xdf, 0x8c, 0x29, 0x44, 0x4b,
+        PwUuid uuid = type::byte_vector({0xef, 0x63, 0x6d, 0xdf, 0x8c, 0x29, 0x44, 0x4b,
                                     0x91, 0xf7, 0xa9, 0xa4, 0x03, 0xe3, 0x0a, 0x0c});
 
         // TODO: fix Memory, Iterations and etc to match with libargon2 api
@@ -55,10 +55,10 @@ namespace keepasslibpp {
         static const std::uint32_t defaultParallelism;
 
         // TODO: fix const &
-        types::bytes transformKey(
-            types::bytes msg, types::bytes salt, std::uint32_t parallelism,
+        type::byte_vector transformKey(
+            type::byte_vector msg, type::byte_vector salt, std::uint32_t parallelism,
             std::uint64_t memory, std::uint64_t iterations, std::size_t result_size,
-            std::uint32_t version, types::bytes secret_key, types::bytes assoc_data
+            std::uint32_t version, type::byte_vector secret_key, type::byte_vector assoc_data
         ) const;
     };
 }

@@ -18,9 +18,9 @@ namespace keepasslibpp {
 
         // TODO: Add check for uuid and etc?
         virtual void Randomize(KdfParameters& kp) const = 0;
-        // TODO: bytes? string? ???
+        // TODO: byte_vector? string? ???
         // TODO: Const msg? How to work without change?
-        virtual types::bytes Transform(types::bytes msg, const KdfParameters& kp) const = 0;
+        virtual type::byte_vector Transform(type::byte_vector msg, const KdfParameters& kp) const = 0;
         // TODO: Do we need this?
 //        virtual KdfParameters GetBestParameters(unsigned int milliseconds);
 //    protected:

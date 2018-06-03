@@ -25,10 +25,10 @@ namespace keepasslibpp {
         // Underlying uuid generator type
         using uuid_generator_t = boost::uuids::random_generator;
 
-        // Standard size in bytes of a UUID.
+        // Standard size in byte_vector of a UUID.
         static const size_t UuidSize = uuid_t::static_size();
 
-        // Nil UUID (all bytes are zero).
+        // Nil UUID (all byte_vector are zero).
         static const PwUuid Nil;
 
         // Construct a new UUID instance with random value.
@@ -50,12 +50,12 @@ namespace keepasslibpp {
         PwUuid(uuid_t&& u) : uuid(std::forward<decltype(u)>(u)) {};
         PwUuid(const std::string& s);
         PwUuid(std::string&& s);
-        PwUuid(const types::bytes& b);
-        PwUuid(types::bytes&& b);
+        PwUuid(const type::byte_vector& b);
+        PwUuid(type::byte_vector&& b);
 
-        // Get the 16 UUID bytes.
-        types::bytes Bytes() const;
-        // Get the 16 UUID bytes string.
+        // Get the 16 UUID byte_vector.
+        type::byte_vector Bytes() const;
+        // Get the 16 UUID byte_vector string.
         std::string ByteString() const;
         // TODO: Optional separators?
         // Get the 32 hexadecimal digits in five groups separated by hyphens.

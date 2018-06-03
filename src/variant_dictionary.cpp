@@ -104,7 +104,7 @@ void VariantDictionary::deserialize(std::istream& stream, keepasslibpp::VariantD
                 value = mem_util::Read<std::string>(stream, value_size);
                 break;
             case serialization_type::ByteArray:
-                value = mem_util::Read<types::bytes>(stream, value_size);
+                value = mem_util::Read<type::byte_vector>(stream, value_size);
                 break;
             default:
                 // TODO: Add error message?

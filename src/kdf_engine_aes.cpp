@@ -27,13 +27,13 @@ void AesKdf::Randomize(KdfParameters& kp) const {
     kp[ParamSeed] = CryptoUtil::GetRandomBytes(CryptoUtil::Sha256DigestLength);
 }
 
-types::bytes AesKdf::Transform(types::bytes msg, const KdfParameters& kp) const {
+type::byte_vector AesKdf::Transform(type::byte_vector msg, const KdfParameters& kp) const {
     std::uint64_t rounds;
     if (!kp.Get<std::uint64_t>(ParamRounds, rounds))
         throw exception::ArgumentNullException("rounds");
 
-    types::bytes seed;
-    if (!kp.Get<types::bytes>(ParamSeed, seed))
+    type::byte_vector seed;
+    if (!kp.Get<type::byte_vector>(ParamSeed, seed))
         throw exception::ArgumentNullException("seed");
 
     // TODO: something without copy??
@@ -49,13 +49,13 @@ types::bytes AesKdf::Transform(types::bytes msg, const KdfParameters& kp) const 
     return transformKey(msg, seed, rounds);
 }
 
-types::bytes AesKdf::transformKey(const types::bytes& data, const types::bytes& seed,
+type::byte_vector AesKdf::transformKey(const type::byte_vector& data, const type::byte_vector& seed,
                                   std::uint64_t rounds) const {
-    types::bytes result_data = data;
+    type::byte_vector result_data = data;
     // TODO: Add many many checks
     // TODO: change 16 to some constant?
     // TODO: change it to char* ?
-    types::bytes iv(16, 0);
+    type::byte_vector iv(16, 0);
     // TODO: handle errors
     auto ctx = EVP_CIPHER_CTX_new();
     // TODO: handle errors

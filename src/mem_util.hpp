@@ -21,7 +21,7 @@ namespace keepasslibpp {
         inline void assert_read_enough(T actual, U expected) {
             if (actual != expected) {
                 std::ostringstream errs("keepasslibpp::mem_util::Read: "
-                                        "not enough bytes: ");
+                                        "not enough byte_vector: ");
                 errs << "expected " << expected << " != " << actual;
                 throw std::length_error(errs.str());
             }
@@ -73,7 +73,7 @@ namespace keepasslibpp {
             stream << value;
         }
 
-        inline void Write(std::ostream& stream, const types::bytes& value) {
+        inline void Write(std::ostream& stream, const type::byte_vector& value) {
             std::copy(value.begin(), value.end(), std::ostreambuf_iterator<char>(stream));
         }
 

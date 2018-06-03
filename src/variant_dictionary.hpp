@@ -21,7 +21,7 @@ namespace keepasslibpp {
         using key_type = std::string;
         using mapped_type = boost::variant<
             bool, std::int32_t, std::int64_t, std::uint32_t, std::uint64_t,
-            std::string, types::bytes
+            std::string, type::byte_vector
         >;
         using value_type = std::pair<key_type, mapped_type>;
 
@@ -97,7 +97,7 @@ namespace keepasslibpp {
                     return serialization_type::UInt64;
                 } else if (std::is_same<T, std::string>::value) {
                     return serialization_type::String;
-                } else if (std::is_same<T, types::bytes>::value) {
+                } else if (std::is_same<T, type::byte_vector>::value) {
                     return serialization_type::ByteArray;
                 } else {
                     return serialization_type::None;
@@ -122,7 +122,7 @@ namespace keepasslibpp {
             }
 
             // TODO: Rework this!!
-            std::size_t guess_size(const types::bytes& value) const {
+            std::size_t guess_size(const type::byte_vector& value) const {
                 return value.size();
             }
 
@@ -133,7 +133,7 @@ namespace keepasslibpp {
                 mem_util::Write(stream, value);
             }
 
-            void operator ()(const types::bytes& value) const {
+            void operator ()(const type::byte_vector& value) const {
                 auto value_size = static_cast<std::int32_t>(guess_size(value));
                 mem_util::Write(stream, value_size);
                 mem_util::Write(stream, value);

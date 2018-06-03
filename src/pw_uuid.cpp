@@ -39,12 +39,12 @@ PwUuid::PwUuid(string&& s) {
     move(s.begin(), s.end(), uuid.begin());
 }
 
-PwUuid::PwUuid(const types::bytes& b) {
+PwUuid::PwUuid(const type::byte_vector& b) {
     checkSize(b);
     copy(b.begin(), b.end(), uuid.begin());
 }
 
-PwUuid::PwUuid(types::bytes&& b) {
+PwUuid::PwUuid(type::byte_vector&& b) {
     checkSize(b);
     move(b.begin(), b.end(), uuid.begin());
 }
@@ -52,8 +52,8 @@ PwUuid::PwUuid(types::bytes&& b) {
 PwUuid::uuid_generator_t PwUuid::uuid_generator = PwUuid::uuid_generator_t{};
 const PwUuid PwUuid::Nil = boost::uuids::nil_generator()();
 
-types::bytes PwUuid::Bytes() const {
-    return types::bytes(uuid.begin(), uuid.end());
+type::byte_vector PwUuid::Bytes() const {
+    return type::byte_vector(uuid.begin(), uuid.end());
 }
 
 std::string PwUuid::ByteString() const {

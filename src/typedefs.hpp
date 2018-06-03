@@ -4,7 +4,7 @@
 #include <vector>
 
 namespace keepasslibpp {
-    namespace types {
-        using bytes = std::vector<std::uint8_t>;
+    namespace type {
+        using byte_vector = std::vector<std::uint8_t>;
     }
 }

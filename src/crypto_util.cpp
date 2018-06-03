@@ -11,8 +11,8 @@ using namespace keepasslibpp;
 const std::size_t CryptoUtil::Sha256DigestLength = SHA256_DIGEST_LENGTH;
 
     // TODO: Add exceptions
-types::bytes CryptoUtil::HashSha256(const types::bytes& data) {
-    types::bytes result_data(Sha256DigestLength);
+type::byte_vector CryptoUtil::HashSha256(const type::byte_vector& data) {
+    type::byte_vector result_data(Sha256DigestLength);
 
     // TODO: handle errors
     SHA256_CTX ctx;
@@ -25,8 +25,8 @@ types::bytes CryptoUtil::HashSha256(const types::bytes& data) {
 
 // TODO: Add exceptions
 // TODO: Rename?
-types::bytes CryptoUtil::GetRandomBytes(std::size_t count) {
-    types::bytes result_data(count);
+type::byte_vector CryptoUtil::GetRandomBytes(std::size_t count) {
+    type::byte_vector result_data(count);
     // TODO: handle errors
     RAND_bytes(&result_data[0], static_cast<int>(count));
     return result_data;

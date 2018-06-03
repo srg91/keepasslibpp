@@ -28,7 +28,7 @@ using namespace std;
 //using namespace keepasslibpp;
 
 
-ostream& operator <<(ostream& stream, keepasslibpp::types::bytes value) {
+ostream& operator <<(ostream& stream, keepasslibpp::type::byte_vector value) {
     auto o = stream.flags();
     stream << setfill('0') << hex;
     for (const auto& c : value) {
@@ -39,12 +39,12 @@ ostream& operator <<(ostream& stream, keepasslibpp::types::bytes value) {
 };
 
 int main() {
-    keepasslibpp::types::bytes S = {'1', '2', '3', '4', '5', '6', '7', '8'};
-    keepasslibpp::types::bytes msg = {'H', 'e', 'l', 'l', 'o'};
+    keepasslibpp::type::byte_vector S = {'1', '2', '3', '4', '5', '6', '7', '8'};
+    keepasslibpp::type::byte_vector msg = {'H', 'e', 'l', 'l', 'o'};
 
     keepasslibpp::AesKdf aes_kdf;
     keepasslibpp::KdfParameters aes_kp(aes_kdf.GetUuid());
-    aes_kp.Set<keepasslibpp::types::bytes>("S", S);
+    aes_kp.Set<keepasslibpp::type::byte_vector>("S", S);
     aes_kp.Set<std::uint64_t>("R", 6000);
 
     cout << "AES: " << aes_kdf.Transform(msg, aes_kp) << endl;
@@ -81,7 +81,7 @@ int main() {
 //    sample_dict["uint32"] = std::uint32_t(0x12345678);
 //    sample_dict["uint64"] = std::uint64_t(0x1234567887654321);
 //    sample_dict["string"] = std::string("hello, world");
-//    sample_dict["bytes"] = keepasslibpp::VariantDictionary::bytes(
+//    sample_dict["byte_vector"] = keepasslibpp::VariantDictionary::byte_vector(
 //        {'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd'}
 //    );
 //
@@ -114,7 +114,7 @@ int main() {
 //    istringstream source("hello, world");
 //    string dest;
 
-//    keepasslibpp::types::bytes dest(32, 0);
+//    keepasslibpp::type::byte_vector dest(32, 0);
 //
 //    unsigned n = 1'000'000;
 //    auto start = chrono::steady_clock::now();

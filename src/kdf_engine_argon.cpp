@@ -53,15 +53,15 @@ void Argon2Kdf::Randomize(keepasslibpp::KdfParameters& kp) const {
     kp[ParamSalt] = CryptoUtil::GetRandomBytes(CryptoUtil::Sha256DigestLength);
 }
 
-types::bytes Argon2Kdf::Transform(keepasslibpp::types::bytes msg, const keepasslibpp::KdfParameters& kp) const {
+type::byte_vector Argon2Kdf::Transform(keepasslibpp::type::byte_vector msg, const keepasslibpp::KdfParameters& kp) const {
     std::uint32_t version;
     if (!kp.Get<std::uint32_t>(ParamVersion, version))
         throw exception::ArgumentNullException("version");
     if ((version < minVersion) || (version > maxVersion))
         throw exception::ArgumentOutOfRangeException("version");
 
-    types::bytes salt;
-    if (!kp.Get<types::bytes>(ParamSalt, salt))
+    type::byte_vector salt;
+    if (!kp.Get<type::byte_vector>(ParamSalt, salt))
         throw exception::ArgumentNullException("salt");
     // TODO: ???
     if ((salt.size() < minSalt) || (salt.size() > maxSalt))
@@ -87,10 +87,10 @@ types::bytes Argon2Kdf::Transform(keepasslibpp::types::bytes msg, const keepassl
         throw exception::ArgumentOutOfRangeException("iterations");
 
     // TODO: Add checks?
-    types::bytes secret_key;
-    kp.Get<types::bytes>(ParamSecretKey, secret_key);
-    types::bytes assoc_data;
-    kp.Get<types::bytes>(ParamAssocData, assoc_data);
+    type::byte_vector secret_key;
+    kp.Get<type::byte_vector>(ParamSecretKey, secret_key);
+    type::byte_vector assoc_data;
+    kp.Get<type::byte_vector>(ParamAssocData, assoc_data);
 
     // TODO: What about memory? Shod we clear smthg
     // TODO: change 32 to const?
@@ -100,14 +100,14 @@ types::bytes Argon2Kdf::Transform(keepasslibpp::types::bytes msg, const keepassl
     );
 }
 
-types::bytes Argon2Kdf::transformKey(keepasslibpp::types::bytes msg, keepasslibpp::types::bytes salt,
+type::byte_vector Argon2Kdf::transformKey(keepasslibpp::type::byte_vector msg, keepasslibpp::type::byte_vector salt,
                                      std::uint32_t parallelism, std::uint64_t memory, std::uint64_t iterations,
                                      std::size_t result_size, std::uint32_t version,
-                                     keepasslibpp::types::bytes secret_key, keepasslibpp::types::bytes assoc_data) const {
+                                     keepasslibpp::type::byte_vector secret_key, keepasslibpp::type::byte_vector assoc_data) const {
     // TODO: use secret key?
     // TODO: use assoc_data?
     // TODO: check version?
-    types::bytes result(result_size);
+    type::byte_vector result(result_size);
     argon2d_hash_raw(
         static_cast<std::uint32_t>(iterations),
         static_cast<std::uint32_t>(memory),

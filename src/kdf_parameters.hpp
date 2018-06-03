@@ -13,7 +13,7 @@ namespace keepasslibpp {
     public:
         KdfParameters() = delete;
         explicit KdfParameters(const PwUuid& uuid) : kdf_uuid(uuid) {
-            Set<types::bytes>(uuid_key, uuid.Bytes());
+            Set<type::byte_vector>(uuid_key, uuid.Bytes());
         };
         KdfParameters(VariantDictionary&& vd)
             : VariantDictionary(std::forward<VariantDictionary>(vd))
