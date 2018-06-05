@@ -5,7 +5,8 @@
 #include "typedefs.hpp"
 
 // TODO: don't forget to move
-#include <openssl/evp.h>
+//#include <openssl/evp.h>
+#include <gcrypt.h>
 
 #include <cstdint>
 
@@ -49,25 +50,54 @@ type::byte_vector AesKdf::Transform(type::byte_vector msg, const KdfParameters& 
     return transformKey(msg, seed, rounds);
 }
 
+//type::byte_vector AesKdf::transformKey(const type::byte_vector& data, const type::byte_vector& seed,
+//                                  std::uint64_t rounds) const {
+//    type::byte_vector result_data = data;
+//    // TODO: Add many many checks
+//    // TODO: change 16 to some constant?
+//    // TODO: change it to char* ?
+//    type::byte_vector iv(16, 0);
+//    // TODO: handle errors
+//    auto ctx = EVP_CIPHER_CTX_new();
+//    // TODO: handle errors
+//    EVP_EncryptInit_ex(ctx, EVP_aes_256_ecb(), nullptr, &seed[0], &iv[0]);
+//
+//    int len = 16;
+//    for (std::uint64_t i = 0; i < rounds; i++) {
+//        // TODO: handle errors
+//        EVP_EncryptUpdate(ctx, &result_data[0], &len, &result_data[0], len);
+//        EVP_EncryptUpdate(ctx, &result_data[16], &len, &result_data[16], len);
+//    }
+//
+//    EVP_CIPHER_CTX_free(ctx);
+//    return CryptoUtil::HashSha256(result_data);
+//}
+
 type::byte_vector AesKdf::transformKey(const type::byte_vector& data, const type::byte_vector& seed,
-                                  std::uint64_t rounds) const {
+                                       std::uint64_t rounds) const {
+    // TODO: do not copy?
     type::byte_vector result_data = data;
     // TODO: Add many many checks
-    // TODO: change 16 to some constant?
+    // TODO: change to constant by gcry_cipher_get_algo_keylen or smtelse
     // TODO: change it to char* ?
     type::byte_vector iv(16, 0);
     // TODO: handle errors
-    auto ctx = EVP_CIPHER_CTX_new();
     // TODO: handle errors
-    EVP_EncryptInit_ex(ctx, EVP_aes_256_ecb(), nullptr, &seed[0], &iv[0]);
+    gcry_cipher_hd_t handle;
 
-    int len = 16;
+    // TODO: add gcry_control?
+    // TODO: handle errors
+    gcry_cipher_open(&handle, GCRY_CIPHER_AES256, GCRY_CIPHER_MODE_ECB, 0);
+    gcry_cipher_setiv(handle, &iv[0], iv.size());
+    gcry_cipher_setkey(handle, &seed[0], seed.size());
+
+    // TODO: make constant by gcry_cipher_get_algo_keylen or smtelse
+    size_t len = 16;
     for (std::uint64_t i = 0; i < rounds; i++) {
         // TODO: handle errors
-        EVP_EncryptUpdate(ctx, &result_data[0], &len, &result_data[0], len);
-        EVP_EncryptUpdate(ctx, &result_data[16], &len, &result_data[16], len);
+        gcry_cipher_encrypt(handle, &result_data[0], len, &result_data[0], len);
+        gcry_cipher_encrypt(handle, &result_data[16], len, &result_data[16], len);
     }
 
-    EVP_CIPHER_CTX_free(ctx);
     return CryptoUtil::HashSha256(result_data);
 }

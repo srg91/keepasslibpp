@@ -31,7 +31,7 @@ add_subdirectory(src)
 
 include_directories(src)
 add_executable(main main.cpp ${SOURCES})
-target_link_libraries(main keepasslib ${OPENSSL_CRYPTO_LIBRARY} libargon2)
+target_link_libraries(main keepasslibpp libgcrypt libargon2)
 
 # Configure tests
 if (${CMAKE_BUILD_TYPE} STREQUAL Test OR ${CMAKE_BUILD_TYPE} STREQUAL Debug)
