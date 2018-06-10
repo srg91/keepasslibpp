@@ -13,31 +13,32 @@ using namespace keepasslibpp;
 namespace keepasslibpp {
 
 bool VariantDictionary::empty() const {
-    return mDict.empty();
+    return dict.empty();
 }
 
-VariantDictionary::size_type VariantDictionary::count(const VariantDictionary::key_type& key) const {
-    return mDict.count(key);
+VariantDictionary::size_type VariantDictionary::count(
+        const VariantDictionary::key_type& key) const {
+    return dict.count(key);
 }
 
 std::size_t VariantDictionary::size() const {
-    return mDict.size();
+    return dict.size();
 }
 
 void VariantDictionary::erase(const std::string& key) {
-    mDict.erase(key);
+    dict.erase(key);
 }
 
 void VariantDictionary::clear() {
-    mDict.clear();
+    dict.clear();
 }
 
-std::ostream& VariantDictionary::serialize(std::ostream& stream) const {
-    mem_util::Write<uint16_t>(stream, kVdVersion);
+std::ostream& VariantDictionary::serialize(std::ostream& stream) const noexcept {
+    mem_util::Write<uint16_t>(stream, vdVersion);
 
-    for (const auto& [key, value] : mDict) {
+    for (const auto& [key, value] : dict) {
         // write type id
-        ValueTypeId value_type = std::visit(guess_type_visitor(), value);
+        ValueTypeId value_type = std::visit(GuessTypeVisitor(), value);
         mem_util::Write(stream, static_cast<std::uint8_t>(value_type));
 
         // write key
@@ -45,13 +46,13 @@ std::ostream& VariantDictionary::serialize(std::ostream& stream) const {
         mem_util::Write(stream, key);
 
         // write value
-        std::visit(write_value_visitor(stream), value);
+        std::visit(WriteValueVisitor(stream), value);
     }
 
     mem_util::Write(stream, static_cast<std::uint8_t>(ValueTypeId::None));
 }
 
-std::string VariantDictionary::serialize() const {
+std::string VariantDictionary::serialize() const noexcept {
     std::ostringstream stream;
     VariantDictionary::serialize(stream);
     return stream.str();
@@ -68,22 +69,26 @@ VariantDictionary VariantDictionary::deserialize(std::istream& stream) {
     return vd;
 }
 
-void VariantDictionary::deserialize(std::istream& stream, keepasslibpp::VariantDictionary& vd) {
+void VariantDictionary::deserialize(std::istream& stream,
+                                    keepasslibpp::VariantDictionary& vd) {
     auto version = mem_util::Read<std::uint16_t>(stream);
-    if ((version & kVdmCritical) > (kVdVersion & kVdmCritical))
+    if ((version & vdmCritical) > (vdVersion & vdmCritical))
         // TODO: Add error message?
         throw exception::NewVersionRequiredError();
 
     for (;;) {
         // TODO: Add error message?
         if (stream.peek() < 0) throw exception::FileCorruptedError();
-        auto value_type = static_cast<ValueTypeId>(mem_util::Read<std::int8_t>(stream));
+        auto value_type = static_cast<ValueTypeId>(
+            mem_util::Read<std::int8_t>(stream));
         if (value_type == ValueTypeId::None) break;
 
         auto key_size = mem_util::Read<std::int32_t>(stream);
-        auto key = mem_util::Read<std::string>(stream, static_cast<std::size_t>(key_size));
-        auto value_size = static_cast<std::size_t>(mem_util::Read<std::int32_t>(stream));
+        auto key = mem_util::Read<std::string>(
+            stream, static_cast<std::size_t>(key_size));
 
+        auto value_size = static_cast<std::size_t>(
+            mem_util::Read<std::int32_t>(stream));
         mapped_type value;
         switch (value_type) {
             case ValueTypeId::Bool:
@@ -123,16 +128,19 @@ VariantDictionary VariantDictionary::deserialize(const std::string& bytes) {
     return VariantDictionary::deserialize(stream);
 }
 
-VariantDictionary::mapped_type& VariantDictionary::operator [](const VariantDictionary::key_type& index) {
-    return mDict[index];
+VariantDictionary::mapped_type& VariantDictionary::operator [] (
+        const VariantDictionary::key_type& index) {
+    return dict[index];
 }
 
-const VariantDictionary::mapped_type& VariantDictionary::operator [](const keepasslibpp::VariantDictionary::key_type& index) const {
-    return mDict.at(index);
+const VariantDictionary::mapped_type& VariantDictionary::operator [] (
+        const keepasslibpp::VariantDictionary::key_type& index) const {
+    return dict.at(index);
 }
 
-bool operator ==(const VariantDictionary& left, const VariantDictionary& right) {
-    return left.mDict == right.mDict;
+bool operator == (const VariantDictionary& left,
+                  const VariantDictionary& right) {
+    return left.dict == right.dict;
 }
 
 }

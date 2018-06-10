@@ -25,17 +25,11 @@ public:
     >;
     using value_type = std::pair<key_type, mapped_type>;
     using size_type = std::map<key_type, mapped_type>::size_type;
-//
-//    using iterator = std::map<key_type, mapped_type>::iterator;
-//    using const_iterator = std::map<key_type, mapped_type>::const_iterator;
 
-//    iterator begin() { return mDict.begin(); }
-//    const_iterator begin() const { return mDict.begin(); }
-//    iterator end() { return mDict.end(); }
-//    const_iterator end() const { return mDict.end(); }
-
+    // TODO: Use '= default' to define a trivial default constructor
     VariantDictionary() {};
-    VariantDictionary(VariantDictionary&& vd) : mDict(std::move(vd.mDict)) {};
+    VariantDictionary(VariantDictionary&& vd) noexcept
+        : dict(std::move(vd.dict)) {};
 
     bool empty() const;
     size_type count(const key_type& key) const;
@@ -49,21 +43,21 @@ public:
     template <typename T>
     void set(const std::string& key, const T& value);
 
-    std::string serialize() const;
-    std::ostream& serialize(std::ostream& stream) const;
+    std::string serialize() const noexcept;
+    std::ostream& serialize(std::ostream& stream) const noexcept;
 
     static VariantDictionary deserialize(std::istream& stream);
     static VariantDictionary deserialize(const std::string& bytes);
 
-    mapped_type& operator [](const key_type& index);
-    const mapped_type& operator [](const key_type& index) const;
+    mapped_type& operator [] (const key_type& index);
+    const mapped_type& operator [] (const key_type& index) const;
 
-    friend bool operator ==(const VariantDictionary& left,
-                            const VariantDictionary& right);
+    friend bool operator == (const VariantDictionary& left,
+                             const VariantDictionary& right);
 private:
-    static const uint16_t kVdVersion = 0x0100;
-    static const uint16_t kVdmCritical = 0xff00;
-//    static const uint16_t kVdmInfo = 0x00ff;
+    static const uint16_t vdVersion = 0x0100;
+    static const uint16_t vdmCritical = 0xff00;
+//    static const uint16_t vdmInfo = 0x00ff;
 
     // TODO: Rename
     enum class ValueTypeId : std::int8_t {
@@ -77,12 +71,12 @@ private:
         ByteArray = 0x42,
     };
 
-    std::map<key_type, mapped_type> mDict;
+    std::map<key_type, mapped_type> dict;
 
     static void deserialize(std::istream& stream, VariantDictionary& vd);
 
     // TODO: Can we move it from header?
-    struct guess_type_visitor
+    struct GuessTypeVisitor
     {
         ValueTypeId operator () (bool) { return ValueTypeId::Bool; }
         ValueTypeId operator () (std::int32_t) { return ValueTypeId::Int32; }
@@ -96,10 +90,10 @@ private:
     };
 
     // TODO: Can we move it from header?
-    struct write_value_visitor
+    struct WriteValueVisitor
     {
         std::ostream& stream;
-        explicit write_value_visitor(std::ostream& stream) : stream(stream) {}
+        explicit WriteValueVisitor(std::ostream& stream) : stream(stream) {}
 
         template <
             typename T,
@@ -135,7 +129,7 @@ template <typename T>
 bool VariantDictionary::get(const std::string& key, T& value) const noexcept {
     if (key.empty()) return false;
     try {
-        auto vv = mDict.at(key);
+        auto vv = dict.at(key);
         value = std::get<T>(vv);
     } catch(const std::exception&) {
         return false;
@@ -146,7 +140,7 @@ bool VariantDictionary::get(const std::string& key, T& value) const noexcept {
 template <typename T>
 void VariantDictionary::set(const std::string& key, const T& value) {
     if (key.empty()) return;
-    mDict[key] = value;
+    dict[key] = value;
 }
 
 }
