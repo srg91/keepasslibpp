@@ -8,7 +8,6 @@ target_include_directories(test_keepasslibpp PRIVATE ${GTEST_INCLUDE_DIRS})
 target_link_libraries(test_keepasslibpp keepasslibpp ${GTEST_BOTH_LIBRARIES} libgcrypt libargon2)
 
 # TODO: Do we need to use add_test?
-
 #[[
 If you would like each Google test to show up in CTest as a test you may use the following macro. NOTE: It will slow down your tests by running an executable for each test and test fixture. You will also have to rerun CMake after adding or removing tests or test fixtures.
 

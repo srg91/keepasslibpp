@@ -8,8 +8,6 @@
 
 //#include <boost/uuid/uuid.hpp>
 //#include <boost/uuid/random_generator.hpp>
-#include <boost/variant/variant.hpp>
-#include <boost/variant/get.hpp>
 
 #include <gcrypt.h>
 #include <openssl/sha.h>
