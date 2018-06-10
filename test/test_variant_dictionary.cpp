@@ -145,19 +145,19 @@ TEST_F(TestVariantDictionary, DeserializationFromStream) {
     EXPECT_TRUE(vd == sample_dict);
 }
 
-TEST(TestVariantDictionary, DeserializationEmptyDictionary) {
+TEST_F(TestVariantDictionary, DeserializationEmptyDictionary) {
     std::string s = {0x00, 0x01, 0x00};
     auto vd = VariantDictionary::deserialize(s);
     EXPECT_TRUE(vd.empty());
     EXPECT_EQ(vd.size(), 0);
 }
 
-TEST(TestVariantDictionary, DeserializationEmptyFile) {
+TEST_F(TestVariantDictionary, DeserializationEmptyFile) {
     EXPECT_THROW(VariantDictionary::deserialize(""),
                  exception::FileCorruptedError);
 }
 
-TEST(TestVariantDictionary, DeserializationNewestFile) {
+TEST_F(TestVariantDictionary, DeserializationNewestFile) {
     // Newest version - 0x02
     auto statement_newest_version = []{
         std::string s = {0x00, 0x02};
@@ -183,7 +183,7 @@ TEST(TestVariantDictionary, DeserializationNewestFile) {
                  exception::NewVersionRequiredError);
 }
 
-TEST(TestVariantDictionary, DeserializationCorruptedType) {
+TEST_F(TestVariantDictionary, DeserializationCorruptedType) {
     auto statement_corrupted_type = []{
         std::string s = {0x00, 0x01, -0x01};
         VariantDictionary::deserialize(s);
@@ -191,7 +191,7 @@ TEST(TestVariantDictionary, DeserializationCorruptedType) {
     EXPECT_THROW(statement_corrupted_type(), exception::FileCorruptedError);
 }
 
-TEST(TestVariantDictionary, DeserializationUnexpectedEndOnType) {
+TEST_F(TestVariantDictionary, DeserializationUnexpectedEndOnType) {
     std::string s = {
         0x00, 0x01,
         0x08,
@@ -205,7 +205,7 @@ TEST(TestVariantDictionary, DeserializationUnexpectedEndOnType) {
                  exception::FileCorruptedError);
 }
 
-TEST(TestVariantDictionary, DeserializationEndOnReading) {
+TEST_F(TestVariantDictionary, DeserializationEndOnReading) {
     auto statement_failed_on_type = []{
         std::string s = {0x00, 0x01};
         VariantDictionary::deserialize(s);
@@ -301,14 +301,14 @@ TEST_F(TestVariantDictionary, GetByteVector) {
     EXPECT_TRUE(result == expected);
 }
 
-TEST(TestVariantDictionary, GetNothing) {
+TEST_F(TestVariantDictionary, GetNothing) {
     VariantDictionary vd;
     std::int32_t value;
     bool success = vd.get<std::int32_t>("unknown_key", value);
     EXPECT_TRUE(!success);
 }
 
-TEST(TestVariantDictionary, SetBool) {
+TEST_F(TestVariantDictionary, SetBool) {
     VariantDictionary vd;
 vd.set<bool>("key", true);
 
@@ -326,7 +326,7 @@ vd.set<bool>("key", true);
     EXPECT_EQ(result, expected);
 }
 
-TEST(TestVariantDictionary, SetInt32) {
+TEST_F(TestVariantDictionary, SetInt32) {
     VariantDictionary vd;
 vd.set<std::int32_t>("key", 0x12345678);
 
@@ -353,7 +353,7 @@ vd.set<std::int32_t>("key", 0x12345678);
     EXPECT_EQ(result, expected);
 }
 
-TEST(TestVariantDictionary, SetInt64) {
+TEST_F(TestVariantDictionary, SetInt64) {
     VariantDictionary vd;
 vd.set<std::int64_t>("key", 0x1234567887654321);
 
@@ -370,7 +370,7 @@ vd.set<std::int64_t>("key", 0x1234567887654321);
     EXPECT_EQ(result, expected);
 }
 
-TEST(TestVariantDictionary, SetUint32) {
+TEST_F(TestVariantDictionary, SetUint32) {
     VariantDictionary vd;
 vd.set<std::uint32_t>("key", 0x12345678);
 
@@ -387,7 +387,7 @@ vd.set<std::uint32_t>("key", 0x12345678);
     EXPECT_EQ(result, expected);
 }
 
-TEST(TestVariantDictionary, SetUint64) {
+TEST_F(TestVariantDictionary, SetUint64) {
     VariantDictionary vd;
 vd.set<std::uint64_t>("key", 0x1234567887654321);
 
@@ -404,7 +404,7 @@ vd.set<std::uint64_t>("key", 0x1234567887654321);
     EXPECT_EQ(result, expected);
 }
 
-TEST(TestVariantDictionary, SetString) {
+TEST_F(TestVariantDictionary, SetString) {
     VariantDictionary vd;
 vd.set<std::string>("key", "hello");
 
@@ -421,7 +421,7 @@ vd.set<std::string>("key", "hello");
     EXPECT_EQ(result, expected);
 }
 
-TEST(TestVariantDictionary, SetByteVector) {
+TEST_F(TestVariantDictionary, SetByteVector) {
     VariantDictionary vd;
 
     type::ByteVector bytes = {'h', 'e', 'l', 'l', 'o'};
@@ -440,13 +440,13 @@ TEST(TestVariantDictionary, SetByteVector) {
     EXPECT_EQ(result, expected);
 }
 
-TEST(TestVariantDictionary, EmptyDictionary) {
+TEST_F(TestVariantDictionary, EmptyDictionary) {
     VariantDictionary vd;
     EXPECT_TRUE(vd.empty());
     EXPECT_EQ(vd.size(), 0);
 }
 
-TEST(TestVariantDictionary, NonEmptyDictionary) {
+TEST_F(TestVariantDictionary, NonEmptyDictionary) {
     VariantDictionary vd;
     vd.set<std::int32_t>("some int", 123456);
     vd.set<std::string>("some string", "hello, world");
@@ -455,7 +455,7 @@ TEST(TestVariantDictionary, NonEmptyDictionary) {
     EXPECT_EQ(vd.size(), 3);
 }
 
-TEST(TestVariantDictionary, Erase) {
+TEST_F(TestVariantDictionary, Erase) {
     VariantDictionary vd;
     vd.set<std::int32_t>("some int", 123456);
     EXPECT_EQ(vd.size(), 1);
@@ -470,7 +470,7 @@ TEST(TestVariantDictionary, Erase) {
     EXPECT_EQ(vd.size(), 1);
 }
 
-TEST(TestVariantDictionary, Clear) {
+TEST_F(TestVariantDictionary, Clear) {
     VariantDictionary vd;
     vd.set<std::int32_t>("some int", 123456);
     vd.set<std::string>("some string", "hello, world");
@@ -480,7 +480,7 @@ TEST(TestVariantDictionary, Clear) {
     EXPECT_TRUE(vd.empty());
 }
 
-TEST(TestVariantDictionary, Equal) {
+TEST_F(TestVariantDictionary, Equal) {
     VariantDictionary left, right;
     left["string"] = std::string("hello, world");
     left["int32"] = std::int32_t(123456);
@@ -491,7 +491,7 @@ TEST(TestVariantDictionary, Equal) {
     EXPECT_TRUE(left == right);
 }
 
-TEST(TestVariantDictionary, Index) {
+TEST_F(TestVariantDictionary, Index) {
     VariantDictionary vd;
     vd["bool"] = true;
     EXPECT_TRUE(!vd.empty());
@@ -509,7 +509,7 @@ TEST(TestVariantDictionary, Index) {
     EXPECT_TRUE(is_same_types);
 }
 
-TEST(TestVariantDictionary, Count) {
+TEST_F(TestVariantDictionary, Count) {
     VariantDictionary vd;
     EXPECT_EQ(vd.count("bool"), 0);
 

@@ -3,9 +3,9 @@ enable_testing()
 find_package(GTest REQUIRED)
 
 file(GLOB TEST_SOURCES *.cpp *.hpp)
-add_executable(test_keepasslib ${SOURCES} ${TEST_SOURCES})
-target_include_directories(test_keepasslib ${GTEST_INCLUDE_DIRS})
-target_link_libraries(test_keepasslib keepasslibpp ${GTEST_BOTH_LIBRARIES} libgcrypt libargon2)
+add_executable(test_keepasslibpp ${SOURCES} ${TEST_SOURCES})
+target_include_directories(test_keepasslibpp PRIVATE ${GTEST_INCLUDE_DIRS})
+target_link_libraries(test_keepasslibpp keepasslibpp ${GTEST_BOTH_LIBRARIES} libgcrypt libargon2)
 
 # TODO: Do we need to use add_test?
 

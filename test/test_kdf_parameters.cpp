@@ -13,7 +13,7 @@ using namespace keepasslibpp;
 struct TestKdfParameters : public ::testing::Test {
     Uuid kdf_uuid;
     std::string sample_bytes;
-    auto sample_params = KdfParameters(kdf_uuid);
+    KdfParameters sample_params = KdfParameters(kdf_uuid);
 
     void SetUp() override {
         sample_params["int32"] = std::int32_t(0x12345678);
@@ -73,7 +73,7 @@ TEST_F(TestKdfParameters, DeserializationFromStream) {
     EXPECT_TRUE(kp == sample_params);
 }
 
-TEST(TestKdfParameters, NewKdfParameters)
+TEST_F(TestKdfParameters, NewKdfParameters)
 {
     Uuid u;
     KdfParameters kp(u);
@@ -84,7 +84,7 @@ TEST(TestKdfParameters, NewKdfParameters)
     EXPECT_TRUE(kdf_uuid == u.byteVector());
 }
 
-TEST(TestKdfParameters, InvalidKdfParameters) {
+TEST_F(TestKdfParameters, InvalidKdfParameters) {
     auto statement = []{
         VariantDictionary vd;
         auto bytes = vd.serialize();
