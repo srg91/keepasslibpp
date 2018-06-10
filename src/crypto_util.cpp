@@ -15,7 +15,7 @@ const std::size_t CryptoUtil::Sha256DigestLength = gcry_md_get_algo_dlen(
     GCRY_MD_SHA256);
 
 // TODO: Add exceptions
-type::ByteVector CryptoUtil::HashSha256(const type::ByteVector& data) {
+type::ByteVector CryptoUtil::hashSha256(const type::ByteVector& data) {
     type::ByteVector result_data(Sha256DigestLength);
 
     // TODO: move to construct
@@ -46,14 +46,14 @@ type::ByteVector CryptoUtil::HashSha256(const type::ByteVector& data) {
 
 // TODO: Add exceptions
 // TODO: Rename?
-type::ByteVector CryptoUtil::GetRandomBytes(std::size_t count) {
+type::ByteVector CryptoUtil::getRandomBytes(std::size_t count) {
     type::ByteVector result_data(count);
     // TODO: handle errors
     gcry_create_nonce(&result_data[0], count);
     return result_data;
 }
 
-void CryptoUtil::FillRandomBytes(void* begin, std::size_t count) noexcept {
+void CryptoUtil::fillRandomBytes(void* begin, std::size_t count) noexcept {
     // TODO: Is there any errors handle here?
     gcry_create_nonce(begin, count);
 }

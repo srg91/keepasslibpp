@@ -55,7 +55,7 @@ std::string Uuid::hex() const {
 Uuid::uuid_t Uuid::createNew() noexcept {
     uuid_t u;
 
-    keepasslibpp::CryptoUtil::FillRandomBytes(&u[0], u.size());
+    keepasslibpp::CryptoUtil::fillRandomBytes(&u[0], u.size());
 
     // set variant as rfc4122
     u[8] &= 0xbf;

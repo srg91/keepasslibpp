@@ -25,7 +25,7 @@ KdfParameters AesKdf::GetDefaultParameters() const  {
 
 void AesKdf::Randomize(KdfParameters& kp) const {
     // TODO: Sha256DigestLength?
-    kp[ParamSeed] = CryptoUtil::GetRandomBytes(CryptoUtil::Sha256DigestLength);
+    kp[ParamSeed] = CryptoUtil::getRandomBytes(CryptoUtil::Sha256DigestLength);
 }
 
 type::ByteVector AesKdf::Transform(type::ByteVector msg, const KdfParameters& kp) const {
@@ -39,11 +39,11 @@ type::ByteVector AesKdf::Transform(type::ByteVector msg, const KdfParameters& kp
 
     // TODO: something without copy??
     if (msg.size() != CryptoUtil::Sha256DigestLength) {
-        msg = CryptoUtil::HashSha256(msg);
+        msg = CryptoUtil::hashSha256(msg);
     }
 
     if (seed.size() != CryptoUtil::Sha256DigestLength) {
-        seed = CryptoUtil::HashSha256(seed);
+        seed = CryptoUtil::hashSha256(seed);
     }
 
     // TODO: do not copy msg?
@@ -70,7 +70,7 @@ type::ByteVector AesKdf::Transform(type::ByteVector msg, const KdfParameters& kp
 //    }
 //
 //    EVP_CIPHER_CTX_free(ctx);
-//    return CryptoUtil::HashSha256(result_data);
+//    return CryptoUtil::hashSha256(result_data);
 //}
 
 type::ByteVector AesKdf::transformKey(const type::ByteVector& data, const type::ByteVector& seed,
@@ -99,5 +99,5 @@ type::ByteVector AesKdf::transformKey(const type::ByteVector& data, const type::
         gcry_cipher_encrypt(handle, &result_data[16], len, &result_data[16], len);
     }
 
-    return CryptoUtil::HashSha256(result_data);
+    return CryptoUtil::hashSha256(result_data);
 }

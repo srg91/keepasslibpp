@@ -2,16 +2,17 @@
 
 #include "typedefs.hpp"
 
+#include <cstddef>
+
 namespace keepasslibpp {
 
 struct CryptoUtil {
     static const std::size_t Sha256DigestLength;
 
-    static type::ByteVector HashSha256(const type::ByteVector& data);
-    static type::ByteVector GetRandomBytes(std::size_t count);
-
+    static type::ByteVector hashSha256(const type::ByteVector& data);
+    static type::ByteVector getRandomBytes(std::size_t count);
     // TODO: can we use iterator here? But without templates?
-    static void FillRandomBytes(void* begin, std::size_t count) noexcept;
+    static void fillRandomBytes(void* begin, std::size_t count) noexcept;
 };
 
 }

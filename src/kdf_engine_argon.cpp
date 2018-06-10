@@ -50,7 +50,7 @@ KdfParameters Argon2Kdf::GetDefaultParameters() const {
 
 void Argon2Kdf::Randomize(keepasslibpp::KdfParameters& kp) const {
     // TODO: Sha256DigestLength?
-    kp[ParamSalt] = CryptoUtil::GetRandomBytes(CryptoUtil::Sha256DigestLength);
+    kp[ParamSalt] = CryptoUtil::getRandomBytes(CryptoUtil::Sha256DigestLength);
 }
 
 type::ByteVector Argon2Kdf::Transform(keepasslibpp::type::ByteVector msg, const keepasslibpp::KdfParameters& kp) const {
