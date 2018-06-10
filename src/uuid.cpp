@@ -37,7 +37,7 @@ type::ByteVector Uuid::byteVector() const {
 
 std::string Uuid::string() const {
     std::string s;
-    s.reserve(16);
+    s.resize(UUID_SIZE);
     std::copy(uuid.begin(), uuid.end(), s.begin());
     return s;
 }
