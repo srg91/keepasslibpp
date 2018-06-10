@@ -61,8 +61,7 @@ private:
     // Never empty after constructor.
     uuid_t uuid;
 
-    // Checks is the string length equals UuidSize.
-    template <typename T> void checkSize(const T& s) const;
+    // Checks is the string length equals UUID_SIZE.
     template <typename It> void checkSize(It begin, It end) const;
 
     static uuid_t createNew() noexcept;
@@ -76,22 +75,7 @@ const Uuid UUID_NIL = Uuid::nil();
 
 std::ostream& operator <<(std::ostream& stream, const Uuid& u);
 
-template <typename T>
-void Uuid::checkSize(const T& s) const {
-    // TODO: Make keepasslibpp exception
-    if (s.size() != UUID_SIZE) {
-        std::ostringstream es;
-        es << "value " << '"';
-        es << std::hex << std::setfill('0');
-        for (const auto i : s) {
-            es << std::setw(2) << static_cast<unsigned>(static_cast<unsigned char>(i));
-        }
-        es << '"' << " has incorrect size: "
-           << std::dec << s.size() << " != " << UUID_SIZE;
-        throw std::invalid_argument(es.str());
-    }
-}
-
+// TODO: Guess iterator names
 template <typename It>
 void Uuid::checkSize(It begin, It end) const {
     // TODO: Make keepasslibpp exception
