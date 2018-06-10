@@ -25,22 +25,22 @@ struct VariantDictionarySerializationFixture {
         sample_dict["uint32"] = std::uint32_t(0x12345678);
         sample_dict["uint64"] = std::uint64_t(0x1234567887654321);
         sample_dict["string"] = std::string("hello, world");
-        sample_dict["bytes"] = type::byte_vector(
+        sample_dict["bytes"] = type::ByteVector(
             {'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd'}
         );
 
         sample_bytes = {
             // vd version
             0x00, 0x01,
-            // byte_vector type
+            // ByteVector type
             0x42,
-            // byte_vector key size
+            // ByteVector key size
             0x05, 0x00, 0x00, 0x00,
-            // byte_vector key
+            // ByteVector key
             'b', 'y', 't', 'e', 's',
-            // byte_vector value size
+            // ByteVector value size
             0x0c, 0x00, 0x00, 0x00,
-            // byte_vector value
+            // ByteVector value
             'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd',
             // bool type
             0x08,
@@ -297,10 +297,10 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
 
     BOOST_FIXTURE_TEST_CASE(test_get_bytes,
                             VariantDictionarySerializationFixture) {
-        type::byte_vector result;
+        type::ByteVector result;
         BOOST_CHECK(sample_dict.Get("bytes", result));
 
-        type::byte_vector expected = {
+        type::ByteVector expected = {
             'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd'
         };
         BOOST_CHECK(result == expected);
@@ -432,7 +432,7 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
     BOOST_AUTO_TEST_CASE(test_set_bytes) {
         VariantDictionary vd;
 
-        type::byte_vector bytes = {'h', 'e', 'l', 'l', 'o'};
+        type::ByteVector bytes = {'h', 'e', 'l', 'l', 'o'};
         vd.Set("key", bytes);
 
         std::string result = vd.Serialize();

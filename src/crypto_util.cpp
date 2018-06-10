@@ -2,6 +2,7 @@
 
 //#include <openssl/rand.h>
 //#include <openssl/sha.h>
+#include <cstring>
 #include <algorithm>
 
 #include <gcrypt.h>
@@ -11,12 +12,11 @@
 
 using namespace keepasslibpp;
 
-// TODO: Add gcry_md_get_algo_dlen
-const std::size_t CryptoUtil::Sha256DigestLength = 32;
+const std::size_t CryptoUtil::Sha256DigestLength = gcry_md_get_algo_dlen(GCRY_MD_SHA256);
 
     // TODO: Add exceptions
-type::byte_vector CryptoUtil::HashSha256(const type::byte_vector& data) {
-    type::byte_vector result_data(Sha256DigestLength);
+type::ByteVector CryptoUtil::HashSha256(const type::ByteVector& data) {
+    type::ByteVector result_data(Sha256DigestLength);
 
     // TODO: move to construct
     gcry_md_hd_t handle;
@@ -28,6 +28,7 @@ type::byte_vector CryptoUtil::HashSha256(const type::byte_vector& data) {
         gcry_md_read(handle, GCRY_MD_SHA256), Sha256DigestLength,
         result_data.begin()
     );
+//    std::memcpy(&result_data[0], gcry_md_read(handle, GCRY_MD_SHA256), Sha256DigestLength);
 
     // TODO: move to destruct
     gcry_md_close(handle);
@@ -45,8 +46,8 @@ type::byte_vector CryptoUtil::HashSha256(const type::byte_vector& data) {
 
 // TODO: Add exceptions
 // TODO: Rename?
-type::byte_vector CryptoUtil::GetRandomBytes(std::size_t count) {
-    type::byte_vector result_data(count);
+type::ByteVector CryptoUtil::GetRandomBytes(std::size_t count) {
+    type::ByteVector result_data(count);
     // TODO: handle errors
 //    RAND_bytes(&result_data[0], static_cast<int>(count));
     gcry_create_nonce(&result_data[0], count);

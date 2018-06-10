@@ -11,6 +11,9 @@
 #include <boost/variant/variant.hpp>
 #include <boost/variant/get.hpp>
 
+#include <gcrypt.h>
+#include <openssl/sha.h>
+
 #include <algorithm>
 #include <chrono>
 #include <cstdint>
@@ -28,7 +31,7 @@ using namespace std;
 //using namespace keepasslibpp;
 
 
-ostream& operator <<(ostream& stream, keepasslibpp::type::byte_vector value) {
+ostream& operator <<(ostream& stream, keepasslibpp::type::ByteVector value) {
     auto o = stream.flags();
     stream << setfill('0') << hex;
     for (const auto& c : value) {
@@ -39,25 +42,25 @@ ostream& operator <<(ostream& stream, keepasslibpp::type::byte_vector value) {
 };
 
 int main() {
-    keepasslibpp::type::byte_vector S = {'1', '2', '3', '4', '5', '6', '7', '8'};
-    keepasslibpp::type::byte_vector msg = {'H', 'e', 'l', 'l', 'o'};
-
-    keepasslibpp::AesKdf aes_kdf;
-    keepasslibpp::KdfParameters aes_kp(aes_kdf.GetUuid());
-    aes_kp.Set<keepasslibpp::type::byte_vector>("S", S);
-    aes_kp.Set<std::uint64_t>("R", 6000);
-
-    cout << "AES: " << aes_kdf.Transform(msg, aes_kp) << endl;
-
-    keepasslibpp::Argon2Kdf argon_kdf;
-    keepasslibpp::KdfParameters argon_kp(argon_kdf.GetUuid());
-    argon_kp[keepasslibpp::Argon2Kdf::ParamSalt] = S;
-    argon_kp[keepasslibpp::Argon2Kdf::ParamParallelism] = std::uint32_t(2);
-    argon_kp[keepasslibpp::Argon2Kdf::ParamMemory] = std::uint64_t(1024 * 1024);
-    argon_kp[keepasslibpp::Argon2Kdf::ParamIterations] = std::uint64_t(2);
-    argon_kp[keepasslibpp::Argon2Kdf::ParamVersion] = std::uint32_t(0x13);
-
-    cout << "Argon2: " << argon_kdf.Transform(msg, argon_kp) << endl;
+//    keepasslibpp::type::ByteVector S = {'1', '2', '3', '4', '5', '6', '7', '8'};
+//    keepasslibpp::type::ByteVector msg = {'H', 'e', 'l', 'l', 'o'};
+//
+//    keepasslibpp::AesKdf aes_kdf;
+//    keepasslibpp::KdfParameters aes_kp(aes_kdf.GetUuid());
+//    aes_kp.Set<keepasslibpp::type::ByteVector>("S", S);
+//    aes_kp.Set<std::uint64_t>("R", 6000);
+//
+//    cout << "AES: " << aes_kdf.Transform(msg, aes_kp) << endl;
+//
+//    keepasslibpp::Argon2Kdf argon_kdf;
+//    keepasslibpp::KdfParameters argon_kp(argon_kdf.GetUuid());
+//    argon_kp[keepasslibpp::Argon2Kdf::ParamSalt] = S;
+//    argon_kp[keepasslibpp::Argon2Kdf::ParamParallelism] = std::uint32_t(2);
+//    argon_kp[keepasslibpp::Argon2Kdf::ParamMemory] = std::uint64_t(1024 * 1024);
+//    argon_kp[keepasslibpp::Argon2Kdf::ParamIterations] = std::uint64_t(2);
+//    argon_kp[keepasslibpp::Argon2Kdf::ParamVersion] = std::uint32_t(0x13);
+//
+//    cout << "Argon2: " << argon_kdf.Transform(msg, argon_kp) << endl;
 
 //    cout << "Hello!" << endl;
 //    std::istringstream s("asdf123");
@@ -81,7 +84,7 @@ int main() {
 //    sample_dict["uint32"] = std::uint32_t(0x12345678);
 //    sample_dict["uint64"] = std::uint64_t(0x1234567887654321);
 //    sample_dict["string"] = std::string("hello, world");
-//    sample_dict["byte_vector"] = keepasslibpp::VariantDictionary::byte_vector(
+//    sample_dict["ByteVector"] = keepasslibpp::VariantDictionary::ByteVector(
 //        {'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd'}
 //    );
 //
@@ -114,13 +117,31 @@ int main() {
 //    istringstream source("hello, world");
 //    string dest;
 
-//    keepasslibpp::type::byte_vector dest(32, 0);
-//
+//    keepasslibpp::type::ByteVector data = {'H', 'e', 'l', 'l', 'o'};
+//    keepasslibpp::type::ByteVector dest(32, 0);
+
+
+//    gcry_md_hd_t handle;
+//    gcry_md_open(&handle, GCRY_MD_SHA256, 0);
+
+//    gcry_buffer_t data_buffer = {
+//        data.size(),
+//        0,
+//        data.size(),
+//        &data[0]
+//    };
+
 //    unsigned n = 1'000'000;
 //    auto start = chrono::steady_clock::now();
 //    for (unsigned i = 0; i < n; i++) {
-//        openssl::RAND_bytes(&dest[0], static_cast<int>(dest.size()));
+
+//        gcry_md_write(handle, &data[0], data.size());
+//        std::memcpy(&dest[0], gcry_md_read(handle, GCRY_MD_SHA256), 32);
+//        gcry_md_reset(handle);
+//        gcry_md_hash_buffers
 //    }
+
+//    gcry_md_close(handle);
 //    auto end = chrono::steady_clock::now();
 //    auto ns = chrono::duration_cast<chrono::nanoseconds>(end - start);
 //    cout << "Count: " << (ns / n).count() << " ns/op" << endl;

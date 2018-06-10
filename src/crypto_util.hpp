@@ -3,10 +3,12 @@
 #include "typedefs.hpp"
 
 namespace keepasslibpp {
-    struct CryptoUtil {
-        static const std::size_t Sha256DigestLength;
 
-        static type::byte_vector HashSha256(const type::byte_vector& data);
-        static type::byte_vector GetRandomBytes(std::size_t count);
-    };
+struct CryptoUtil {
+    static const std::size_t Sha256DigestLength;
+
+    static type::ByteVector HashSha256(const type::ByteVector& data);
+    static type::ByteVector GetRandomBytes(std::size_t count);
+};
+
 }

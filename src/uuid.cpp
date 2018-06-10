@@ -39,12 +39,12 @@ Uuid::Uuid(string&& s) {
     move(s.begin(), s.end(), uuid.begin());
 }
 
-Uuid::Uuid(const type::byte_vector& b) {
+Uuid::Uuid(const type::ByteVector& b) {
     checkSize(b);
     copy(b.begin(), b.end(), uuid.begin());
 }
 
-Uuid::Uuid(type::byte_vector&& b) {
+Uuid::Uuid(type::ByteVector&& b) {
     checkSize(b);
     move(b.begin(), b.end(), uuid.begin());
 }
@@ -52,8 +52,8 @@ Uuid::Uuid(type::byte_vector&& b) {
 Uuid::uuid_generator_t Uuid::uuid_generator = Uuid::uuid_generator_t{};
 const Uuid Uuid::Nil = boost::uuids::nil_generator()();
 
-type::byte_vector Uuid::Bytes() const {
-    return type::byte_vector(uuid.begin(), uuid.end());
+type::ByteVector Uuid::Bytes() const {
+    return type::ByteVector(uuid.begin(), uuid.end());
 }
 
 std::string Uuid::ByteString() const {

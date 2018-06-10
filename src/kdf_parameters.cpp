@@ -10,8 +10,8 @@ using namespace keepasslibpp;
 const std::string KdfParameters::uuid_key = "$UUID";
 
 Uuid KdfParameters::extractUuid() {
-    type::byte_vector uuid_bytes;
-    if (!Get<type::byte_vector>(uuid_key, uuid_bytes))
+    type::ByteVector uuid_bytes;
+    if (!Get<type::ByteVector>(uuid_key, uuid_bytes))
         throw exception::InvalidKdfParametersError();
     return uuid_bytes;
 }

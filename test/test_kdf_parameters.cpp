@@ -21,7 +21,7 @@ struct KdfParametersSerializationFixture {
         sample_bytes = {
             // vd version
             0x00, 0x01,
-            // byte_vector type
+            // ByteVector type
             0x42,
             // $UUID key size
             0x05, 0x00, 0x00, 0x00,
@@ -84,8 +84,8 @@ BOOST_AUTO_TEST_SUITE(test_kdf_parameters)
         KdfParameters kp(u);
         BOOST_CHECK_EQUAL(kp.KdfUuid(), u);
 
-        type::byte_vector kdf_uuid;
-        BOOST_CHECK(kp.Get<type::byte_vector>("$UUID", kdf_uuid));
+        type::ByteVector kdf_uuid;
+        BOOST_CHECK(kp.Get<type::ByteVector>("$UUID", kdf_uuid));
         BOOST_CHECK(kdf_uuid == u.Bytes());
     }
 

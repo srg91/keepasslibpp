@@ -19,7 +19,7 @@ const std::string AesKdf::ParamSeed = "S";
 
 KdfParameters AesKdf::GetDefaultParameters() const  {
     KdfParameters kp = KdfEngine::GetDefaultParameters();
-    kp.Set(ParamRounds, DefaultKeyEncryptionRounds);
+    kp.Set(ParamRounds, DEFAULT_KEY_ENCRYPTION_ROUNDS);
     return kp;
 }
 
@@ -28,13 +28,13 @@ void AesKdf::Randomize(KdfParameters& kp) const {
     kp[ParamSeed] = CryptoUtil::GetRandomBytes(CryptoUtil::Sha256DigestLength);
 }
 
-type::byte_vector AesKdf::Transform(type::byte_vector msg, const KdfParameters& kp) const {
+type::ByteVector AesKdf::Transform(type::ByteVector msg, const KdfParameters& kp) const {
     std::uint64_t rounds;
     if (!kp.Get<std::uint64_t>(ParamRounds, rounds))
         throw exception::ArgumentNullException("rounds");
 
-    type::byte_vector seed;
-    if (!kp.Get<type::byte_vector>(ParamSeed, seed))
+    type::ByteVector seed;
+    if (!kp.Get<type::ByteVector>(ParamSeed, seed))
         throw exception::ArgumentNullException("seed");
 
     // TODO: something without copy??
@@ -50,13 +50,13 @@ type::byte_vector AesKdf::Transform(type::byte_vector msg, const KdfParameters& 
     return transformKey(msg, seed, rounds);
 }
 
-//type::byte_vector AesKdf::transformKey(const type::byte_vector& data, const type::byte_vector& seed,
+//type::ByteVector AesKdf::transformKey(const type::ByteVector& data, const type::ByteVector& seed,
 //                                  std::uint64_t rounds) const {
-//    type::byte_vector result_data = data;
+//    type::ByteVector result_data = data;
 //    // TODO: Add many many checks
 //    // TODO: change 16 to some constant?
 //    // TODO: change it to char* ?
-//    type::byte_vector iv(16, 0);
+//    type::ByteVector iv(16, 0);
 //    // TODO: handle errors
 //    auto ctx = EVP_CIPHER_CTX_new();
 //    // TODO: handle errors
@@ -73,14 +73,14 @@ type::byte_vector AesKdf::Transform(type::byte_vector msg, const KdfParameters& 
 //    return CryptoUtil::HashSha256(result_data);
 //}
 
-type::byte_vector AesKdf::transformKey(const type::byte_vector& data, const type::byte_vector& seed,
+type::ByteVector AesKdf::transformKey(const type::ByteVector& data, const type::ByteVector& seed,
                                        std::uint64_t rounds) const {
     // TODO: do not copy?
-    type::byte_vector result_data = data;
+    type::ByteVector result_data = data;
     // TODO: Add many many checks
     // TODO: change to constant by gcry_cipher_get_algo_keylen or smtelse
     // TODO: change it to char* ?
-    type::byte_vector iv(16, 0);
+    type::ByteVector iv(16, 0);
     // TODO: handle errors
     // TODO: handle errors
     gcry_cipher_hd_t handle;
