@@ -9,12 +9,12 @@
 
 #include <cstdint>
 
+namespace keepasslibpp {
 
-using namespace keepasslibpp;
+const std::size_t CryptoUtil::Sha256DigestLength = gcry_md_get_algo_dlen(
+    GCRY_MD_SHA256);
 
-const std::size_t CryptoUtil::Sha256DigestLength = gcry_md_get_algo_dlen(GCRY_MD_SHA256);
-
-    // TODO: Add exceptions
+// TODO: Add exceptions
 type::ByteVector CryptoUtil::HashSha256(const type::ByteVector& data) {
     type::ByteVector result_data(Sha256DigestLength);
 
@@ -49,7 +49,13 @@ type::ByteVector CryptoUtil::HashSha256(const type::ByteVector& data) {
 type::ByteVector CryptoUtil::GetRandomBytes(std::size_t count) {
     type::ByteVector result_data(count);
     // TODO: handle errors
-//    RAND_bytes(&result_data[0], static_cast<int>(count));
     gcry_create_nonce(&result_data[0], count);
     return result_data;
+}
+
+void CryptoUtil::FillRandomBytes(void* begin, std::size_t count) noexcept {
+    // TODO: Is there any errors handle here?
+    gcry_create_nonce(begin, count);
+}
+
 }

@@ -9,6 +9,9 @@ struct CryptoUtil {
 
     static type::ByteVector HashSha256(const type::ByteVector& data);
     static type::ByteVector GetRandomBytes(std::size_t count);
+
+    // TODO: can we use iterator here? But without templates?
+    static void FillRandomBytes(void* begin, std::size_t count) noexcept;
 };
 
 }

@@ -13,7 +13,7 @@ Uuid KdfParameters::extractUuid() {
     type::ByteVector uuid_bytes;
     if (!get<type::ByteVector>(uuid_key, uuid_bytes))
         throw exception::InvalidKdfParametersError();
-    return uuid_bytes;
+    return Uuid::fromByteVector(uuid_bytes);
 }
 
 std::string KdfParameters::SerializeExt() const {

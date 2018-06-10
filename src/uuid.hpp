@@ -2,11 +2,9 @@
 
 #include "typedefs.hpp"
 
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/random_generator.hpp>
-
 #include <array>
 #include <cstdint>
+#include <functional>
 #include <iomanip>
 #include <iostream>
 #include <stdexcept>
@@ -15,6 +13,9 @@
 
 namespace keepasslibpp {
 
+// Standard size in bytes of a UUID.
+const std::size_t UUID_SIZE = 16;
+
 /*
  * Represents an UUID of a password entry or group. Once created,
  * Uuid objects aren't modifiable anymore (immutable).
@@ -22,55 +23,36 @@ namespace keepasslibpp {
 class Uuid {
 public:
     // Underlying uuid type
-    using uuid_t = boost::uuids::uuid;
-    // Underlying uuid generator type
-    using uuid_generator_t = boost::uuids::random_generator;
-
-    // Standard size in ByteVector of a UUID.
-    static const size_t UuidSize = uuid_t::static_size();
-
-    // Nil UUID (all ByteVector are zero).
-    static const Uuid Nil;
+    using uuid_t = std::array<std::uint8_t, UUID_SIZE>;
 
     // Construct a new UUID instance with random value.
-    Uuid() : uuid(uuid_generator()) {};
+    Uuid() : uuid(createNew()) {};
 
-    // Construct a new UUID from another UUID.
-    Uuid(const Uuid& u);
-    Uuid(Uuid&& u);
+    // TODO: Move to private? Should we test this?
+    // Construct a new UUID from underlying type.
+    explicit Uuid(const uuid_t& value) : uuid(value) {};
+    explicit Uuid(uuid_t&& value) : uuid(value) {};
 
     // TODO: Guess which category iterator is
     // Construct a new UUID instance by range of values.
-    template <typename It>
-    explicit Uuid(It begin, It end);
+    template <typename It> explicit Uuid(It begin, It end);
 
-    // TODO: Fix ambiguous in aggregate initialization
-    // TODO: (In cases like u = {1, 2, 3, ...};
-    // Construct a new UUID by another object.
-    Uuid(const uuid_t& u) : uuid(u) {};
-    Uuid(uuid_t&& u) : uuid(std::forward<decltype(u)>(u)) {};
-    Uuid(const std::string& s);
-    Uuid(std::string&& s);
-    Uuid(const type::ByteVector& b);
-    Uuid(type::ByteVector&& b);
+    // Create nil UUID (all bytes are zero).
+    static Uuid nil() noexcept { return Uuid(createNil()); }
 
-    // get the 16 UUID ByteVector.
-    type::ByteVector Bytes() const;
-    // get the 16 UUID ByteVector string.
-    std::string ByteString() const;
+    // Construct a new UUID from another object.
+    static Uuid fromByteVector(const type::ByteVector& bv);
+    static Uuid fromString(const std::string& s);
+
+    // return the 16 bytes size byte vector.
+    type::ByteVector byteVector() const;
+    // return the 16 bytes size string.
+    std::string string() const;
     // TODO: Optional separators?
-    // get the 32 hexadecimal digits in five groups separated by hyphens.
-    std::string ToString() const;
+    // return the 32 hexadecimal digits in five groups separated by hyphens.
+    std::string hex() const;
     // Hash of current UUID
-    inline std::size_t Hash() const { return boost::uuids::hash_value(uuid); };
-
-    Uuid& operator=(const Uuid& u) {
-        uuid = u.uuid;
-    }
-
-    Uuid& operator=(Uuid&& u) {
-        std::swap(uuid, u.uuid);
-    }
+    std::size_t hash() const noexcept;
 
     friend bool operator <(const Uuid& left, const Uuid& right);
     friend bool operator ==(const Uuid& left, const Uuid& right);
@@ -79,19 +61,25 @@ private:
     // Never empty after constructor.
     uuid_t uuid;
 
-    // Boost random generator.
-    static uuid_generator_t uuid_generator;
-
     // Checks is the string length equals UuidSize.
     template <typename T> void checkSize(const T& s) const;
     template <typename It> void checkSize(It begin, It end) const;
+
+    static uuid_t createNew() noexcept;
+    static uuid_t createNil() noexcept;
+
+    constexpr static const auto uuid_t_hash_func = std::hash<std::string_view>{};
 };
+
+// Nil UUID (all bytes are zero).
+const Uuid UUID_NIL = Uuid::nil();
 
 std::ostream& operator <<(std::ostream& stream, const Uuid& u);
 
 template <typename T>
 void Uuid::checkSize(const T& s) const {
-    if (s.size() != Uuid::UuidSize) {
+    // TODO: Make keepasslibpp exception
+    if (s.size() != UUID_SIZE) {
         std::ostringstream es;
         es << "value " << '"';
         es << std::hex << std::setfill('0');
@@ -99,19 +87,20 @@ void Uuid::checkSize(const T& s) const {
             es << std::setw(2) << static_cast<unsigned>(static_cast<unsigned char>(i));
         }
         es << '"' << " has incorrect size: "
-           << std::dec << s.size() << " != " << Uuid::UuidSize;
+           << std::dec << s.size() << " != " << UUID_SIZE;
         throw std::invalid_argument(es.str());
     }
 }
 
 template <typename It>
 void Uuid::checkSize(It begin, It end) const {
+    // TODO: Make keepasslibpp exception
     auto it_size = end - begin;
-    if (it_size != UuidSize) {
+    if (it_size != UUID_SIZE) {
         std::string message = "invalid interval size: ";
         message += std::to_string(it_size);
         message += " != ";
-        message += std::to_string(UuidSize);
+        message += std::to_string(UUID_SIZE);
         throw std::invalid_argument(message);
     }
 }
@@ -128,8 +117,10 @@ namespace std {
     template<>
     struct hash<keepasslibpp::Uuid>
     {
-        std::size_t operator()(const keepasslibpp::Uuid& u) const {
-            return u.Hash();
+        using result_type = std::size_t;
+
+        result_type operator()(const keepasslibpp::Uuid& u) const {
+            return u.hash();
         }
     };
 }
