@@ -4,18 +4,18 @@
 #include "typedefs.hpp"
 #include "variant_dictionary.hpp"
 
-#include <boost/test/unit_test.hpp>
+#include <gtest/gtest.h>
 
 #include <sstream>
 
 using namespace keepasslibpp;
 
-struct KdfParametersSerializationFixture {
+struct TestKdfParameters : public ::testing::Test {
     Uuid kdf_uuid;
     std::string sample_bytes;
-    KdfParameters sample_params;
+    auto sample_params = KdfParameters(kdf_uuid);
 
-    KdfParametersSerializationFixture() : sample_params(kdf_uuid) {
+    void SetUp() override {
         sample_params["int32"] = std::int32_t(0x12345678);
 
         sample_bytes = {
@@ -46,55 +46,49 @@ struct KdfParametersSerializationFixture {
             // end
             0x00
         };
-    }
+    };
 };
 
-BOOST_AUTO_TEST_SUITE(test_kdf_parameters)
-    BOOST_FIXTURE_TEST_CASE(test_serializtion_to_string,
-                            KdfParametersSerializationFixture) {
-        std::string result = sample_params.SerializeExt();
-        std::string expected = sample_bytes;
-        BOOST_CHECK_EQUAL(result, expected);
-    }
+TEST_F(TestKdfParameters, SerializationToString) {
+    std::string result = sample_params.SerializeExt();
+    std::string expected = sample_bytes;
+    EXPECT_EQ(result, expected);
+}
 
-    BOOST_FIXTURE_TEST_CASE(test_serializtion_to_stream,
-                            KdfParametersSerializationFixture) {
-        std::ostringstream stream;
-        sample_params.SerializeExt(stream);
-        std::string expected = sample_bytes;
-        BOOST_CHECK_EQUAL(stream.str(), expected);
-    }
+TEST_F(TestKdfParameters, SerializationToStream) {
+    std::ostringstream stream;
+    sample_params.SerializeExt(stream);
+    std::string expected = sample_bytes;
+    EXPECT_EQ(stream.str(), expected);
+}
 
-    BOOST_FIXTURE_TEST_CASE(test_deserialization_from_string,
-                            KdfParametersSerializationFixture) {
-        auto kp = KdfParameters::DeserializeExt(sample_bytes);
-        BOOST_CHECK(kp == sample_params);
-    }
+TEST_F(TestKdfParameters, DeserializationFromString) {
+    auto kp = KdfParameters::DeserializeExt(sample_bytes);
+    EXPECT_TRUE(kp == sample_params);
+}
 
-    BOOST_FIXTURE_TEST_CASE(test_deserialization_from_stream,
-                            KdfParametersSerializationFixture) {
-        std::istringstream stream(sample_bytes);
-        auto kp = KdfParameters::DeserializeExt(stream);
-        BOOST_CHECK(kp == sample_params);
-    }
+TEST_F(TestKdfParameters, DeserializationFromStream) {
+    std::istringstream stream(sample_bytes);
+    auto kp = KdfParameters::DeserializeExt(stream);
+    EXPECT_TRUE(kp == sample_params);
+}
 
-    BOOST_AUTO_TEST_CASE(test_new_kdf_parameters)
-    {
-        Uuid u;
-        KdfParameters kp(u);
-        BOOST_CHECK_EQUAL(kp.KdfUuid(), u);
+TEST(TestKdfParameters, NewKdfParameters)
+{
+    Uuid u;
+    KdfParameters kp(u);
+    EXPECT_EQ(kp.KdfUuid(), u);
 
-        type::ByteVector kdf_uuid;
-        BOOST_CHECK(kp.get<type::ByteVector>("$UUID", kdf_uuid));
-        BOOST_CHECK(kdf_uuid == u.byteVector());
-    }
+    type::ByteVector kdf_uuid;
+    EXPECT_TRUE(kp.get<type::ByteVector>("$UUID", kdf_uuid));
+    EXPECT_TRUE(kdf_uuid == u.byteVector());
+}
 
-    BOOST_AUTO_TEST_CASE(test_invalid_kdf_parameters) {
-        auto statement = []{
-            VariantDictionary vd;
-            auto bytes = vd.serialize();
-            auto kp = KdfParameters::DeserializeExt(bytes);
-        };
-        BOOST_CHECK_THROW(statement(), exception::InvalidKdfParametersError);
-    }
-BOOST_AUTO_TEST_SUITE_END()
+TEST(TestKdfParameters, InvalidKdfParameters) {
+    auto statement = []{
+        VariantDictionary vd;
+        auto bytes = vd.serialize();
+        auto kp = KdfParameters::DeserializeExt(bytes);
+    };
+    EXPECT_THROW(statement(), exception::InvalidKdfParametersError);
+}

@@ -1,9 +1,5 @@
 enable_testing()
 
-#set(Boost_USE_STATIC_LIBS ON)
-
-#find_package(Boost COMPONENTS unit_test_framework REQUIRED)
-#include_directories(${Boost_INCLUDE_DIRS})
 find_package(GTest REQUIRED)
 
 file(GLOB TEST_SOURCES *.cpp *.hpp)
