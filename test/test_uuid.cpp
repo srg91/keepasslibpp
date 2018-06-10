@@ -14,7 +14,7 @@
 
 using namespace keepasslibpp;
 
-TEST(TestUuid, TestEqualOperator) {
+TEST(TestUuid, EqualUuids) {
     Uuid u1, u2;
     Uuid u3(u1);
 
@@ -22,7 +22,7 @@ TEST(TestUuid, TestEqualOperator) {
     EXPECT_NE(u1, u2);
 }
 
-TEST(TestUuid, TestLength) {
+TEST(TestUuid, CompareLength) {
     std::string no_throw(UUID_SIZE, 0);
     EXPECT_NO_THROW(Uuid::fromString(no_throw).string());
 
@@ -31,7 +31,7 @@ TEST(TestUuid, TestLength) {
                  std::invalid_argument);
 }
 
-TEST(TestUuid, TestNewUuid) {
+TEST(TestUuid, NewUuid) {
     Uuid u1;
     auto byte_string = u1.string();
     auto u2 = Uuid::fromString(byte_string);
@@ -45,7 +45,7 @@ TEST(TestUuid, TestNewUuid) {
     EXPECT_EQ(byte_string.size(), default_size);
 }
 
-TEST(TestUuid, TestNewUuidByUuid) {
+TEST(TestUuid, NewUuidByUuid) {
     Uuid::uuid_t expected_uuid;
     std::string expected = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
                             0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
@@ -56,7 +56,7 @@ TEST(TestUuid, TestNewUuidByUuid) {
     EXPECT_EQ(byte_string, expected);
 }
 
-TEST(TestUuid, TestNewUuidByString) {
+TEST(TestUuid, NewUuidByString) {
     std::string expected = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
                             0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
     auto u = Uuid::fromString(expected);
@@ -64,7 +64,7 @@ TEST(TestUuid, TestNewUuidByString) {
     EXPECT_EQ(byte_string, expected);
 }
 
-TEST(TestUuid, TestNewUuidByByteVector) {
+TEST(TestUuid, NewUuidByByteVector) {
     type::ByteVector expected = {
         0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
         0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f
@@ -74,7 +74,7 @@ TEST(TestUuid, TestNewUuidByByteVector) {
     EXPECT_TRUE(bytes == expected);
 }
 
-TEST(TestUuid, TestNewUuidByIterator) {
+TEST(TestUuid, NewUuidByIterator) {
     std::vector<uint8_t> v = {
         0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
         0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f
@@ -87,12 +87,12 @@ TEST(TestUuid, TestNewUuidByIterator) {
     EXPECT_EQ(bytes, expected);
 }
 
-TEST(TestUuid, TestNewUuidByRValue) {
+TEST(TestUuid, NewUuidByRValue) {
     Uuid u([]() -> Uuid { return Uuid(); }());
     EXPECT_NE(u, UUID_NIL);
 }
 
-TEST(TestUuid, TestLoverOperator) {
+TEST(TestUuid, LowerOperator) {
     std::string zero_string(16, 0);
     std::string bigger_string = zero_string;
     bigger_string[0] = 0x01;
@@ -103,7 +103,7 @@ TEST(TestUuid, TestLoverOperator) {
     EXPECT_LT(zero, bigger);
 }
 
-TEST(TestUuid, TestUnique) {
+TEST(TestUuid, IsUnique) {
     Uuid u1, u2;
     EXPECT_NE(u1, u2);
 
@@ -112,7 +112,7 @@ TEST(TestUuid, TestUnique) {
     EXPECT_EQ(v.size(), s.size());
 }
 
-TEST(TestUuid, TestNil) {
+TEST(TestUuid, IsNil) {
     auto z = Uuid::fromString(std::string(16, 0));
     EXPECT_EQ(z, UUID_NIL);
 
@@ -121,7 +121,7 @@ TEST(TestUuid, TestNil) {
     EXPECT_EQ(bytes, expected);
 }
 
-TEST(TestUuid, TestHex) {
+TEST(TestUuid, FormatHex) {
     auto s = UUID_NIL.hex();
     std::string expected("00000000-0000-0000-0000-000000000000");
     EXPECT_EQ(s, expected);
@@ -135,7 +135,7 @@ TEST(TestUuid, TestHex) {
     EXPECT_EQ(s, expected);
 }
 
-TEST(TestUuid, TestAddToMap) {
+TEST(TestUuid, AddToMap) {
     std::map<Uuid, std::string> m;
     int n = 10;
     for (int i = 0; i < n; i++) {
@@ -144,7 +144,7 @@ TEST(TestUuid, TestAddToMap) {
     EXPECT_EQ(m.size(), n);
 }
 
-TEST(TestUuid, TestAddToUnorderedMap) {
+TEST(TestUuid, AddToUnorderedMap) {
     std::unordered_map<Uuid, std::string> m;
     int n = 10;
     for (int i = 0; i < n; i++) {
@@ -153,7 +153,7 @@ TEST(TestUuid, TestAddToUnorderedMap) {
     EXPECT_EQ(m.size(), n);
 }
 
-TEST(TestUuid, TestAddToSet) {
+TEST(TestUuid, AddToSet) {
     std::set<Uuid> s;
     int n = 10;
     for (int i = 0; i < n; i++) {
@@ -162,7 +162,7 @@ TEST(TestUuid, TestAddToSet) {
     EXPECT_EQ(s.size(), n);
 }
 
-TEST(TestUuid, TestAddToUnorderedSet) {
+TEST(TestUuid, AddToUnorderedSet) {
     std::unordered_set<Uuid> s;
     int n = 10;
     for (int i = 0; i < n; i++) {
