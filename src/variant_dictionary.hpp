@@ -19,6 +19,7 @@ namespace keepasslibpp {
 // TODO: Use template for container (in src use unordered, but map in tests)
 class VariantDictionary {
 public:
+    // TODO: Rename this all stuff?
     using key_type = std::string;
     using mapped_type = boost::variant<
         bool, std::int32_t, std::int64_t, std::uint32_t, std::uint64_t,
@@ -31,40 +32,40 @@ public:
     using iterator = std::map<key_type, mapped_type>::iterator;
     using const_iterator = std::map<key_type, mapped_type>::const_iterator;
 
-    iterator begin() { return dict.begin(); }
-    const_iterator begin() const { return dict.begin(); }
-    iterator end() { return dict.end(); }
-    const_iterator end() const { return dict.end(); }
+//    iterator begin() { return mDict.begin(); }
+//    const_iterator begin() const { return mDict.begin(); }
+//    iterator end() { return mDict.end(); }
+//    const_iterator end() const { return mDict.end(); }
 
     VariantDictionary() {};
-    VariantDictionary(VariantDictionary&& vd) : dict(std::move(vd.dict)) {};
+    VariantDictionary(VariantDictionary&& vd) : mDict(std::move(vd.mDict)) {};
 
-    bool Empty() const;
-    size_type Count(const key_type& key) const;
-    std::size_t Size() const;
-    void Erase(const std::string& key);
-    void Clear();
-
-    template <typename T>
-    bool Get(const std::string& key, T& value) const noexcept ;
+    bool empty() const;
+    size_type count(const key_type& key) const;
+    std::size_t size() const;
+    void erase(const std::string& key);
+    void clear();
 
     template <typename T>
-    void Set(const std::string& key, const T& value);
+    bool get(const std::string& key, T& value) const noexcept ;
 
-    std::string Serialize() const;
-    std::ostream& Serialize(std::ostream& stream) const;
+    template <typename T>
+    void set(const std::string& key, const T& value);
 
-    static VariantDictionary Deserialize(std::istream& stream);
-    static VariantDictionary Deserialize(const std::string& bytes);
+    std::string serialize() const;
+    std::ostream& serialize(std::ostream& stream) const;
+
+    static VariantDictionary deserialize(std::istream& stream);
+    static VariantDictionary deserialize(const std::string& bytes);
 
     mapped_type& operator [](const key_type& index);
     const mapped_type& operator [](const key_type& index) const;
 
     friend bool operator ==(const VariantDictionary& left, const VariantDictionary& right);
 private:
-    static const uint16_t vd_version = 0x0100;
-    static const uint16_t vdm_critical = 0xff00;
-//        static const uint16_t vdm_info = 0x00ff;
+    static const uint16_t kVdVersion = 0x0100;
+    static const uint16_t kVdmCritical = 0xff00;
+//    static const uint16_t kVdmInfo = 0x00ff;
 
     enum class serialization_type : std::int8_t {
         None = 0x00,
@@ -77,7 +78,7 @@ private:
         ByteArray = 0x42,
     };
 
-    std::map<key_type, mapped_type> dict;
+    std::map<key_type, mapped_type> mDict;
 
     static void deserialize(std::istream& stream, VariantDictionary& vd);
 
@@ -144,10 +145,10 @@ private:
 };
 
 template <typename T>
-bool VariantDictionary::Get(const std::string& key, T& value) const noexcept {
+bool VariantDictionary::get(const std::string& key, T& value) const noexcept {
     if (key.empty()) return false;
     try {
-        auto vv = dict.at(key);
+        auto vv = mDict.at(key);
         value = boost::get<T>(vv);
     } catch(const std::exception&) {
         return false;
@@ -156,9 +157,9 @@ bool VariantDictionary::Get(const std::string& key, T& value) const noexcept {
 }
 
 template <typename T>
-void VariantDictionary::Set(const std::string& key, const T& value) {
+void VariantDictionary::set(const std::string& key, const T& value) {
     if (key.empty()) return;
-    dict[key] = value;
+    mDict[key] = value;
 }
 
 }

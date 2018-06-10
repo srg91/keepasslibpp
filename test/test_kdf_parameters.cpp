@@ -85,14 +85,14 @@ BOOST_AUTO_TEST_SUITE(test_kdf_parameters)
         BOOST_CHECK_EQUAL(kp.KdfUuid(), u);
 
         type::ByteVector kdf_uuid;
-        BOOST_CHECK(kp.Get<type::ByteVector>("$UUID", kdf_uuid));
+        BOOST_CHECK(kp.get<type::ByteVector>("$UUID", kdf_uuid));
         BOOST_CHECK(kdf_uuid == u.Bytes());
     }
 
     BOOST_AUTO_TEST_CASE(test_invalid_kdf_parameters) {
         auto statement = []{
             VariantDictionary vd;
-            auto bytes = vd.Serialize();
+            auto bytes = vd.serialize();
             auto kp = KdfParameters::DeserializeExt(bytes);
         };
         BOOST_CHECK_THROW(statement(), exception::InvalidKdfParametersError);

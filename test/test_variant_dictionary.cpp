@@ -121,7 +121,7 @@ struct VariantDictionarySerializationFixture {
 BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
     BOOST_FIXTURE_TEST_CASE(test_serialization_to_string,
                             VariantDictionarySerializationFixture) {
-        std::string result = sample_dict.Serialize();
+        std::string result = sample_dict.serialize();
         std::string expected = sample_bytes;
         BOOST_CHECK_EQUAL(result, expected);
     }
@@ -129,14 +129,14 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
     BOOST_FIXTURE_TEST_CASE(test_serialization_to_stream,
                             VariantDictionarySerializationFixture) {
         std::ostringstream stream;
-        sample_dict.Serialize(stream);
+    sample_dict.serialize(stream);
         std::string expected = sample_bytes;
         BOOST_CHECK_EQUAL(stream.str(), expected);
     }
 
     BOOST_FIXTURE_TEST_CASE(test_deserialization_from_string,
                             VariantDictionarySerializationFixture) {
-        auto vd = VariantDictionary::Deserialize(sample_bytes);
+        auto vd = VariantDictionary::deserialize(sample_bytes);
         // TODO: Implement << operator?
         BOOST_CHECK(vd == sample_dict);
     }
@@ -144,27 +144,27 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
     BOOST_FIXTURE_TEST_CASE(test_deserialization_from_stream,
                             VariantDictionarySerializationFixture) {
         std::istringstream stream(sample_bytes);
-        auto vd = VariantDictionary::Deserialize(stream);
+        auto vd = VariantDictionary::deserialize(stream);
         // TODO: Implement << operator?
         BOOST_CHECK(vd == sample_dict);
     }
 
     BOOST_AUTO_TEST_CASE(test_deserialization_empty_dictionary) {
         std::string s = {0x00, 0x01, 0x00};
-        auto vd = VariantDictionary::Deserialize(s);
-        BOOST_CHECK(vd.Empty());
-        BOOST_CHECK_EQUAL(vd.Size(), 0);
+        auto vd = VariantDictionary::deserialize(s);
+        BOOST_CHECK(vd.empty());
+        BOOST_CHECK_EQUAL(vd.size(), 0);
     }
 
     BOOST_AUTO_TEST_CASE(test_deserialization_empty_file) {
-        BOOST_CHECK_THROW(VariantDictionary::Deserialize(""), exception::FileCorruptedError);
+        BOOST_CHECK_THROW(VariantDictionary::deserialize(""), exception::FileCorruptedError);
     }
 
     BOOST_AUTO_TEST_CASE(test_deserialization_newest_file) {
         // Newest version - 0x02
         auto statement_newest_version = []{
             std::string s = {0x00, 0x02};
-            VariantDictionary::Deserialize(s);
+            VariantDictionary::deserialize(s);
         };
         BOOST_CHECK_THROW(statement_newest_version(), exception::NewVersionRequiredError);
 
@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
                 0x01,
                 0x00
             };
-            VariantDictionary::Deserialize(s);
+            VariantDictionary::deserialize(s);
         };
         BOOST_CHECK_THROW(statement_new_unknown_type(), exception::NewVersionRequiredError);
     }
@@ -187,7 +187,7 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
     BOOST_AUTO_TEST_CASE(test_deserialization_corrupted_type) {
         auto statement_corrupted_type = []{
             std::string s = {0x00, 0x01, -0x01};
-            VariantDictionary::Deserialize(s);
+            VariantDictionary::deserialize(s);
         };
         BOOST_CHECK_THROW(statement_corrupted_type(), exception::FileCorruptedError);
     }
@@ -202,25 +202,25 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
             0x01
             // 0x00 is expected
         };
-        BOOST_CHECK_THROW(VariantDictionary::Deserialize(s), exception::FileCorruptedError);
+        BOOST_CHECK_THROW(VariantDictionary::deserialize(s), exception::FileCorruptedError);
     }
 
     BOOST_AUTO_TEST_CASE(test_deserialization_unexpected_end_on_reading) {
         auto statement_failed_on_type = []{
             std::string s = {0x00, 0x01};
-            VariantDictionary::Deserialize(s);
+            VariantDictionary::deserialize(s);
         };
         BOOST_CHECK_THROW(statement_failed_on_type(), exception::FileCorruptedError);
 
         auto statement_failed_on_key_size = []{
             std::string s = {0x00, 0x01, 0x08, 0x04};
-            VariantDictionary::Deserialize(s);
+            VariantDictionary::deserialize(s);
         };
         BOOST_CHECK_THROW(statement_failed_on_key_size(), exception::FileCorruptedError);
 
         auto statement_failed_on_key = []{
             std::string s = {0x00, 0x01, 0x08, 0x04, 0x00, 0x00, 0x00, 'k', 'e', 'y'};
-            VariantDictionary::Deserialize(s);
+            VariantDictionary::deserialize(s);
         };
         BOOST_CHECK_THROW(statement_failed_on_key(), exception::FileCorruptedError);
 
@@ -232,7 +232,7 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
                 'b', 'o', 'o', 'l',
                 0x04
             };
-            VariantDictionary::Deserialize(s);
+            VariantDictionary::deserialize(s);
         };
         BOOST_CHECK_THROW(statement_failed_on_value_size(), exception::FileCorruptedError);
 
@@ -245,7 +245,7 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
                 0x04, 0x00, 0x00, 0x00,
                 'v', 'a', 'l'
             };
-            VariantDictionary::Deserialize(s);
+            VariantDictionary::deserialize(s);
         };
         BOOST_CHECK_THROW(statement_failed_on_value(), exception::FileCorruptedError);
     }
@@ -253,52 +253,52 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
     BOOST_FIXTURE_TEST_CASE(test_get_bool,
                             VariantDictionarySerializationFixture) {
         bool result;
-        BOOST_CHECK(sample_dict.Get("true_bool", result));
+        BOOST_CHECK(sample_dict.get("true_bool", result));
         BOOST_CHECK(result);
 
-        BOOST_CHECK(sample_dict.Get("false_bool", result));
+        BOOST_CHECK(sample_dict.get("false_bool", result));
         BOOST_CHECK(!result);
     }
 
     BOOST_FIXTURE_TEST_CASE(test_get_int32,
                             VariantDictionarySerializationFixture) {
         std::int32_t result;
-        BOOST_CHECK(sample_dict.Get("int32", result));
+        BOOST_CHECK(sample_dict.get("int32", result));
         BOOST_CHECK_EQUAL(result, 0x12345678);
     }
 
     BOOST_FIXTURE_TEST_CASE(test_get_int64,
                             VariantDictionarySerializationFixture) {
         std::int64_t result;
-        BOOST_CHECK(sample_dict.Get("int64", result));
+        BOOST_CHECK(sample_dict.get("int64", result));
         BOOST_CHECK_EQUAL(result, 0x1234567887654321);
     }
 
     BOOST_FIXTURE_TEST_CASE(test_get_uint32,
                             VariantDictionarySerializationFixture) {
         std::uint32_t result;
-        BOOST_CHECK(sample_dict.Get("uint32", result));
+        BOOST_CHECK(sample_dict.get("uint32", result));
         BOOST_CHECK_EQUAL(result, 0x12345678);
     }
 
     BOOST_FIXTURE_TEST_CASE(test_get_uint64,
                             VariantDictionarySerializationFixture) {
         std::uint64_t result;
-        BOOST_CHECK(sample_dict.Get("uint64", result));
+        BOOST_CHECK(sample_dict.get("uint64", result));
         BOOST_CHECK_EQUAL(result, 0x1234567887654321);
     }
 
     BOOST_FIXTURE_TEST_CASE(test_get_string,
                             VariantDictionarySerializationFixture) {
         std::string result;
-        BOOST_CHECK(sample_dict.Get<std::string>("string", result));
+        BOOST_CHECK(sample_dict.get<std::string>("string", result));
         BOOST_CHECK_EQUAL(result, "hello, world");
     }
 
     BOOST_FIXTURE_TEST_CASE(test_get_bytes,
                             VariantDictionarySerializationFixture) {
         type::ByteVector result;
-        BOOST_CHECK(sample_dict.Get("bytes", result));
+        BOOST_CHECK(sample_dict.get("bytes", result));
 
         type::ByteVector expected = {
             'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd'
@@ -309,15 +309,15 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
     BOOST_AUTO_TEST_CASE(test_get_nothing) {
         VariantDictionary vd;
         std::int32_t value;
-        bool success = vd.Get<std::int32_t>("unknown_key", value);
+        bool success = vd.get<std::int32_t>("unknown_key", value);
         BOOST_CHECK(!success);
     }
 
     BOOST_AUTO_TEST_CASE(test_set_bool) {
         VariantDictionary vd;
-        vd.Set<bool>("key", true);
+    vd.set<bool>("key", true);
 
-        std::string result = vd.Serialize();
+        std::string result = vd.serialize();
         // TODO: Cut version and end None?
         std::string expected = {
             0x00, 0x01,
@@ -333,9 +333,9 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
 
     BOOST_AUTO_TEST_CASE(test_set_int32) {
         VariantDictionary vd;
-        vd.Set<std::int32_t>("key", 0x12345678);
+    vd.set<std::int32_t>("key", 0x12345678);
 
-        std::string result = vd.Serialize();
+        std::string result = vd.serialize();
         std::string expected = {
             0x00, 0x01,
             0x0c,
@@ -363,9 +363,9 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
 
     BOOST_AUTO_TEST_CASE(test_set_int64) {
         VariantDictionary vd;
-        vd.Set<std::int64_t>("key", 0x1234567887654321);
+    vd.set<std::int64_t>("key", 0x1234567887654321);
 
-        std::string result = vd.Serialize();
+        std::string result = vd.serialize();
         std::string expected = {
             0x00, 0x01,
             0x0d,
@@ -380,9 +380,9 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
 
     BOOST_AUTO_TEST_CASE(test_set_uint32) {
         VariantDictionary vd;
-        vd.Set<std::uint32_t>("key", 0x12345678);
+    vd.set<std::uint32_t>("key", 0x12345678);
 
-        std::string result = vd.Serialize();
+        std::string result = vd.serialize();
         std::string expected = {
             0x00, 0x01,
             0x04,
@@ -397,9 +397,9 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
 
     BOOST_AUTO_TEST_CASE(test_set_uint64) {
         VariantDictionary vd;
-        vd.Set<std::uint64_t>("key", 0x1234567887654321);
+    vd.set<std::uint64_t>("key", 0x1234567887654321);
 
-        std::string result = vd.Serialize();
+        std::string result = vd.serialize();
         std::string expected = {
             0x00, 0x01,
             0x05,
@@ -414,9 +414,9 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
 
     BOOST_AUTO_TEST_CASE(test_set_string) {
         VariantDictionary vd;
-        vd.Set<std::string>("key", "hello");
+    vd.set<std::string>("key", "hello");
 
-        std::string result = vd.Serialize();
+        std::string result = vd.serialize();
         std::string expected = {
             0x00, 0x01,
             0x18,
@@ -433,9 +433,9 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
         VariantDictionary vd;
 
         type::ByteVector bytes = {'h', 'e', 'l', 'l', 'o'};
-        vd.Set("key", bytes);
+    vd.set("key", bytes);
 
-        std::string result = vd.Serialize();
+        std::string result = vd.serialize();
         std::string expected = {
             0x00, 0x01,
             0x42,
@@ -450,42 +450,42 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
 
     BOOST_AUTO_TEST_CASE(test_empty_dictionary) {
         VariantDictionary vd;
-        BOOST_CHECK(vd.Empty());
-        BOOST_CHECK_EQUAL(vd.Size(), 0);
+        BOOST_CHECK(vd.empty());
+        BOOST_CHECK_EQUAL(vd.size(), 0);
     }
 
     BOOST_AUTO_TEST_CASE(test_non_empty_dictionary) {
         VariantDictionary vd;
-        vd.Set<std::int32_t>("some int", 123456);
-        vd.Set<std::string>("some string", "hello, world");
-        vd.Set<bool>("some bool", true);
-        BOOST_CHECK(!vd.Empty());
-        BOOST_CHECK_EQUAL(vd.Size(), 3);
+    vd.set<std::int32_t>("some int", 123456);
+    vd.set<std::string>("some string", "hello, world");
+    vd.set<bool>("some bool", true);
+        BOOST_CHECK(!vd.empty());
+        BOOST_CHECK_EQUAL(vd.size(), 3);
     }
 
     BOOST_AUTO_TEST_CASE(test_erase) {
         VariantDictionary vd;
-        vd.Set<std::int32_t>("some int", 123456);
-        BOOST_CHECK_EQUAL(vd.Size(), 1);
+    vd.set<std::int32_t>("some int", 123456);
+        BOOST_CHECK_EQUAL(vd.size(), 1);
 
-        vd.Erase("some int");
-        BOOST_CHECK(vd.Empty());
+    vd.erase("some int");
+        BOOST_CHECK(vd.empty());
 
-        vd.Set<std::int32_t>("some int", 123456);
-        vd.Set<std::string>("some string", "hello, world");
-        BOOST_CHECK_EQUAL(vd.Size(), 2);
-        vd.Erase("some string");
-        BOOST_CHECK_EQUAL(vd.Size(), 1);
+    vd.set<std::int32_t>("some int", 123456);
+    vd.set<std::string>("some string", "hello, world");
+        BOOST_CHECK_EQUAL(vd.size(), 2);
+    vd.erase("some string");
+        BOOST_CHECK_EQUAL(vd.size(), 1);
     }
 
     BOOST_AUTO_TEST_CASE(test_clear) {
         VariantDictionary vd;
-        vd.Set<std::int32_t>("some int", 123456);
-        vd.Set<std::string>("some string", "hello, world");
-        BOOST_CHECK(!vd.Empty());
+    vd.set<std::int32_t>("some int", 123456);
+    vd.set<std::string>("some string", "hello, world");
+        BOOST_CHECK(!vd.empty());
 
-        vd.Clear();
-        BOOST_CHECK(vd.Empty());
+    vd.clear();
+        BOOST_CHECK(vd.empty());
     }
 
     BOOST_AUTO_TEST_CASE(test_equal) {
@@ -502,11 +502,11 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
     BOOST_AUTO_TEST_CASE(test_index) {
         VariantDictionary vd;
         vd["bool"] = true;
-        BOOST_CHECK(!vd.Empty());
-        BOOST_CHECK_EQUAL(vd.Size(), 1);
+        BOOST_CHECK(!vd.empty());
+        BOOST_CHECK_EQUAL(vd.size(), 1);
 
         bool result;
-        BOOST_CHECK(vd.Get("bool", result));
+        BOOST_CHECK(vd.get("bool", result));
         BOOST_CHECK(result);
 
         auto mapped_value = vd["bool"];
@@ -519,10 +519,10 @@ BOOST_AUTO_TEST_SUITE(test_variant_dictionary)
 
     BOOST_AUTO_TEST_CASE(test_count) {
         VariantDictionary vd;
-        BOOST_CHECK_EQUAL(vd.Count("bool"), 0);
+        BOOST_CHECK_EQUAL(vd.count("bool"), 0);
 
         vd["bool"] = true;
-        BOOST_CHECK_EQUAL(vd.Count("bool"), 1);
-        BOOST_CHECK_EQUAL(vd.Count("another"), 0);
+        BOOST_CHECK_EQUAL(vd.count("bool"), 1);
+        BOOST_CHECK_EQUAL(vd.count("another"), 0);
     }
 BOOST_AUTO_TEST_SUITE_END()

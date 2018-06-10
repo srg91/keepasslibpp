@@ -19,7 +19,7 @@ const std::string AesKdf::ParamSeed = "S";
 
 KdfParameters AesKdf::GetDefaultParameters() const  {
     KdfParameters kp = KdfEngine::GetDefaultParameters();
-    kp.Set(ParamRounds, DEFAULT_KEY_ENCRYPTION_ROUNDS);
+    kp.set(ParamRounds, DEFAULT_KEY_ENCRYPTION_ROUNDS);
     return kp;
 }
 
@@ -30,11 +30,11 @@ void AesKdf::Randomize(KdfParameters& kp) const {
 
 type::ByteVector AesKdf::Transform(type::ByteVector msg, const KdfParameters& kp) const {
     std::uint64_t rounds;
-    if (!kp.Get<std::uint64_t>(ParamRounds, rounds))
+    if (!kp.get<std::uint64_t>(ParamRounds, rounds))
         throw exception::ArgumentNullException("rounds");
 
     type::ByteVector seed;
-    if (!kp.Get<type::ByteVector>(ParamSeed, seed))
+    if (!kp.get<type::ByteVector>(ParamSeed, seed))
         throw exception::ArgumentNullException("seed");
 
     // TODO: something without copy??

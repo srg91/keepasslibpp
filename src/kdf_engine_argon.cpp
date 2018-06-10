@@ -55,13 +55,13 @@ void Argon2Kdf::Randomize(keepasslibpp::KdfParameters& kp) const {
 
 type::ByteVector Argon2Kdf::Transform(keepasslibpp::type::ByteVector msg, const keepasslibpp::KdfParameters& kp) const {
     std::uint32_t version;
-    if (!kp.Get<std::uint32_t>(ParamVersion, version))
+    if (!kp.get<std::uint32_t>(ParamVersion, version))
         throw exception::ArgumentNullException("version");
     if ((version < minVersion) || (version > maxVersion))
         throw exception::ArgumentOutOfRangeException("version");
 
     type::ByteVector salt;
-    if (!kp.Get<type::ByteVector>(ParamSalt, salt))
+    if (!kp.get<type::ByteVector>(ParamSalt, salt))
         throw exception::ArgumentNullException("salt");
     // TODO: ???
     if ((salt.size() < minSalt) || (salt.size() > maxSalt))
@@ -69,28 +69,28 @@ type::ByteVector Argon2Kdf::Transform(keepasslibpp::type::ByteVector msg, const 
 
     // TODO: Can we simplify this?
     std::uint32_t parallelism;
-    if (!kp.Get<std::uint32_t>(ParamParallelism, parallelism))
+    if (!kp.get<std::uint32_t>(ParamParallelism, parallelism))
         throw exception::ArgumentNullException("parallelism");
     if ((parallelism < minParallelism) || (parallelism > maxParallelism))
         throw exception::ArgumentOutOfRangeException("parallelism");
 
     std::uint64_t memory;
-    if (!kp.Get<std::uint64_t>(ParamMemory, memory))
+    if (!kp.get<std::uint64_t>(ParamMemory, memory))
         throw exception::ArgumentNullException("memory");
     if ((memory < minMemory) || (memory > maxMemory))
         throw exception::ArgumentOutOfRangeException("memory");
 
     std::uint64_t iterations;
-    if (!kp.Get<std::uint64_t>(ParamIterations, iterations))
+    if (!kp.get<std::uint64_t>(ParamIterations, iterations))
         throw exception::ArgumentNullException("iterations");
     if ((iterations < minIterations) || (iterations > maxIterations))
         throw exception::ArgumentOutOfRangeException("iterations");
 
     // TODO: Add checks?
     type::ByteVector secret_key;
-    kp.Get<type::ByteVector>(ParamSecretKey, secret_key);
+    kp.get<type::ByteVector>(ParamSecretKey, secret_key);
     type::ByteVector assoc_data;
-    kp.Get<type::ByteVector>(ParamAssocData, assoc_data);
+    kp.get<type::ByteVector>(ParamAssocData, assoc_data);
 
     // TODO: What about memory? Shod we clear smthg
     // TODO: change 32 to const?

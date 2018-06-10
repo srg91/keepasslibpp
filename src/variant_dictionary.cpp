@@ -9,30 +9,32 @@
 
 using namespace keepasslibpp;
 
-bool VariantDictionary::Empty() const {
-    return dict.empty();
+namespace keepasslibpp {
+
+bool VariantDictionary::empty() const {
+    return mDict.empty();
 }
 
-VariantDictionary::size_type VariantDictionary::Count(const VariantDictionary::key_type& key) const {
-    return dict.count(key);
+VariantDictionary::size_type VariantDictionary::count(const VariantDictionary::key_type& key) const {
+    return mDict.count(key);
 }
 
-std::size_t VariantDictionary::Size() const {
-    return dict.size();
+std::size_t VariantDictionary::size() const {
+    return mDict.size();
 }
 
-void VariantDictionary::Erase(const std::string& key) {
-    dict.erase(key);
+void VariantDictionary::erase(const std::string& key) {
+    mDict.erase(key);
 }
 
-void VariantDictionary::Clear() {
-    dict.clear();
+void VariantDictionary::clear() {
+    mDict.clear();
 }
 
-std::ostream& VariantDictionary::Serialize(std::ostream& stream) const {
-    mem_util::Write<uint16_t>(stream, vd_version);
+std::ostream& VariantDictionary::serialize(std::ostream& stream) const {
+    mem_util::Write<uint16_t>(stream, kVdVersion);
 
-    for (const auto& item : dict) {
+    for (const auto& item : mDict) {
         // write type id
         auto gv = guess_type_visitor();
         serialization_type value_type = item.second.apply_visitor(gv);
@@ -50,13 +52,13 @@ std::ostream& VariantDictionary::Serialize(std::ostream& stream) const {
     mem_util::Write(stream, static_cast<std::uint8_t>(serialization_type::None));
 }
 
-std::string VariantDictionary::Serialize() const {
+std::string VariantDictionary::serialize() const {
     std::ostringstream stream;
-    VariantDictionary::Serialize(stream);
+    VariantDictionary::serialize(stream);
     return stream.str();
 }
 
-VariantDictionary VariantDictionary::Deserialize(std::istream& stream) {
+VariantDictionary VariantDictionary::deserialize(std::istream& stream) {
     VariantDictionary vd;
     try {
         deserialize(stream, vd);
@@ -69,7 +71,7 @@ VariantDictionary VariantDictionary::Deserialize(std::istream& stream) {
 
 void VariantDictionary::deserialize(std::istream& stream, keepasslibpp::VariantDictionary& vd) {
     auto version = mem_util::Read<std::uint16_t>(stream);
-    if ((version & vdm_critical) > (vd_version & vdm_critical))
+    if ((version & kVdmCritical) > (kVdVersion & kVdmCritical))
         // TODO: Add error message?
         throw exception::NewVersionRequiredError();
 
@@ -117,21 +119,21 @@ void VariantDictionary::deserialize(std::istream& stream, keepasslibpp::VariantD
     }
 }
 
-VariantDictionary VariantDictionary::Deserialize(const std::string& bytes) {
+VariantDictionary VariantDictionary::deserialize(const std::string& bytes) {
     std::istringstream stream(bytes);
-    return VariantDictionary::Deserialize(stream);
+    return VariantDictionary::deserialize(stream);
 }
 
 VariantDictionary::mapped_type& VariantDictionary::operator [](const VariantDictionary::key_type& index) {
-    return dict[index];
+    return mDict[index];
 }
 
 const VariantDictionary::mapped_type& VariantDictionary::operator [](const keepasslibpp::VariantDictionary::key_type& index) const {
-    return dict.at(index);
+    return mDict.at(index);
 }
 
-namespace keepasslibpp {
-    bool operator ==(const VariantDictionary& left, const VariantDictionary& right) {
-        return left.dict == right.dict;
-    }
+bool operator ==(const VariantDictionary& left, const VariantDictionary& right) {
+    return left.mDict == right.mDict;
+}
+
 }

@@ -54,12 +54,12 @@ public:
     Uuid(const type::ByteVector& b);
     Uuid(type::ByteVector&& b);
 
-    // Get the 16 UUID ByteVector.
+    // get the 16 UUID ByteVector.
     type::ByteVector Bytes() const;
-    // Get the 16 UUID ByteVector string.
+    // get the 16 UUID ByteVector string.
     std::string ByteString() const;
     // TODO: Optional separators?
-    // Get the 32 hexadecimal digits in five groups separated by hyphens.
+    // get the 32 hexadecimal digits in five groups separated by hyphens.
     std::string ToString() const;
     // Hash of current UUID
     inline std::size_t Hash() const { return boost::uuids::hash_value(uuid); };

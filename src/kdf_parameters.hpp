@@ -14,7 +14,7 @@ class KdfParameters final : public VariantDictionary {
 public:
     KdfParameters() = delete;
     explicit KdfParameters(const Uuid& uuid) : kdf_uuid(uuid) {
-        Set<type::ByteVector>(uuid_key, uuid.Bytes());
+        set<type::ByteVector>(uuid_key, uuid.Bytes());
     };
     KdfParameters(VariantDictionary&& vd)
         : VariantDictionary(std::forward<VariantDictionary>(vd))

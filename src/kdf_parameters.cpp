@@ -11,21 +11,21 @@ const std::string KdfParameters::uuid_key = "$UUID";
 
 Uuid KdfParameters::extractUuid() {
     type::ByteVector uuid_bytes;
-    if (!Get<type::ByteVector>(uuid_key, uuid_bytes))
+    if (!get<type::ByteVector>(uuid_key, uuid_bytes))
         throw exception::InvalidKdfParametersError();
     return uuid_bytes;
 }
 
 std::string KdfParameters::SerializeExt() const {
-    return VariantDictionary::Serialize();
+    return VariantDictionary::serialize();
 }
 
 std::ostream& KdfParameters::SerializeExt(std::ostream& stream) const {
-    return VariantDictionary::Serialize(stream);
+    return VariantDictionary::serialize(stream);
 }
 
 KdfParameters KdfParameters::DeserializeExt(std::istream& stream) {
-    return VariantDictionary::Deserialize(stream);
+    return VariantDictionary::deserialize(stream);
 }
 
 KdfParameters KdfParameters::DeserializeExt(const std::string& bytes) {

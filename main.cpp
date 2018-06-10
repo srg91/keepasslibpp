@@ -47,8 +47,8 @@ int main() {
 //
 //    keepasslibpp::AesKdf aes_kdf;
 //    keepasslibpp::KdfParameters aes_kp(aes_kdf.GetUuid());
-//    aes_kp.Set<keepasslibpp::type::ByteVector>("S", S);
-//    aes_kp.Set<std::uint64_t>("R", 6000);
+//    aes_kp.set<keepasslibpp::type::ByteVector>("S", S);
+//    aes_kp.set<std::uint64_t>("R", 6000);
 //
 //    cout << "AES: " << aes_kdf.Transform(msg, aes_kp) << endl;
 //
@@ -88,7 +88,7 @@ int main() {
 //        {'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd'}
 //    );
 //
-//    f << sample_dict.Serialize();
+//    f << sample_dict.serialize();
 //    f.close();
 
 //    vt v = true;
@@ -144,7 +144,7 @@ int main() {
 //    gcry_md_close(handle);
 //    auto end = chrono::steady_clock::now();
 //    auto ns = chrono::duration_cast<chrono::nanoseconds>(end - start);
-//    cout << "Count: " << (ns / n).count() << " ns/op" << endl;
+//    cout << "count: " << (ns / n).count() << " ns/op" << endl;
 //    cout << "Text: " << dest <<endl;
     return 0;
 }

@@ -123,7 +123,7 @@ enum class PwIcon {
         Count
 };
 
-// TODO: Get rid of this
+// TODO: get rid of this
 // ProxyServerType
 // ProxyAuthType
 
@@ -166,7 +166,7 @@ enum class MemProtCmpMode {
 enum class PwCompareOptions {
     None,
 
-    // Empty standard string fields are considered to be the
+    // empty standard string fields are considered to be the
     // same as non-existing standard string fields.
     // This doesn't affect custom string comparisons.
         NullEmptyEquivStd,
@@ -181,10 +181,10 @@ enum class PwCompareOptions {
     // TODO: IgnoreTimes = (IgnoreLastAccess | IgnoreLastMod)
 };
 
-// TODO: Get rid of it
+// TODO: get rid of it
 // IOAccessType
 
-// TODO: Get rid of it
+// TODO: get rid of it
 namespace AppRunFlags {
     enum AppRunFlags {
         None = 0,
@@ -204,7 +204,7 @@ enum class ScaleTransformFlags {
         UIIcon
 };
 
-// TODO: Get rid of it
+// TODO: get rid of it
 enum class DesktopType {
     None,
     Windows,
