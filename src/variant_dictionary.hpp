@@ -3,15 +3,13 @@
 #include "mem_util.hpp"
 #include "typedefs.hpp"
 
-#include <boost/variant/get.hpp>
-#include <boost/variant/variant.hpp>
-
 #include <cstdint>
 #include <iostream>
 #include <map>
 #include <string>
 #include <type_traits>
 #include <utility>
+#include <variant>
 #include <vector>
 
 namespace keepasslibpp {
@@ -21,16 +19,15 @@ class VariantDictionary {
 public:
     // TODO: Rename this all stuff?
     using key_type = std::string;
-    using mapped_type = boost::variant<
+    using mapped_type = std::variant<
         bool, std::int32_t, std::int64_t, std::uint32_t, std::uint64_t,
         std::string, type::ByteVector
     >;
     using value_type = std::pair<key_type, mapped_type>;
-
     using size_type = std::map<key_type, mapped_type>::size_type;
-
-    using iterator = std::map<key_type, mapped_type>::iterator;
-    using const_iterator = std::map<key_type, mapped_type>::const_iterator;
+//
+//    using iterator = std::map<key_type, mapped_type>::iterator;
+//    using const_iterator = std::map<key_type, mapped_type>::const_iterator;
 
 //    iterator begin() { return mDict.begin(); }
 //    const_iterator begin() const { return mDict.begin(); }
@@ -61,13 +58,15 @@ public:
     mapped_type& operator [](const key_type& index);
     const mapped_type& operator [](const key_type& index) const;
 
-    friend bool operator ==(const VariantDictionary& left, const VariantDictionary& right);
+    friend bool operator ==(const VariantDictionary& left,
+                            const VariantDictionary& right);
 private:
     static const uint16_t kVdVersion = 0x0100;
     static const uint16_t kVdmCritical = 0xff00;
 //    static const uint16_t kVdmInfo = 0x00ff;
 
-    enum class serialization_type : std::int8_t {
+    // TODO: Rename
+    enum class ValueTypeId : std::int8_t {
         None = 0x00,
         UInt32 = 0x04,
         UInt64 = 0x05,
@@ -82,48 +81,36 @@ private:
 
     static void deserialize(std::istream& stream, VariantDictionary& vd);
 
-    struct guess_type_visitor : public boost::static_visitor<serialization_type>
+    // TODO: Can we move it from header?
+    struct guess_type_visitor
     {
-        // TODO: Or many small operators?
-        template <typename T>
-        serialization_type operator ()(const T& value) const {
-            if (std::is_same<T, bool>::value) {
-                return serialization_type::Bool;
-            } else if (std::is_same<T, std::int32_t>::value) {
-                return serialization_type::Int32;
-            } else if (std::is_same<T, std::int64_t>::value) {
-                return serialization_type::Int64;
-            } else if (std::is_same<T, std::uint32_t>::value) {
-                return serialization_type::UInt32;
-            } else if (std::is_same<T, std::uint64_t>::value) {
-                return serialization_type::UInt64;
-            } else if (std::is_same<T, std::string>::value) {
-                return serialization_type::String;
-            } else if (std::is_same<T, type::ByteVector>::value) {
-                return serialization_type::ByteArray;
-            } else {
-                return serialization_type::None;
-            }
-        }
+        ValueTypeId operator () (bool) { return ValueTypeId::Bool; }
+        ValueTypeId operator () (std::int32_t) { return ValueTypeId::Int32; }
+        ValueTypeId operator () (std::int64_t) { return ValueTypeId::Int64; }
+        ValueTypeId operator () (std::uint32_t) { return ValueTypeId::UInt32; }
+        ValueTypeId operator () (std::uint64_t) { return ValueTypeId::UInt64; }
+        ValueTypeId operator () (const std::string&)
+            { return ValueTypeId::String; }
+        ValueTypeId operator () (const type::ByteVector&)
+            { return ValueTypeId::ByteArray; }
     };
 
-    struct write_value_visitor : public boost::static_visitor<>
+    // TODO: Can we move it from header?
+    struct write_value_visitor
     {
         std::ostream& stream;
         explicit write_value_visitor(std::ostream& stream) : stream(stream) {}
 
-        // TODO: Rework this!!
-        template <typename T, typename = std::enable_if_t<std::is_trivial<T>::value>>
-        std::size_t guess_size(const T& value) const {
-            return sizeof(T);
-        }
+        template <
+            typename T,
+            typename = std::enable_if_t<std::is_trivial<T>::value>
+        >
+        std::size_t guess_size(T) const { return sizeof(T);}
 
-        // TODO: Rework this!!
         std::size_t guess_size(const std::string& value) const {
             return value.size();
         }
 
-        // TODO: Rework this!!
         std::size_t guess_size(const type::ByteVector& value) const {
             return value.size();
         }
@@ -149,7 +136,7 @@ bool VariantDictionary::get(const std::string& key, T& value) const noexcept {
     if (key.empty()) return false;
     try {
         auto vv = mDict.at(key);
-        value = boost::get<T>(vv);
+        value = std::get<T>(vv);
     } catch(const std::exception&) {
         return false;
     }

@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <iostream>
 #include <sstream>
+#include <variant>
 
 using namespace keepasslibpp;
 
@@ -34,22 +35,20 @@ void VariantDictionary::clear() {
 std::ostream& VariantDictionary::serialize(std::ostream& stream) const {
     mem_util::Write<uint16_t>(stream, kVdVersion);
 
-    for (const auto& item : mDict) {
+    for (const auto& [key, value] : mDict) {
         // write type id
-        auto gv = guess_type_visitor();
-        serialization_type value_type = item.second.apply_visitor(gv);
+        ValueTypeId value_type = std::visit(guess_type_visitor(), value);
         mem_util::Write(stream, static_cast<std::uint8_t>(value_type));
 
         // write key
-        mem_util::Write(stream, static_cast<std::int32_t>(item.first.size()));
-        mem_util::Write(stream, item.first);
+        mem_util::Write(stream, static_cast<std::int32_t>(key.size()));
+        mem_util::Write(stream, key);
 
         // write value
-        auto wv = write_value_visitor(stream);
-        item.second.apply_visitor(wv);
+        std::visit(write_value_visitor(stream), value);
     }
 
-    mem_util::Write(stream, static_cast<std::uint8_t>(serialization_type::None));
+    mem_util::Write(stream, static_cast<std::uint8_t>(ValueTypeId::None));
 }
 
 std::string VariantDictionary::serialize() const {
@@ -78,8 +77,8 @@ void VariantDictionary::deserialize(std::istream& stream, keepasslibpp::VariantD
     for (;;) {
         // TODO: Add error message?
         if (stream.peek() < 0) throw exception::FileCorruptedError();
-        auto value_type = static_cast<serialization_type>(mem_util::Read<std::int8_t>(stream));
-        if (value_type == serialization_type::None) break;
+        auto value_type = static_cast<ValueTypeId>(mem_util::Read<std::int8_t>(stream));
+        if (value_type == ValueTypeId::None) break;
 
         auto key_size = mem_util::Read<std::int32_t>(stream);
         auto key = mem_util::Read<std::string>(stream, static_cast<std::size_t>(key_size));
@@ -87,25 +86,25 @@ void VariantDictionary::deserialize(std::istream& stream, keepasslibpp::VariantD
 
         mapped_type value;
         switch (value_type) {
-            case serialization_type::Bool:
+            case ValueTypeId::Bool:
                 value = mem_util::Read<bool>(stream);
                 break;
-            case serialization_type::Int32:
+            case ValueTypeId::Int32:
                 value = mem_util::Read<std::int32_t>(stream);
                 break;
-            case serialization_type::Int64:
+            case ValueTypeId::Int64:
                 value = mem_util::Read<std::int64_t>(stream);
                 break;
-            case serialization_type::UInt32:
+            case ValueTypeId::UInt32:
                 value = mem_util::Read<std::uint32_t>(stream);
                 break;
-            case serialization_type::UInt64:
+            case ValueTypeId::UInt64:
                 value = mem_util::Read<std::uint64_t>(stream);
                 break;
-            case serialization_type::String:
+            case ValueTypeId::String:
                 value = mem_util::Read<std::string>(stream, value_size);
                 break;
-            case serialization_type::ByteArray:
+            case ValueTypeId::ByteArray:
                 value = mem_util::Read<type::ByteVector>(stream, value_size);
                 break;
             default:

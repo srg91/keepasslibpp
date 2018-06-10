@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(keepasslib)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 if (${CMAKE_BUILD_TYPE} STREQUAL Release)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
@@ -14,12 +14,6 @@ endif()
 #endif()
 
 # Add additional libriaries
-find_package(Boost REQUIRED)
-include_directories(${Boost_INCLUDE_DIR})
-
-# TODO: Can we lib to libgcrypt20?
-find_package(OpenSSL REQUIRED)
-include_directories(${OPENSSL_INCLUDE_DIR})
 
 #find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 #find_package(Boost COMPONENTS unit_test_framework system)
