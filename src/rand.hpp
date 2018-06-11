@@ -6,8 +6,9 @@ namespace keepasslibpp {
 
 class Rand {
 public:
-    static void fillRandom(void* buffer, std::size_t length);
-    static void fillStrongRandom(void* buffer, std::size_t length);
+    // TODO: Change to iterators?
+    static void fillRandom(void* buffer, std::size_t size);
+    static void fillStrongRandom(void* buffer, std::size_t size);
 };
 
 }

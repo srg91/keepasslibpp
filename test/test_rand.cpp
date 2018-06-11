@@ -8,7 +8,7 @@
 
 using namespace keepasslibpp;
 
-TEST(TestRand, fillRandom) {
+TEST(TestRand, FillRandom) {
     const std::size_t COUNT = 32;
 
     type::ByteVector bytes(COUNT);
@@ -25,7 +25,7 @@ TEST(TestRand, fillRandom) {
     EXPECT_NE(value, 0);
 }
 
-TEST(TestRand, fillStrongRandom) {
+TEST(TestRand, FillStrongRandom) {
     const std::size_t COUNT = 32;
 
     type::ByteVector bytes(COUNT);

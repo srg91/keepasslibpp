@@ -4,12 +4,12 @@
 
 namespace keepasslibpp {
 
-void Rand::fillRandom(void* buffer, std::size_t length) {
-    gcry_create_nonce(buffer, length);
+void Rand::fillRandom(void* buffer, std::size_t size) {
+    gcry_create_nonce(buffer, size);
 }
 
-void Rand::fillStrongRandom(void* buffer, std::size_t length) {
-    gcry_randomize(buffer, length, GCRY_STRONG_RANDOM);
+void Rand::fillStrongRandom(void* buffer, std::size_t size) {
+    gcry_randomize(buffer, size, GCRY_STRONG_RANDOM);
 }
 
 }
