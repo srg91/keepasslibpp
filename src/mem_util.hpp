@@ -23,6 +23,7 @@ inline void assert_read_enough(T actual, U expected) {
         std::ostringstream errs("keepasslibpp::mem_util::Read: "
                                 "not enough ByteVector: ");
         errs << "expected " << expected << " != " << actual;
+        // TODO: change to keepasslibpp exception
         throw std::length_error(errs.str());
     }
 }
@@ -42,7 +43,7 @@ template <typename T>
 T Read(std::istream& stream, std::size_t size) {
     T value;
     value.resize(size);
-    stream.read(reinterpret_cast<char *>(&value[0]), size);
+    stream.read(reinterpret_cast<char *>(value.data()), size);
     assert_read_enough(stream.gcount(), size);
     return value;
 }

@@ -48,12 +48,12 @@ KdfParameters Argon2Kdf::GetDefaultParameters() const {
     return kp;
 }
 
-void Argon2Kdf::Randomize(keepasslibpp::KdfParameters& kp) const {
+void Argon2Kdf::Randomize(KdfParameters& kp) const {
     // TODO: Sha256DigestLength?
     kp[ParamSalt] = CryptoUtil::getRandomBytes(CryptoUtil::Sha256DigestLength);
 }
 
-type::ByteVector Argon2Kdf::Transform(keepasslibpp::type::ByteVector msg, const keepasslibpp::KdfParameters& kp) const {
+type::ByteVector Argon2Kdf::Transform(type::ByteVector msg, const KdfParameters& kp) const {
     std::uint32_t version;
     if (!kp.get<std::uint32_t>(ParamVersion, version))
         throw exception::ArgumentNullException("version");
@@ -100,10 +100,10 @@ type::ByteVector Argon2Kdf::Transform(keepasslibpp::type::ByteVector msg, const 
     );
 }
 
-type::ByteVector Argon2Kdf::transformKey(keepasslibpp::type::ByteVector msg, keepasslibpp::type::ByteVector salt,
+type::ByteVector Argon2Kdf::transformKey(type::ByteVector msg, type::ByteVector salt,
                                      std::uint32_t parallelism, std::uint64_t memory, std::uint64_t iterations,
                                      std::size_t result_size, std::uint32_t version,
-                                     keepasslibpp::type::ByteVector secret_key, keepasslibpp::type::ByteVector assoc_data) const {
+                                     type::ByteVector secret_key, type::ByteVector assoc_data) const {
     // TODO: use secret key?
     // TODO: use assoc_data?
     // TODO: check version?

@@ -70,7 +70,7 @@ VariantDictionary VariantDictionary::deserialize(std::istream& stream) {
 }
 
 void VariantDictionary::deserialize(std::istream& stream,
-                                    keepasslibpp::VariantDictionary& vd) {
+                                    VariantDictionary& vd) {
     auto version = mem_util::Read<std::uint16_t>(stream);
     if ((version & vdmCritical) > (vdVersion & vdmCritical))
         // TODO: Add error message?
@@ -134,7 +134,7 @@ VariantDictionary::mapped_type& VariantDictionary::operator [] (
 }
 
 const VariantDictionary::mapped_type& VariantDictionary::operator [] (
-        const keepasslibpp::VariantDictionary::key_type& index) const {
+        const VariantDictionary::key_type& index) const {
     return dict.at(index);
 }
 

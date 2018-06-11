@@ -1,11 +1,7 @@
-//
-// Created by srg91 on 16.04.2018.
-//
-
+#include "rand.hpp"
+#include "typedefs.hpp"
 #include "uuid.hpp"
 
-#include "crypto_util.hpp"
-#include "typedefs.hpp"
 #include <array>
 #include <algorithm>
 #include <functional>
@@ -20,7 +16,7 @@
 namespace keepasslibpp {
 
 // TODO: Template? Inline?
-Uuid Uuid::fromByteVector(const keepasslibpp::type::ByteVector& bv) {
+Uuid Uuid::fromByteVector(const type::ByteVector& bv) {
     return Uuid(bv.begin(), bv.end());
 }
 
@@ -55,7 +51,7 @@ std::string Uuid::hex() const {
 Uuid::uuid_t Uuid::createNew() noexcept {
     uuid_t u;
 
-    keepasslibpp::CryptoUtil::fillRandomBytes(&u[0], u.size());
+    Rand::fillRandom(u.data(), u.size());
 
     // set variant as rfc4122
     u[8] &= 0xbf;
