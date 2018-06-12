@@ -18,3 +18,5 @@ type::ByteVector Rand::getRandomBytes(std::size_t count) {
     Rand::fillRandom(buffer.data(), buffer.size());
     return buffer;
 }
+
+}
