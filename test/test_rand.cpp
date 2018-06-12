@@ -41,3 +41,10 @@ TEST(TestRand, FillStrongRandom) {
     Rand::fillStrongRandom(reinterpret_cast<void *>(&value), 8);
     EXPECT_NE(value, 0);
 }
+
+TEST(TestRand, GetRandomBytes) {
+    type::ByteVector result = Rand::getRandomBytes(64);
+
+    EXPECT_EQ(result.size(), 64);
+    EXPECT_NE(result, type::ByteVector(64));
+}
