@@ -22,6 +22,7 @@
 #include <type_traits>
 #include <variant>
 #include <vector>
+#include <memory>
 
 using namespace std;
 //using namespace keepasslibpp;
