@@ -1,13 +1,11 @@
+#include "byte_vector.hpp"
 #include "crypto_util.hpp"
-
-//#include <openssl/rand.h>
-//#include <openssl/sha.h>
-#include <cstring>
-#include <algorithm>
 
 #include <gcrypt.h>
 
+#include <algorithm>
 #include <cstdint>
+#include <cstring>
 
 namespace keepasslibpp {
 
@@ -15,8 +13,8 @@ const std::size_t CryptoUtil::Sha256DigestLength = gcry_md_get_algo_dlen(
     GCRY_MD_SHA256);
 
 // TODO: Add exceptions
-type::ByteVector CryptoUtil::hashSha256(const type::ByteVector& data) {
-    type::ByteVector result_data(Sha256DigestLength);
+ByteVector CryptoUtil::hashSha256(const ByteVector& data) {
+    ByteVector result_data(Sha256DigestLength);
 
     // TODO: move to construct
     gcry_md_hd_t handle;
@@ -46,8 +44,8 @@ type::ByteVector CryptoUtil::hashSha256(const type::ByteVector& data) {
 
 // TODO: Add exceptions
 // TODO: Rename?
-type::ByteVector CryptoUtil::getRandomBytes(std::size_t count) {
-    type::ByteVector result_data(count);
+ByteVector CryptoUtil::getRandomBytes(std::size_t count) {
+    ByteVector result_data(count);
     // TODO: handle errors
     gcry_create_nonce(&result_data[0], count);
     return result_data;

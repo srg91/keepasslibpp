@@ -1,7 +1,7 @@
+#include "byte_vector.hpp"
 #include "exception.hpp"
 #include "mem_util.hpp"
 #include "variant_dictionary.hpp"
-#include "typedefs.hpp"
 
 #include <cstdint>
 #include <iostream>
@@ -110,7 +110,7 @@ void VariantDictionary::deserialize(std::istream& stream,
                 value = mem_util::Read<std::string>(stream, value_size);
                 break;
             case ValueTypeId::ByteArray:
-                value = mem_util::Read<type::ByteVector>(stream, value_size);
+                value = mem_util::Read<ByteVector>(stream, value_size);
                 break;
             default:
                 // TODO: Add error message?

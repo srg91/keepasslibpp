@@ -1,9 +1,9 @@
 #pragma once
 
+#include "byte_vector.hpp"
 #include "exception.hpp"
 #include "uuid.hpp"
 #include "variant_dictionary.hpp"
-#include "typedefs.hpp"
 
 #include <iostream>
 #include <string>
@@ -14,7 +14,7 @@ class KdfParameters final : public VariantDictionary {
 public:
     KdfParameters() = delete;
     explicit KdfParameters(const Uuid& uuid) : kdf_uuid(uuid) {
-        set<type::ByteVector>(uuid_key, uuid.byteVector());
+        set<ByteVector>(uuid_key, uuid.byteVector());
     };
     KdfParameters(VariantDictionary&& vd)
         : VariantDictionary(std::forward<VariantDictionary>(vd))

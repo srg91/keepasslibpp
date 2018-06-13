@@ -1,5 +1,5 @@
+#include "byte_vector.hpp"
 #include "rand.hpp"
-#include "typedefs.hpp"
 #include "uuid.hpp"
 
 #include <array>
@@ -16,7 +16,7 @@
 namespace keepasslibpp {
 
 // TODO: Template? Inline?
-Uuid Uuid::fromByteVector(const type::ByteVector& bv) {
+Uuid Uuid::fromByteVector(const ByteVector& bv) {
     return Uuid(bv.begin(), bv.end());
 }
 
@@ -25,8 +25,8 @@ Uuid Uuid::fromString(const std::string& s) {
     return Uuid(s.begin(), s.end());
 }
 
-type::ByteVector Uuid::byteVector() const {
-    type::ByteVector bv(UUID_SIZE);
+ByteVector Uuid::byteVector() const {
+    ByteVector bv(UUID_SIZE);
     std::copy(uuid.begin(), uuid.end(), bv.begin());
     return bv;
 }

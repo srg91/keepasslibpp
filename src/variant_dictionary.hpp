@@ -1,7 +1,7 @@
 #pragma once
 
+#include "byte_vector.hpp"
 #include "mem_util.hpp"
-#include "typedefs.hpp"
 
 #include <cstdint>
 #include <iostream>
@@ -21,7 +21,7 @@ public:
     using key_type = std::string;
     using mapped_type = std::variant<
         bool, std::int32_t, std::int64_t, std::uint32_t, std::uint64_t,
-        std::string, type::ByteVector
+        std::string, ByteVector
     >;
     using value_type = std::pair<key_type, mapped_type>;
     using size_type = std::map<key_type, mapped_type>::size_type;
@@ -85,7 +85,7 @@ private:
         ValueTypeId operator () (std::uint64_t) { return ValueTypeId::UInt64; }
         ValueTypeId operator () (const std::string&)
             { return ValueTypeId::String; }
-        ValueTypeId operator () (const type::ByteVector&)
+        ValueTypeId operator () (const ByteVector&)
             { return ValueTypeId::ByteArray; }
     };
 
@@ -105,7 +105,7 @@ private:
             return value.size();
         }
 
-        std::size_t guess_size(const type::ByteVector& value) const {
+        std::size_t guess_size(const ByteVector& value) const {
             return value.size();
         }
 
@@ -116,7 +116,7 @@ private:
             mem_util::Write(stream, value);
         }
 
-        void operator ()(const type::ByteVector& value) const {
+        void operator ()(const ByteVector& value) const {
             auto value_size = static_cast<std::int32_t>(guess_size(value));
             mem_util::Write(stream, value_size);
             mem_util::Write(stream, value);

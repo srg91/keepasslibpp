@@ -1,6 +1,6 @@
 #pragma once
 
-#include "typedefs.hpp"
+#include "byte_vector.hpp"
 
 #include <cstddef>
 
@@ -13,7 +13,7 @@ public:
     static void fillStrongRandom(void* buffer, std::size_t size) noexcept;
 
     // TODO: Add fill strong random. Add type of random to constructor?
-    static type::ByteVector getRandomBytes(std::size_t count);
+    static ByteVector getRandomBytes(std::size_t count);
 };
 
 }

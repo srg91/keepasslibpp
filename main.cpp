@@ -41,7 +41,7 @@ ostream& operator <<(ostream& stream, const std::array<std::uint8_t, 16>& value)
     return stream;
 };
 
-ostream& operator <<(ostream& stream, keepasslibpp::type::ByteVector value) {
+ostream& operator <<(ostream& stream, keepasslibpp::ByteVector value) {
     auto o = stream.flags();
     stream << setfill('0') << hex;
     for (const auto& c : value) {

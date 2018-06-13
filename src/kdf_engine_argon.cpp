@@ -1,7 +1,7 @@
+#include "byte_vector.hpp"
 #include "crypto_util.hpp"
 #include "kdf_engine_argon.hpp"
 #include "kdf_parameters.hpp"
-#include "typedefs.hpp"
 
 #include <argon2.h>
 
@@ -53,15 +53,15 @@ void Argon2Kdf::Randomize(KdfParameters& kp) const {
     kp[ParamSalt] = CryptoUtil::getRandomBytes(CryptoUtil::Sha256DigestLength);
 }
 
-type::ByteVector Argon2Kdf::Transform(type::ByteVector msg, const KdfParameters& kp) const {
+ByteVector Argon2Kdf::Transform(ByteVector msg, const KdfParameters& kp) const {
     std::uint32_t version;
     if (!kp.get<std::uint32_t>(ParamVersion, version))
         throw exception::ArgumentNullException("version");
     if ((version < minVersion) || (version > maxVersion))
         throw exception::ArgumentOutOfRangeException("version");
 
-    type::ByteVector salt;
-    if (!kp.get<type::ByteVector>(ParamSalt, salt))
+    ByteVector salt;
+    if (!kp.get<ByteVector>(ParamSalt, salt))
         throw exception::ArgumentNullException("salt");
     // TODO: ???
     if ((salt.size() < minSalt) || (salt.size() > maxSalt))
@@ -87,10 +87,10 @@ type::ByteVector Argon2Kdf::Transform(type::ByteVector msg, const KdfParameters&
         throw exception::ArgumentOutOfRangeException("iterations");
 
     // TODO: Add checks?
-    type::ByteVector secret_key;
-    kp.get<type::ByteVector>(ParamSecretKey, secret_key);
-    type::ByteVector assoc_data;
-    kp.get<type::ByteVector>(ParamAssocData, assoc_data);
+    ByteVector secret_key;
+    kp.get<ByteVector>(ParamSecretKey, secret_key);
+    ByteVector assoc_data;
+    kp.get<ByteVector>(ParamAssocData, assoc_data);
 
     // TODO: What about memory? Shod we clear smthg
     // TODO: change 32 to const?
@@ -100,14 +100,14 @@ type::ByteVector Argon2Kdf::Transform(type::ByteVector msg, const KdfParameters&
     );
 }
 
-type::ByteVector Argon2Kdf::transformKey(type::ByteVector msg, type::ByteVector salt,
-                                     std::uint32_t parallelism, std::uint64_t memory, std::uint64_t iterations,
-                                     std::size_t result_size, std::uint32_t version,
-                                     type::ByteVector secret_key, type::ByteVector assoc_data) const {
+ByteVector Argon2Kdf::transformKey(ByteVector msg, ByteVector salt,
+                                   std::uint32_t parallelism, std::uint64_t memory, std::uint64_t iterations,
+                                   std::size_t result_size, std::uint32_t version,
+                                   ByteVector secret_key, ByteVector assoc_data) const {
     // TODO: use secret key?
     // TODO: use assoc_data?
     // TODO: check version?
-    type::ByteVector result(result_size);
+    ByteVector result(result_size);
     argon2d_hash_raw(
         static_cast<std::uint32_t>(iterations),
         static_cast<std::uint32_t>(memory),

@@ -1,8 +1,8 @@
 #pragma once
 
+#include "byte_vector.hpp"
 #include "defs.hpp"
 #include "kdf_engine.hpp"
-#include "typedefs.hpp"
 
 #include <cstdint>
 #include <string>
@@ -19,7 +19,7 @@ public:
     KdfParameters GetDefaultParameters() const override;
 
     void Randomize(KdfParameters& kp) const override;
-    type::ByteVector Transform(type::ByteVector msg, const KdfParameters& kp) const override;
+    ByteVector Transform(ByteVector msg, const KdfParameters& kp) const override;
 private:
     // TODO: static?
     Uuid uuid = Uuid::fromByteVector({
@@ -27,8 +27,8 @@ private:
         0xbf, 0x74, 0x0d, 0x08, 0xc1, 0x8a, 0x4f, 0xea
     });
 
-    type::ByteVector transformKey(const type::ByteVector& data, const type::ByteVector& seed,
-                              std::uint64_t rounds) const;
+    ByteVector transformKey(const ByteVector& data, const ByteVector& seed,
+                            std::uint64_t rounds) const;
 };
 
 }

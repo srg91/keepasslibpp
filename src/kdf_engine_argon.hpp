@@ -1,7 +1,7 @@
 #pragma once
 
+#include "byte_vector.hpp"
 #include "kdf_engine.hpp"
-#include "typedefs.hpp"
 
 #include <cstdint>
 #include <string>
@@ -22,7 +22,7 @@ public:
     KdfParameters GetDefaultParameters() const override;
 
     void Randomize(KdfParameters& kp) const override;
-    type::ByteVector Transform(type::ByteVector msg, const KdfParameters& kp) const override;
+    ByteVector Transform(ByteVector msg, const KdfParameters& kp) const override;
 private:
     Uuid uuid = Uuid::fromByteVector({
         0xef, 0x63, 0x6d, 0xdf, 0x8c, 0x29, 0x44, 0x4b,
@@ -58,10 +58,10 @@ private:
     static const std::uint32_t defaultParallelism;
 
     // TODO: fix const &
-    type::ByteVector transformKey(
-        type::ByteVector msg, type::ByteVector salt, std::uint32_t parallelism,
+    ByteVector transformKey(
+        ByteVector msg, ByteVector salt, std::uint32_t parallelism,
         std::uint64_t memory, std::uint64_t iterations, std::size_t result_size,
-        std::uint32_t version, type::ByteVector secret_key, type::ByteVector assoc_data
+        std::uint32_t version, ByteVector secret_key, ByteVector assoc_data
     ) const;
 };
 

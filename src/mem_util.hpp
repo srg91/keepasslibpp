@@ -1,6 +1,6 @@
 #pragma once
 
-#include "typedefs.hpp"
+#include "byte_vector.hpp"
 
 #include <algorithm>
 #include <cstddef>
@@ -74,7 +74,7 @@ inline void Write(std::ostream& stream, const std::string& value) {
     stream << value;
 }
 
-inline void Write(std::ostream& stream, const type::ByteVector& value) {
+inline void Write(std::ostream& stream, const ByteVector& value) {
     std::copy(value.begin(), value.end(), std::ostreambuf_iterator<char>(stream));
 }
 

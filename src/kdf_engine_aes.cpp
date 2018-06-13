@@ -1,8 +1,8 @@
+#include "byte_vector.hpp"
 #include "crypto_util.hpp"
 #include "exception.hpp"
 #include "kdf_engine_aes.hpp"
 #include "kdf_parameters.hpp"
-#include "typedefs.hpp"
 
 // TODO: don't forget to move
 //#include <openssl/evp.h>
@@ -28,13 +28,13 @@ void AesKdf::Randomize(KdfParameters& kp) const {
     kp[ParamSeed] = CryptoUtil::getRandomBytes(CryptoUtil::Sha256DigestLength);
 }
 
-type::ByteVector AesKdf::Transform(type::ByteVector msg, const KdfParameters& kp) const {
+ByteVector AesKdf::Transform(ByteVector msg, const KdfParameters& kp) const {
     std::uint64_t rounds;
     if (!kp.get<std::uint64_t>(ParamRounds, rounds))
         throw exception::ArgumentNullException("rounds");
 
-    type::ByteVector seed;
-    if (!kp.get<type::ByteVector>(ParamSeed, seed))
+    ByteVector seed;
+    if (!kp.get<ByteVector>(ParamSeed, seed))
         throw exception::ArgumentNullException("seed");
 
     // TODO: something without copy??
@@ -73,14 +73,14 @@ type::ByteVector AesKdf::Transform(type::ByteVector msg, const KdfParameters& kp
 //    return CryptoUtil::hashSha256(result_data);
 //}
 
-type::ByteVector AesKdf::transformKey(const type::ByteVector& data, const type::ByteVector& seed,
+ByteVector AesKdf::transformKey(const ByteVector& data, const ByteVector& seed,
                                        std::uint64_t rounds) const {
     // TODO: do not copy?
-    type::ByteVector result_data = data;
+    ByteVector result_data = data;
     // TODO: Add many many checks
     // TODO: change to constant by gcry_cipher_get_algo_keylen or smtelse
     // TODO: change it to char* ?
-    type::ByteVector iv(16, 0);
+    ByteVector iv(16, 0);
     // TODO: handle errors
     // TODO: handle errors
     gcry_cipher_hd_t handle;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "typedefs.hpp"
+#include "byte_vector.hpp"
 
 #include <array>
 #include <cstdint>
@@ -41,11 +41,11 @@ public:
     static Uuid nil() noexcept { return Uuid(createNil()); }
 
     // Construct a new UUID from another object.
-    static Uuid fromByteVector(const type::ByteVector& bv);
+    static Uuid fromByteVector(const ByteVector& bv);
     static Uuid fromString(const std::string& s);
 
     // return the 16 bytes size byte vector.
-    type::ByteVector byteVector() const;
+    ByteVector byteVector() const;
     // return the 16 bytes size string.
     std::string string() const;
     // TODO: Optional separators?
