@@ -4,6 +4,7 @@
 #include "defs.hpp"
 #include "kdf_engine.hpp"
 
+#include <cstddef>
 #include <cstdint>
 #include <string>
 
@@ -21,6 +22,9 @@ public:
     void Randomize(KdfParameters& kp) const override;
     ByteVector Transform(ByteVector msg, const KdfParameters& kp) const override;
 private:
+    // TODO: Rename?
+    static const std::size_t defaultSize = 32;
+
     // TODO: static?
     Uuid uuid = Uuid::fromByteVector({
         0xc9, 0xd9, 0xf3, 0x9a, 0x62, 0x8a, 0x44, 0x60,

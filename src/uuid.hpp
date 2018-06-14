@@ -40,6 +40,7 @@ public:
     // Create nil UUID (all bytes are zero).
     static Uuid nil() noexcept { return Uuid(createNil()); }
 
+    // TODO: initialization_list?
     // Construct a new UUID from another object.
     static Uuid fromByteVector(const ByteVector& bv);
     static Uuid fromString(const std::string& s);

@@ -1,7 +1,7 @@
 #include "byte_vector.hpp"
-#include "crypto_util.hpp"
 #include "kdf_engine_argon.hpp"
 #include "kdf_parameters.hpp"
+#include "rand.hpp"
 
 #include <argon2.h>
 
@@ -49,8 +49,8 @@ KdfParameters Argon2Kdf::GetDefaultParameters() const {
 }
 
 void Argon2Kdf::Randomize(KdfParameters& kp) const {
-    // TODO: Sha256DigestLength?
-    kp[ParamSalt] = CryptoUtil::getRandomBytes(CryptoUtil::Sha256DigestLength);
+    // TODO: const?
+    kp[ParamSalt] = Rand(RandomStrength::strong).get(32);
 }
 
 ByteVector Argon2Kdf::Transform(ByteVector msg, const KdfParameters& kp) const {

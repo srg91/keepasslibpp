@@ -1,8 +1,9 @@
 #include "byte_vector.hpp"
-#include "crypto_util.hpp"
 #include "exception.hpp"
+#include "hash.hpp"
 #include "kdf_engine_aes.hpp"
 #include "kdf_parameters.hpp"
+#include "rand.hpp"
 
 // TODO: don't forget to move
 //#include <openssl/evp.h>
@@ -24,8 +25,7 @@ KdfParameters AesKdf::GetDefaultParameters() const  {
 }
 
 void AesKdf::Randomize(KdfParameters& kp) const {
-    // TODO: Sha256DigestLength?
-    kp[ParamSeed] = CryptoUtil::getRandomBytes(CryptoUtil::Sha256DigestLength);
+    kp[ParamSeed] = Rand(RandomStrength::strong).get(AesKdf::defaultSize);
 }
 
 ByteVector AesKdf::Transform(ByteVector msg, const KdfParameters& kp) const {
@@ -38,12 +38,12 @@ ByteVector AesKdf::Transform(ByteVector msg, const KdfParameters& kp) const {
         throw exception::ArgumentNullException("seed");
 
     // TODO: something without copy??
-    if (msg.size() != CryptoUtil::Sha256DigestLength) {
-        msg = CryptoUtil::hashSha256(msg);
+    if (msg.size() != AesKdf::defaultSize) {
+        msg = Hash(HashAlgorithm::sha256).sum(msg);
     }
 
-    if (seed.size() != CryptoUtil::Sha256DigestLength) {
-        seed = CryptoUtil::hashSha256(seed);
+    if (seed.size() != AesKdf::defaultSize) {
+        seed = Hash(HashAlgorithm::sha256).sum(seed);
     }
 
     // TODO: do not copy msg?
@@ -99,5 +99,5 @@ ByteVector AesKdf::transformKey(const ByteVector& data, const ByteVector& seed,
         gcry_cipher_encrypt(handle, &result_data[16], len, &result_data[16], len);
     }
 
-    return CryptoUtil::hashSha256(result_data);
+    return Hash(HashAlgorithm::sha256).sum(result_data);
 }
