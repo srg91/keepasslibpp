@@ -3,48 +3,46 @@
 
 #include <gtest/gtest.h>
 
+#include <cstddef>
 #include <cstdint>
 #include <string>
 
 using namespace keepasslibpp;
 
-TEST(TestRand, FillRandom) {
-    const std::size_t COUNT = 32;
+void TestFillRandom(RandomStrength strength, std::size_t count) {
+    Rand rand(strength);
 
-    ByteVector bytes(COUNT);
+    ByteVector bytes(count);
+    rand.fill(bytes);
+    EXPECT_TRUE(bytes != ByteVector(count));
 
-    Rand::fillRandom(bytes.data(), COUNT);
-    EXPECT_NE(bytes, ByteVector(COUNT));
+    std::string str(count, 0);
+    rand.fill(str);
+    EXPECT_NE(str, std::string(count, 0));
+}
 
-    std::string str(COUNT, 0);
-    Rand::fillRandom(str.data(), COUNT);
-    EXPECT_NE(str, std::string(COUNT, 0));
+void TestGetRandom(RandomStrength strength, std::size_t count) {
+    auto result = Rand(strength).get(count);
+    EXPECT_EQ(std::size(result), count);
+    EXPECT_TRUE(result != ByteVector(count));
+}
 
-    std::int64_t value = 0;
-    Rand::fillRandom(reinterpret_cast<void *>(&value), 8);
-    EXPECT_NE(value, 0);
+TEST(TestRand, FillWeakRandom) {
+    for (std::size_t i = 1; i <= 32; i++)
+        TestFillRandom(RandomStrength::Weak, i);
 }
 
 TEST(TestRand, FillStrongRandom) {
-    const std::size_t COUNT = 32;
-
-    ByteVector bytes(COUNT);
-
-    Rand::fillStrongRandom(bytes.data(), COUNT);
-    EXPECT_NE(bytes, ByteVector(COUNT));
-
-    std::string str(COUNT, 0);
-    Rand::fillStrongRandom(str.data(), COUNT);
-    EXPECT_NE(str, std::string(COUNT, 0));
-
-    std::int64_t value = 0;
-    Rand::fillStrongRandom(reinterpret_cast<void *>(&value), 8);
-    EXPECT_NE(value, 0);
+    for (std::size_t i = 1; i <= 32; i++)
+        TestFillRandom(RandomStrength::Strong, i);
 }
 
-TEST(TestRand, GetRandomBytes) {
-    ByteVector result = Rand::getRandomBytes(64);
+TEST(TestRand, GetWeakRandom) {
+    for (std::size_t i = 1; i < 32; i++)
+        TestGetRandom(RandomStrength::Weak, 64);
+}
 
-    EXPECT_EQ(result.size(), 64);
-    EXPECT_NE(result, ByteVector(64));
+TEST(TestRand, GetStrongRandom) {
+    for (std::size_t i = 1; i < 32; i++)
+        TestGetRandom(RandomStrength::Strong, 64);
 }

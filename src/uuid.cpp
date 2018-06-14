@@ -51,7 +51,7 @@ std::string Uuid::hex() const {
 Uuid::uuid_t Uuid::createNew() noexcept {
     uuid_t u;
 
-    Rand::fillRandom(u.data(), u.size());
+    Rand(RandomStrength::Weak).fill(u);
 
     // set variant as rfc4122
     u[8] &= 0xbf;

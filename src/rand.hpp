@@ -3,17 +3,33 @@
 #include "byte_vector.hpp"
 
 #include <cstddef>
+#include <iterator>
 
 namespace keepasslibpp {
 
+// TODO: Move to enums?
+enum class RandomStrength {
+    Weak,
+    Strong
+};
+
+// TODO: Make some facade?
 class Rand {
 public:
-    // TODO: Change to iterators?
-    static void fillRandom(void* buffer, std::size_t size) noexcept;
-    static void fillStrongRandom(void* buffer, std::size_t size) noexcept;
+    explicit Rand(RandomStrength rs) : strength(rs) {};
 
-    // TODO: Add fill strong random. Add type of random to constructor?
-    static ByteVector getRandomBytes(std::size_t count);
+    template <typename Container>
+    void fill(Container& container) const noexcept;
+    ByteVector get(std::size_t count) const noexcept;
+private:
+    const RandomStrength strength;
+
+    void fillBuffer(void* buffer, std::size_t size) const noexcept;
 };
+
+template <typename Container>
+void Rand::fill(Container& container) const noexcept {
+    this->fillBuffer(std::data(container), std::size(container));
+}
 
 }

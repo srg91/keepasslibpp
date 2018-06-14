@@ -3,20 +3,24 @@
 
 #include <gcrypt.h>
 
+#include <cstddef>
+
 namespace keepasslibpp {
 
-void Rand::fillRandom(void* buffer, std::size_t size) noexcept {
-    gcry_create_nonce(buffer, size);
+ByteVector Rand::get(std::size_t count) const noexcept {
+    ByteVector result(count);
+    this->fill(result);
+    return result;
 }
 
-void Rand::fillStrongRandom(void* buffer, std::size_t size) noexcept {
-    gcry_randomize(buffer, size, GCRY_STRONG_RANDOM);
-}
-
-ByteVector Rand::getRandomBytes(std::size_t count) {
-    ByteVector buffer(count);
-    Rand::fillRandom(buffer.data(), buffer.size());
-    return buffer;
+void Rand::fillBuffer(void* buffer, std::size_t size) const noexcept {
+    if (this->strength == RandomStrength::Strong) {
+        gcry_randomize(buffer, size, GCRY_STRONG_RANDOM);
+    } else if (this->strength == RandomStrength::Weak) {
+        gcry_create_nonce(buffer, size);
+    } else {
+        // TODO: exception?
+    }
 }
 
 }
