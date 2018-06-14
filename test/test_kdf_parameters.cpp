@@ -1,7 +1,7 @@
+#include "byte_vector.hpp"
 #include "exception.hpp"
 #include "kdf_parameters.hpp"
 #include "uuid.hpp"
-#include "typedefs.hpp"
 #include "variant_dictionary.hpp"
 
 #include <gtest/gtest.h>
@@ -79,8 +79,8 @@ TEST_F(TestKdfParameters, NewKdfParameters)
     KdfParameters kp(u);
     EXPECT_EQ(kp.KdfUuid(), u);
 
-    type::ByteVector kdf_uuid;
-    EXPECT_TRUE(kp.get<type::ByteVector>("$UUID", kdf_uuid));
+    ByteVector kdf_uuid;
+    EXPECT_TRUE(kp.get<ByteVector>("$UUID", kdf_uuid));
     EXPECT_TRUE(kdf_uuid == u.byteVector());
 }
 

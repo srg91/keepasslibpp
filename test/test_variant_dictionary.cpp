@@ -1,6 +1,6 @@
+#include "byte_vector.hpp"
 #include "exception.hpp"
 #include "variant_dictionary.hpp"
-#include "typedefs.hpp"
 
 #include <gtest/gtest.h>
 
@@ -26,7 +26,7 @@ protected:
         sample_dict["uint32"] = std::uint32_t(0x12345678);
         sample_dict["uint64"] = std::uint64_t(0x1234567887654321);
         sample_dict["string"] = std::string("hello, world");
-        sample_dict["bytes"] = type::ByteVector(
+        sample_dict["bytes"] = ByteVector(
             {'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd'}
         );
 
@@ -292,10 +292,10 @@ TEST_F(TestVariantDictionary, GetString) {
 }
 
 TEST_F(TestVariantDictionary, GetByteVector) {
-    type::ByteVector result;
+    ByteVector result;
     EXPECT_TRUE(sample_dict.get("bytes", result));
 
-    type::ByteVector expected = {
+    ByteVector expected = {
         'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd'
     };
     EXPECT_TRUE(result == expected);
@@ -310,7 +310,7 @@ TEST_F(TestVariantDictionary, GetNothing) {
 
 TEST_F(TestVariantDictionary, SetBool) {
     VariantDictionary vd;
-vd.set<bool>("key", true);
+    vd.set<bool>("key", true);
 
     std::string result = vd.serialize();
     // TODO: Cut version and end None?
@@ -328,7 +328,7 @@ vd.set<bool>("key", true);
 
 TEST_F(TestVariantDictionary, SetInt32) {
     VariantDictionary vd;
-vd.set<std::int32_t>("key", 0x12345678);
+    vd.set<std::int32_t>("key", 0x12345678);
 
     std::string result = vd.serialize();
     std::string expected = {
@@ -424,7 +424,7 @@ vd.set<std::string>("key", "hello");
 TEST_F(TestVariantDictionary, SetByteVector) {
     VariantDictionary vd;
 
-    type::ByteVector bytes = {'h', 'e', 'l', 'l', 'o'};
+    ByteVector bytes = {'h', 'e', 'l', 'l', 'o'};
     vd.set("key", bytes);
 
     std::string result = vd.serialize();
