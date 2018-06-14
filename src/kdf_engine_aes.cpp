@@ -14,27 +14,27 @@
 using namespace keepasslibpp;
 
 // uint64
-const std::string AesKdf::ParamRounds = "R";
+const std::string AesKdf::paramRounds = "R";
 // char[32]
-const std::string AesKdf::ParamSeed = "S";
+const std::string AesKdf::paramSeed = "S";
 
-KdfParameters AesKdf::GetDefaultParameters() const  {
-    KdfParameters kp = KdfEngine::GetDefaultParameters();
-    kp.set(ParamRounds, DEFAULT_KEY_ENCRYPTION_ROUNDS);
+KdfParameters AesKdf::getDefaultParameters() const  {
+    KdfParameters kp = KdfEngine::getDefaultParameters();
+    kp.set(paramRounds, DEFAULT_KEY_ENCRYPTION_ROUNDS);
     return kp;
 }
 
-void AesKdf::Randomize(KdfParameters& kp) const {
-    kp[ParamSeed] = Rand(RandomStrength::strong).get(AesKdf::defaultSize);
+void AesKdf::randomize(KdfParameters& kp) const {
+    kp[paramSeed] = Rand(RandomStrength::strong).get(AesKdf::defaultSize);
 }
 
-ByteVector AesKdf::Transform(ByteVector msg, const KdfParameters& kp) const {
+ByteVector AesKdf::transform(ByteVector msg, const KdfParameters& kp) const {
     std::uint64_t rounds;
-    if (!kp.get<std::uint64_t>(ParamRounds, rounds))
+    if (!kp.get<std::uint64_t>(paramRounds, rounds))
         throw exception::ArgumentNullException("rounds");
 
     ByteVector seed;
-    if (!kp.get<ByteVector>(ParamSeed, seed))
+    if (!kp.get<ByteVector>(paramSeed, seed))
         throw exception::ArgumentNullException("seed");
 
     // TODO: something without copy??

@@ -10,13 +10,13 @@
 
 using namespace keepasslibpp;
 
-const std::string Argon2Kdf::ParamSalt = "S";
-const std::string Argon2Kdf::ParamParallelism = "P";
-const std::string Argon2Kdf::ParamMemory = "M";
-const std::string Argon2Kdf::ParamIterations = "I";
-const std::string Argon2Kdf::ParamVersion = "V";
-const std::string Argon2Kdf::ParamSecretKey = "K";
-const std::string Argon2Kdf::ParamAssocData = "A";
+const std::string Argon2Kdf::paramSalt = "S";
+const std::string Argon2Kdf::paramParallelism = "P";
+const std::string Argon2Kdf::paramMemory = "M";
+const std::string Argon2Kdf::paramIterations = "I";
+const std::string Argon2Kdf::paramVersion = "V";
+const std::string Argon2Kdf::paramSecretKey = "K";
+const std::string Argon2Kdf::paramAssocData = "A";
 
 const std::uint32_t Argon2Kdf::minVersion = 0x10;
 const std::uint32_t Argon2Kdf::maxVersion = 0x13;
@@ -37,31 +37,31 @@ const std::uint64_t Argon2Kdf::defaultIterations = 2;
 const std::uint64_t Argon2Kdf::defaultMemory = 1024 * 1024;
 const std::uint32_t Argon2Kdf::defaultParallelism = 2;
 
-KdfParameters Argon2Kdf::GetDefaultParameters() const {
-    KdfParameters kp = KdfEngine::GetDefaultParameters();
+KdfParameters Argon2Kdf::getDefaultParameters() const {
+    KdfParameters kp = KdfEngine::getDefaultParameters();
 
-    kp[ParamVersion] = Argon2Kdf::maxVersion;
-    kp[ParamIterations] = Argon2Kdf::defaultIterations;
-    kp[ParamMemory] = Argon2Kdf::defaultMemory;
-    kp[ParamParallelism] = Argon2Kdf::defaultParallelism;
+    kp[paramVersion] = Argon2Kdf::maxVersion;
+    kp[paramIterations] = Argon2Kdf::defaultIterations;
+    kp[paramMemory] = Argon2Kdf::defaultMemory;
+    kp[paramParallelism] = Argon2Kdf::defaultParallelism;
 
     return kp;
 }
 
-void Argon2Kdf::Randomize(KdfParameters& kp) const {
+void Argon2Kdf::randomize(KdfParameters& kp) const {
     // TODO: const?
-    kp[ParamSalt] = Rand(RandomStrength::strong).get(32);
+    kp[paramSalt] = Rand(RandomStrength::strong).get(32);
 }
 
-ByteVector Argon2Kdf::Transform(ByteVector msg, const KdfParameters& kp) const {
+ByteVector Argon2Kdf::transform(ByteVector msg, const KdfParameters& kp) const {
     std::uint32_t version;
-    if (!kp.get<std::uint32_t>(ParamVersion, version))
+    if (!kp.get<std::uint32_t>(paramVersion, version))
         throw exception::ArgumentNullException("version");
     if ((version < minVersion) || (version > maxVersion))
         throw exception::ArgumentOutOfRangeException("version");
 
     ByteVector salt;
-    if (!kp.get<ByteVector>(ParamSalt, salt))
+    if (!kp.get<ByteVector>(paramSalt, salt))
         throw exception::ArgumentNullException("salt");
     // TODO: ???
     if ((salt.size() < minSalt) || (salt.size() > maxSalt))
@@ -69,28 +69,28 @@ ByteVector Argon2Kdf::Transform(ByteVector msg, const KdfParameters& kp) const {
 
     // TODO: Can we simplify this?
     std::uint32_t parallelism;
-    if (!kp.get<std::uint32_t>(ParamParallelism, parallelism))
+    if (!kp.get<std::uint32_t>(paramParallelism, parallelism))
         throw exception::ArgumentNullException("parallelism");
     if ((parallelism < minParallelism) || (parallelism > maxParallelism))
         throw exception::ArgumentOutOfRangeException("parallelism");
 
     std::uint64_t memory;
-    if (!kp.get<std::uint64_t>(ParamMemory, memory))
+    if (!kp.get<std::uint64_t>(paramMemory, memory))
         throw exception::ArgumentNullException("memory");
     if ((memory < minMemory) || (memory > maxMemory))
         throw exception::ArgumentOutOfRangeException("memory");
 
     std::uint64_t iterations;
-    if (!kp.get<std::uint64_t>(ParamIterations, iterations))
+    if (!kp.get<std::uint64_t>(paramIterations, iterations))
         throw exception::ArgumentNullException("iterations");
     if ((iterations < minIterations) || (iterations > maxIterations))
         throw exception::ArgumentOutOfRangeException("iterations");
 
     // TODO: Add checks?
     ByteVector secret_key;
-    kp.get<ByteVector>(ParamSecretKey, secret_key);
+    kp.get<ByteVector>(paramSecretKey, secret_key);
     ByteVector assoc_data;
-    kp.get<ByteVector>(ParamAssocData, assoc_data);
+    kp.get<ByteVector>(paramAssocData, assoc_data);
 
     // TODO: What about memory? Shod we clear smthg
     // TODO: change 32 to const?

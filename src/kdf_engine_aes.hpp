@@ -12,15 +12,15 @@ namespace keepasslibpp {
 
 class AesKdf : KdfEngine {
 public:
-    static const std::string ParamRounds;
-    static const std::string ParamSeed;
+    static const std::string paramRounds;
+    static const std::string paramSeed;
 
     // TODO: static?
-    const Uuid& GetUuid() const override { return uuid; }
-    KdfParameters GetDefaultParameters() const override;
+    const Uuid& getUuid() const override { return uuid; }
+    KdfParameters getDefaultParameters() const override;
 
-    void Randomize(KdfParameters& kp) const override;
-    ByteVector Transform(ByteVector msg, const KdfParameters& kp) const override;
+    void randomize(KdfParameters& kp) const override;
+    ByteVector transform(ByteVector msg, const KdfParameters& kp) const override;
 private:
     // TODO: Rename?
     static const std::size_t defaultSize = 32;

@@ -10,19 +10,19 @@ namespace keepasslibpp {
 
 class Argon2Kdf : KdfEngine {
 public:
-    static const std::string ParamSalt;
-    static const std::string ParamParallelism;
-    static const std::string ParamMemory;
-    static const std::string ParamIterations;
-    static const std::string ParamVersion;
-    static const std::string ParamSecretKey;
-    static const std::string ParamAssocData;
+    static const std::string paramSalt;
+    static const std::string paramParallelism;
+    static const std::string paramMemory;
+    static const std::string paramIterations;
+    static const std::string paramVersion;
+    static const std::string paramSecretKey;
+    static const std::string paramAssocData;
 
-    const Uuid& GetUuid() const override { return uuid; };
-    KdfParameters GetDefaultParameters() const override;
+    const Uuid& getUuid() const override { return uuid; };
+    KdfParameters getDefaultParameters() const override;
 
-    void Randomize(KdfParameters& kp) const override;
-    ByteVector Transform(ByteVector msg, const KdfParameters& kp) const override;
+    void randomize(KdfParameters& kp) const override;
+    ByteVector transform(ByteVector msg, const KdfParameters& kp) const override;
 private:
     Uuid uuid = Uuid::fromByteVector({
         0xef, 0x63, 0x6d, 0xdf, 0x8c, 0x29, 0x44, 0x4b,

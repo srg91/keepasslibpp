@@ -11,17 +11,17 @@ namespace keepasslibpp {
 
 class KdfEngine {
 public:
-    virtual const Uuid& GetUuid() const = 0;
+    virtual const Uuid& getUuid() const = 0;
 
-    virtual KdfParameters GetDefaultParameters() const {
-        return KdfParameters(GetUuid());
+    virtual KdfParameters getDefaultParameters() const {
+        return KdfParameters(getUuid());
     }
 
     // TODO: Add check for uuid and etc?
-    virtual void Randomize(KdfParameters& kp) const = 0;
+    virtual void randomize(KdfParameters& kp) const = 0;
     // TODO: ByteVector? string? ???
     // TODO: Const msg? How to work without change?
-    virtual ByteVector Transform(ByteVector msg, const KdfParameters& kp) const = 0;
+    virtual ByteVector transform(ByteVector msg, const KdfParameters& kp) const = 0;
     // TODO: Add benchmarks
 };
 
