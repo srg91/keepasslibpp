@@ -1,3 +1,4 @@
+#include "byte_vector.hpp"
 #include "hash.hpp"
 
 #include <gcrypt.h>
@@ -12,6 +13,7 @@ namespace keepasslibpp {
 
 Hash::Hash(keepasslibpp::HashAlgorithm algorithm) {
     this->algorithm = algorithm;
+    this->digestSize = Hash::getAlgorithmLength(this->algorithm);
     // TODO: handle errors
     // TODO: save gcrypt algo to private var
     gcry_md_open(&handle, Hash::getGcryptAlgorithm(algorithm), 0);
@@ -21,38 +23,24 @@ Hash::~Hash() {
     gcry_md_close(handle);
 }
 
-void Hash::sum(void* out) {
+ByteVector Hash::sum() {
+    ByteVector result(this->digestSize);
     std::copy_n(
         // TODO: handle errors
         gcry_md_read(handle, Hash::getGcryptAlgorithm(algorithm)),
-        // TODO: save length to private var
-        Hash::getAlgorithmLength(this->algorithm),
-        reinterpret_cast<char*>(out)
+        this->digestSize,
+        std::begin(result)
     );
-}
-
-void Hash::sum(void* in, std::size_t size, void* out) {
-    this->write(in, size);
-    this->sum(out);
+    return result;
 }
 
 std::string Hash::hexSum() {
-    std::ostringstream os;
-    os << std::hex << std::setfill('0');
-
-    auto it = gcry_md_read(handle, Hash::getGcryptAlgorithm(algorithm));
-    for (std::size_t i = 0; i < Hash::getAlgorithmLength(this->algorithm); ++i)
-        os << std::setw(2) << static_cast<unsigned>(*it++);
-    return os.str();
+    return to_hex_string(this->sum());
 }
 
-std::string Hash::hexSum(void* in, std::size_t size) {
-    this->write(in, size);
-    return this->hexSum();
-}
-
-void Hash::write(void* in, std::size_t size) {
+Hash& Hash::writeBuffer(const void* in, std::size_t size) {
     gcry_md_write(handle, in, size);
+    return *this;
 }
 
 std::size_t Hash::getAlgorithmLength(HashAlgorithm algorithm) noexcept {

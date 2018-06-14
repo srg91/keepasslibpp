@@ -9,8 +9,8 @@ namespace keepasslibpp {
 
 // TODO: Move to enums?
 enum class RandomStrength {
-    Weak,
-    Strong
+    weak,
+    strong
 };
 
 // TODO: Make some facade?

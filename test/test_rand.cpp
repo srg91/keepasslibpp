@@ -29,20 +29,20 @@ void TestGetRandom(RandomStrength strength, std::size_t count) {
 
 TEST(TestRand, FillWeakRandom) {
     for (std::size_t i = 1; i <= 32; i++)
-        TestFillRandom(RandomStrength::Weak, i);
+        TestFillRandom(RandomStrength::weak, i);
 }
 
 TEST(TestRand, FillStrongRandom) {
     for (std::size_t i = 1; i <= 32; i++)
-        TestFillRandom(RandomStrength::Strong, i);
+        TestFillRandom(RandomStrength::strong, i);
 }
 
 TEST(TestRand, GetWeakRandom) {
     for (std::size_t i = 1; i < 32; i++)
-        TestGetRandom(RandomStrength::Weak, 64);
+        TestGetRandom(RandomStrength::weak, 64);
 }
 
 TEST(TestRand, GetStrongRandom) {
     for (std::size_t i = 1; i < 32; i++)
-        TestGetRandom(RandomStrength::Strong, 64);
+        TestGetRandom(RandomStrength::strong, 64);
 }

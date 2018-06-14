@@ -14,9 +14,9 @@ ByteVector Rand::get(std::size_t count) const noexcept {
 }
 
 void Rand::fillBuffer(void* buffer, std::size_t size) const noexcept {
-    if (this->strength == RandomStrength::Strong) {
+    if (this->strength == RandomStrength::strong) {
         gcry_randomize(buffer, size, GCRY_STRONG_RANDOM);
-    } else if (this->strength == RandomStrength::Weak) {
+    } else if (this->strength == RandomStrength::weak) {
         gcry_create_nonce(buffer, size);
     } else {
         // TODO: exception?

@@ -21,9 +21,8 @@ TEST(TestHash, SumFromString) {
     };
     EXPECT_EQ(expected.size(), SHA256_SIZE);
 
-    ByteVector output(SHA256_SIZE);
-    Hash(HashAlgorithm::sha256).sum(input.data(), input.size(), output.data());
-    EXPECT_TRUE(output == expected);
+    auto result = Hash(HashAlgorithm::sha256).sum(input);
+    EXPECT_TRUE(result == expected);
 }
 
 TEST(TestHash, SumWithWrite) {
@@ -35,11 +34,9 @@ TEST(TestHash, SumWithWrite) {
     };
     EXPECT_EQ(expected.size(), SHA256_SIZE);
 
-    ByteVector output(SHA256_SIZE);
     auto sha256 = Hash(HashAlgorithm::sha256);
-    sha256.write(input.data(), input.size());
-    sha256.sum(output.data());
-    EXPECT_TRUE(output == expected);
+    auto result = sha256.write(input).sum();
+    EXPECT_TRUE(result == expected);
 }
 
 TEST(TestHash, HexSumFromString) {
@@ -48,8 +45,8 @@ TEST(TestHash, HexSumFromString) {
                            "612b1fce77c869345bfc94c75894edd3";
 
     auto sha256 = Hash(HashAlgorithm::sha256);
-    auto output = sha256.hexSum(input.data(), input.size());
-    EXPECT_EQ(output, expected);
+    auto result = sha256.hexSum(input);
+    EXPECT_EQ(result, expected);
 }
 
 TEST(TestHash, HexSumWithWrite) {
@@ -58,9 +55,8 @@ TEST(TestHash, HexSumWithWrite) {
                            "612b1fce77c869345bfc94c75894edd3";
 
     auto sha256 = Hash(HashAlgorithm::sha256);
-    sha256.write(input.data(), input.size());
-    auto output = sha256.hexSum();
-    EXPECT_EQ(output, expected);
+    auto result = sha256.write(input).hexSum();
+    EXPECT_EQ(result, expected);
 }
 
 TEST(TestHash, HexSum256) {
@@ -69,6 +65,6 @@ TEST(TestHash, HexSum256) {
                            "612b1fce77c869345bfc94c75894edd3";
 
     auto sha256 = Hash(HashAlgorithm::sha256);
-    auto output = sha256.hexSum(input.data(), input.size());
+    auto output = sha256.hexSum(input);
     EXPECT_EQ(output, expected);
 }
