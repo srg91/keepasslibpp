@@ -4,17 +4,17 @@
 #include <sstream>
 #include <string>
 
-namespace keepasslibpp {
+namespace keepasspp {
 
 ByteVector to_byte_vector(const std::string& value) {
     return ByteVector(value.begin(), value.end());
 }
 
-std::string to_string(const keepasslibpp::ByteVector& value) {
+std::string to_string(const keepasspp::ByteVector& value) {
     return std::string(value.begin(), value.end());
 }
 
-std::string to_hex_string(const keepasslibpp::ByteVector& value) {
+std::string to_hex_string(const keepasspp::ByteVector& value) {
     std::ostringstream os;
     os << std::hex << std::setfill('0');
     for (const auto& i : value) {

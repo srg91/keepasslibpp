@@ -9,7 +9,7 @@
 #include <iterator>
 #include <numeric>
 
-using namespace keepasslibpp;
+using namespace keepasspp;
 
 const std::string KdfEngineArgon2::paramSalt = "S";
 const std::string KdfEngineArgon2::paramParallelism = "P";
@@ -103,15 +103,15 @@ ByteVector KdfEngineArgon2::transform(const ByteVector& msg,
 }
 
 ByteVector KdfEngineArgon2::transformKey(
-        const keepasslibpp::ByteVector& msg,
-        const keepasslibpp::ByteVector& salt,
+        const keepasspp::ByteVector& msg,
+        const keepasspp::ByteVector& salt,
         std::uint32_t parallelism,
         std::uint64_t memory,
         std::uint64_t iterations,
         std::size_t result_size,
         std::uint32_t version,
-        const keepasslibpp::ByteVector& secret_key,
-        const keepasslibpp::ByteVector& assoc_data) const {
+        const keepasspp::ByteVector& secret_key,
+        const keepasspp::ByteVector& assoc_data) const {
     // TODO: use secret key?
     // TODO: use assoc_data?
     // TODO: check version?

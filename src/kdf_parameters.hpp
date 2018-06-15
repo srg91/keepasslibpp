@@ -8,7 +8,7 @@
 #include <iostream>
 #include <string>
 
-namespace keepasslibpp {
+namespace keepasspp {
 
 class KdfParameters final : public VariantDictionary {
 public:
@@ -16,7 +16,7 @@ public:
     explicit KdfParameters(const Uuid& uuid) : kdf_uuid(uuid) {
         set<ByteVector>(uuid_key, uuid.byteVector());
     };
-    KdfParameters(VariantDictionary&& vd)
+    explicit KdfParameters(VariantDictionary&& vd)
         : VariantDictionary(std::forward<VariantDictionary>(vd))
         , kdf_uuid(extractUuid()) {}
     const Uuid& KdfUuid() { return kdf_uuid; }

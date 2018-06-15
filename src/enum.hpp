@@ -2,7 +2,7 @@
 
 #include <bitset>
 
-namespace keepasslibpp {
+namespace keepasspp {
 
 // TODO: look up enum class name conventions
 /*

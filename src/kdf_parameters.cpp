@@ -5,7 +5,7 @@
 #include <sstream>
 #include <string>
 
-using namespace keepasslibpp;
+using namespace keepasspp;
 
 Uuid KdfParameters::extractUuid() {
     ByteVector uuid_bytes;
@@ -23,7 +23,7 @@ std::ostream& KdfParameters::SerializeExt(std::ostream& stream) const {
 }
 
 KdfParameters KdfParameters::DeserializeExt(std::istream& stream) {
-    return VariantDictionary::deserialize(stream);
+    return KdfParameters(VariantDictionary::deserialize(stream));
 }
 
 KdfParameters KdfParameters::DeserializeExt(const std::string& bytes) {

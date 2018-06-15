@@ -8,7 +8,7 @@
 #include <sstream>
 #include <string>
 
-using namespace keepasslibpp;
+using namespace keepasspp;
 
 TEST(TestMemoryUtil, ReadBoolFromStream) {
     std::istringstream s({0x01, 0x00});

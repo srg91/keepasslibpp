@@ -4,7 +4,7 @@
 
 #include <string>
 
-using namespace keepasslibpp;
+using namespace keepasspp;
 
 TEST(TestByteVector, ToByteVector) {
     std::string s = "Hello, world!";

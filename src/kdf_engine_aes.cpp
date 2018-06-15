@@ -10,7 +10,7 @@
 #include <cstdint>
 #include <iterator>
 
-using namespace keepasslibpp;
+using namespace keepasspp;
 
 KdfParameters KdfEngineAes::getDefaultParameters() const  {
     KdfParameters kp = KdfEngine::getDefaultParameters();
@@ -46,8 +46,9 @@ ByteVector KdfEngineAes::transform(const ByteVector& msg,
     return transformKey(data, seed, rounds);
 }
 
-ByteVector KdfEngineAes::transformKey(const ByteVector& data, const ByteVector& seed,
-                                       std::uint64_t rounds) const {
+ByteVector KdfEngineAes::transformKey(const ByteVector& data,
+                                      const ByteVector& seed,
+                                      std::uint64_t rounds) const {
     // TODO: do not copy?
     ByteVector result_data = data;
     // TODO: Add many many checks

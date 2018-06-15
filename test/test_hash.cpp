@@ -5,7 +5,7 @@
 
 #include <iterator>
 
-using namespace keepasslibpp;
+using namespace keepasspp;
 
 const auto SHA256_SIZE = Hash::getAlgorithmLength(HashAlgorithm::sha256);
 

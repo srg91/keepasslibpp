@@ -12,7 +12,7 @@
 #include <string>
 #include <utility>
 
-namespace keepasslibpp {
+namespace keepasspp {
 
 // TODO: Template? Inline?
 Uuid Uuid::fromByteVector(const ByteVector& bv) {

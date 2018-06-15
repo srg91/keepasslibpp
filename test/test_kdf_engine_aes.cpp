@@ -7,7 +7,7 @@
 
 #include <memory>
 
-using namespace keepasslibpp;
+using namespace keepasspp;
 
 TEST(TestKdfEngineAes, GetUuid) {
     Uuid expected = Uuid::fromByteVector({

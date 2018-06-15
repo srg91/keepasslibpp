@@ -9,9 +9,9 @@
 #include <sstream>
 #include <variant>
 
-using namespace keepasslibpp;
+using namespace keepasspp;
 
-namespace keepasslibpp {
+namespace keepasspp {
 
 bool VariantDictionary::empty() const {
     return std::empty(dict);

@@ -8,7 +8,7 @@
 
 #include <sstream>
 
-using namespace keepasslibpp;
+using namespace keepasspp;
 
 struct TestKdfParameters : public ::testing::Test {
     Uuid kdf_uuid;

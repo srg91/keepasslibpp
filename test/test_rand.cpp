@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <string>
 
-using namespace keepasslibpp;
+using namespace keepasspp;
 
 void TestFillRandom(RandomStrength strength, std::size_t count) {
     Rand rand(strength);

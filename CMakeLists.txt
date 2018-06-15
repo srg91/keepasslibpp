@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(keepasslib)
+project(keepasspp)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_CXX_STANDARD 17)
@@ -25,7 +25,7 @@ add_subdirectory(src)
 
 include_directories(src)
 add_executable(main main.cpp ${SOURCES})
-target_link_libraries(main keepasslibpp libgcrypt libargon2)
+target_link_libraries(main keepasspp libgcrypt libargon2)
 
 # Configure tests
 if (${CMAKE_BUILD_TYPE} STREQUAL Test OR ${CMAKE_BUILD_TYPE} STREQUAL Debug)
@@ -34,11 +34,11 @@ if (${CMAKE_BUILD_TYPE} STREQUAL Test OR ${CMAKE_BUILD_TYPE} STREQUAL Debug)
     add_subdirectory(test)
 endif()
 
-#file(GLOB_RECURSE SOURCES src/keepasslibpp/*.cpp src/keepasslibpp/*.hpp)
+#file(GLOB_RECURSE SOURCES src/keepasspp/*.cpp src/keepasspp/*.hpp)
 # if you wanna dll
-#add_library(keepasslibpp SHARED ${SOURCES})
-#add_library(keepasslibpp ${SOURCES})
-#target_include_directories(keepasslibpp PRIVATE src)
+#add_library(keepasspp SHARED ${SOURCES})
+#add_library(keepasspp ${SOURCES})
+#target_include_directories(keepasspp PRIVATE src)
 #file(GLOB_RECURSE TEST_SOURCES src/tests/*.cpp src/tests/*.hpp)
 #add_executable(test_keepasslib ${SOURCES} ${TEST_SOURCES})
 #target_include_directories(test_keepasslib PRIVATE src)

@@ -12,7 +12,7 @@
 #include <variant>
 #include <vector>
 
-namespace keepasslibpp {
+namespace keepasspp {
 
 // TODO: Use template for container (in src use unordered, but map in tests)
 class VariantDictionary {

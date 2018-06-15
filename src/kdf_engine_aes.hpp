@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <string>
 
-namespace keepasslibpp {
+namespace keepasspp {
 
 class KdfEngineAes : public KdfEngine {
 public:

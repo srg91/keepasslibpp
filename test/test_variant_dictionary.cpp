@@ -12,7 +12,7 @@
 #include <stdexcept>
 #include <type_traits>
 
-using namespace keepasslibpp;
+using namespace keepasspp;
 
 class TestVariantDictionary : public ::testing::Test {
 protected:

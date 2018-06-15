@@ -9,9 +9,9 @@
 #include <iterator>
 #include <sstream>
 
-namespace keepasslibpp {
+namespace keepasspp {
 
-Hash::Hash(keepasslibpp::HashAlgorithm algorithm) {
+Hash::Hash(keepasspp::HashAlgorithm algorithm) {
     this->algorithm = algorithm;
     this->digestSize = Hash::getAlgorithmLength(this->algorithm);
     // TODO: handle errors
@@ -47,7 +47,7 @@ std::size_t Hash::getAlgorithmLength(HashAlgorithm algorithm) noexcept {
     return gcry_md_get_algo_dlen(getGcryptAlgorithm(algorithm));
 }
 
-int Hash::getGcryptAlgorithm(keepasslibpp::HashAlgorithm algorithm) noexcept {
+int Hash::getGcryptAlgorithm(keepasspp::HashAlgorithm algorithm) noexcept {
     int gcrypt_algorithm = 0;
 
     switch (algorithm) {

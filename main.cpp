@@ -25,7 +25,7 @@
 #include <memory>
 
 using namespace std;
-//using namespace keepasslibpp;
+//using namespace keepasspp;
 
 
 //ostream& operator <<(ostream& stream, const std::array<std::uint8_t, 1024 * 1024>& value) {
@@ -41,7 +41,7 @@ using namespace std;
 //    return stream;
 //};
 
-ostream& operator <<(ostream& stream, keepasslibpp::ByteVector value) {
+ostream& operator <<(ostream& stream, keepasspp::ByteVector value) {
     auto o = stream.flags();
     stream << setfill('0') << hex;
     for (const auto& c : value) {
@@ -54,7 +54,7 @@ ostream& operator <<(ostream& stream, keepasslibpp::ByteVector value) {
 // 42410
 // 32480
 int main() {
-    keepasslibpp::ByteVector u(16);
+    keepasspp::ByteVector u(16);
 
     gcry_check_version(GCRYPT_VERSION);
     gcry_control(GCRYCTL_INITIALIZATION_FINISHED, 0);

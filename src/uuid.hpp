@@ -11,7 +11,7 @@
 #include <string>
 #include <utility>
 
-namespace keepasslibpp {
+namespace keepasspp {
 
 // Standard size in bytes of a UUID.
 const std::size_t UUID_SIZE = 16;
@@ -68,7 +68,8 @@ private:
     static uuid_t createNew() noexcept;
     static uuid_t createNil() noexcept;
 
-    constexpr static const auto uuid_t_hash_func = std::hash<std::string_view>{};
+    constexpr static const auto uuid_t_hash_func =
+        std::hash<std::string_view>{};
 };
 
 // Nil UUID (all bytes are zero).
@@ -79,7 +80,7 @@ std::ostream& operator <<(std::ostream& stream, const Uuid& u);
 // TODO: Guess iterator names
 template <typename It>
 void Uuid::checkSize(It begin, It end) const {
-    // TODO: Make keepasslibpp exception
+    // TODO: Make keepasspp exception
     auto it_size = end - begin;
     if (it_size != UUID_SIZE) {
         std::string message = "invalid interval size: ";
@@ -100,11 +101,11 @@ Uuid::Uuid(It begin, It end) {
 
 namespace std {
     template<>
-    struct hash<keepasslibpp::Uuid>
+    struct hash<keepasspp::Uuid>
     {
         using result_type = std::size_t;
 
-        result_type operator()(const keepasslibpp::Uuid& u) const {
+        result_type operator()(const keepasspp::Uuid& u) const {
             return u.hash();
         }
     };

@@ -13,7 +13,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-using namespace keepasslibpp;
+using namespace keepasspp;
 
 TEST(TestUuid, EqualUuids) {
     Uuid u1, u2;

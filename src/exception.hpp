@@ -5,7 +5,7 @@
 #include <sstream>
 #include <string>
 
-namespace keepasslibpp::exception {
+namespace keepasspp::exception {
 
 // TODO: move this to enums
 enum class ErrorCode {
@@ -17,14 +17,14 @@ enum class ErrorCode {
     NotEnoughBytes,
 };
 
-class KeePassLibError: public std:: exception {
+class KeePassError: public std:: exception {
 public:
     // TODO: add namespace and etc
-    explicit KeePassLibError(ErrorCode code_) : code(code_) {};
+    explicit KeePassError(ErrorCode code_) : code(code_) {};
 
     virtual std::string what() {
         std::ostringstream s;
-        s << "keepasslibpp::keepasslib_error: catch error with code ";
+        s << "keepasspp::keepasslib_error: catch error with code ";
         s << "0x" << std::hex << std::setfill('0') << std::setw(2);
         s << static_cast<unsigned>(code);
         return s.str();
@@ -34,51 +34,51 @@ private:
 };
 
 // TODO: Structs?
-class NewVersionRequiredError: public KeePassLibError {
+class NewVersionRequiredError: public KeePassError {
 public:
     NewVersionRequiredError()
-        : KeePassLibError(ErrorCode::NewVersionRequired) {};
+        : KeePassError(ErrorCode::NewVersionRequired) {};
 };
 
-class FileCorruptedError: public KeePassLibError {
+class FileCorruptedError: public KeePassError {
 public:
     FileCorruptedError()
-        : KeePassLibError(ErrorCode::FileCorrupted) {};
+        : KeePassError(ErrorCode::FileCorrupted) {};
 };
 
-class InvalidKdfParametersError: public KeePassLibError {
+class InvalidKdfParametersError: public KeePassError {
 public:
     InvalidKdfParametersError()
-        : KeePassLibError(ErrorCode::InvalidKdfParameters) {};
+        : KeePassError(ErrorCode::InvalidKdfParameters) {};
 };
 
 // TODO: Rename?
 // TODO: Sersly? Error at top and exceptions below??
-class ArgumentNullException: public KeePassLibError {
+class ArgumentNullException: public KeePassError {
 public:
     ArgumentNullException(const std::string& a)
-        : KeePassLibError(ErrorCode::ArgumentIsNull)
+        : KeePassError(ErrorCode::ArgumentIsNull)
         , argument(a) {};
 private:
     const std::string argument;
 };
 
 // TODO: Rename?
-class ArgumentOutOfRangeException: public KeePassLibError {
+class ArgumentOutOfRangeException: public KeePassError {
 public:
     ArgumentOutOfRangeException(const std::string& a)
-        : KeePassLibError(ErrorCode::ArgumentOutOfRange)
+        : KeePassError(ErrorCode::ArgumentOutOfRange)
         , argument(a) {};
 private:
     const std::string argument;
 };
 
 // TODO: Rename?
-class NotEnoughBytesException: public KeePassLibError {
+class NotEnoughBytesException: public KeePassError {
 public:
     NotEnoughBytesException(const std::size_t actual,
                             const std::size_t expected)
-        : KeePassLibError(ErrorCode::NotEnoughBytes)
+        : KeePassError(ErrorCode::NotEnoughBytes)
         , actual(actual), expected(expected) {};
 private:
     const std::size_t actual, expected;

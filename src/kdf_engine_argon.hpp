@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <string>
 
-namespace keepasslibpp {
+namespace keepasspp {
 
 class KdfEngineArgon2 : KdfEngine {
 public:

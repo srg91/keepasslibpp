@@ -5,7 +5,7 @@
 #include <cstddef>
 #include <iterator>
 
-namespace keepasslibpp {
+namespace keepasspp {
 
 // TODO: Move to enums?
 enum class RandomStrength {

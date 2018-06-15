@@ -13,7 +13,7 @@
 #include <type_traits>
 #include <utility>
 
-namespace keepasslibpp {
+namespace keepasspp {
 
 class MemoryUtil {
 public:

@@ -9,7 +9,7 @@
 #include <iterator>
 #include <string>
 
-namespace keepasslibpp {
+namespace keepasspp {
 
 // TODO: Move to enums?
 enum class HashAlgorithm {
