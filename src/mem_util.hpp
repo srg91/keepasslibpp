@@ -29,7 +29,7 @@ inline void assert_read_enough(T actual, U expected) {
 }
 
 // TODO: Think about endianness
-template <typename T, typename = std::enable_if_t<std::is_trivial<T>::value>>
+template <typename T, typename = std::enable_if_t<std::is_trivial_v<T>>>
 T Read(std::istream& stream) {
     T value;
     std::size_t value_size = sizeof(value);
@@ -49,7 +49,7 @@ T Read(std::istream& stream, std::size_t size) {
 }
 
 // TODO: Think about endianness
-template <typename T, typename = std::enable_if_t<std::is_trivial<T>::value>>
+template <typename T, typename = std::enable_if_t<std::is_trivial_v<T>>>
 T Read(const std::string& s) {
     std::size_t value_size = sizeof(T);
     assert_read_enough(s.size(), value_size);
@@ -63,33 +63,22 @@ T Read(const std::string& s) {
 // TODO: We expect always Little Endian
 // TODO: Add check for big-endian?
 // TODO: Add function which writing size before?
-template <typename T, typename = std::enable_if_t<std::is_trivial<T>::value>>
+template <typename T>
 void Write(std::ostream& stream, T value) {
-    auto value_size = sizeof(T);
-    auto it = reinterpret_cast<const char *>(&value);
-    std::copy(it, it + value_size, std::ostream_iterator<char>(stream));
+    if constexpr (std::is_trivial_v<T>) {
+        auto it = reinterpret_cast<const char *>(&value);
+        std::copy_n(it, sizeof(T), std::ostreambuf_iterator<char>(stream));
+    } else {
+        auto value_size = std::size(value);
+        std::copy(std::begin(value), std::end(value),
+                  std::ostreambuf_iterator<char>(stream));
+    }
 }
 
-inline void Write(std::ostream& stream, const std::string& value) {
-    stream << value;
-}
-
-inline void Write(std::ostream& stream, const ByteVector& value) {
-    std::copy(value.begin(), value.end(), std::ostreambuf_iterator<char>(stream));
-}
-
-template <typename T, typename = std::enable_if_t<std::is_trivial<T>::value>>
-std::string Write(T value, std::size_t value_size) {
-    auto it = reinterpret_cast<const char *>(&value);
-    return std::string(it, it + value_size);
-}
-
-template <
-    typename T,
-    typename = std::enable_if_t<std::is_trivial<T>::value>
->
+template <typename T, typename = std::enable_if_t<std::is_trivial_v<T>>>
 std::string Write(T value) {
-    return Write<T>(value, sizeof(value));
+    auto it = reinterpret_cast<const char *>(&value);
+    return std::string(it, it + sizeof(value));
 }
 
 }
