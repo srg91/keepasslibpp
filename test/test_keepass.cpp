@@ -12,6 +12,9 @@ int main(int argc, char **argv) {
     // tell libgcrypt that initialization has completed
     gcry_control(GCRYCTL_INITIALIZATION_FINISHED, 0);
 
+    // warm up the random
+    gcry_random_bytes(1, GCRY_STRONG_RANDOM);
+
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
