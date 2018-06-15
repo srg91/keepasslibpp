@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 
 #include <cstdint>
+#include <iterator>
 #include <sstream>
 #include <string>
 
@@ -69,7 +70,7 @@ TEST(TestMemoryUtil, ReadUint64FromStream) {
 TEST(TestMemoryUtil, ReadStringFromStream) {
     std::istringstream s("hello, world!\nanother string");
     std::string expected = "hello, world!";
-    auto result = MemoryUtil::read<std::string>(s, expected.size());
+    auto result = MemoryUtil::read<std::string>(s, std::size(expected));
     EXPECT_EQ(result, expected);
 }
 

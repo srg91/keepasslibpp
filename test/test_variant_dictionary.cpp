@@ -149,7 +149,7 @@ TEST_F(TestVariantDictionary, DeserializationEmptyDictionary) {
     std::string s = {0x00, 0x01, 0x00};
     auto vd = VariantDictionary::deserialize(s);
     EXPECT_TRUE(vd.empty());
-    EXPECT_EQ(vd.size(), 0);
+    EXPECT_EQ(std::size(vd), 0);
 }
 
 TEST_F(TestVariantDictionary, DeserializationEmptyFile) {
@@ -443,7 +443,7 @@ TEST_F(TestVariantDictionary, SetByteVector) {
 TEST_F(TestVariantDictionary, EmptyDictionary) {
     VariantDictionary vd;
     EXPECT_TRUE(vd.empty());
-    EXPECT_EQ(vd.size(), 0);
+    EXPECT_EQ(std::size(vd), 0);
 }
 
 TEST_F(TestVariantDictionary, NonEmptyDictionary) {
@@ -452,22 +452,22 @@ TEST_F(TestVariantDictionary, NonEmptyDictionary) {
     vd.set<std::string>("some string", "hello, world");
     vd.set<bool>("some bool", true);
     EXPECT_TRUE(!vd.empty());
-    EXPECT_EQ(vd.size(), 3);
+    EXPECT_EQ(std::size(vd), 3);
 }
 
 TEST_F(TestVariantDictionary, Erase) {
     VariantDictionary vd;
     vd.set<std::int32_t>("some int", 123456);
-    EXPECT_EQ(vd.size(), 1);
+    EXPECT_EQ(std::size(vd), 1);
 
     vd.erase("some int");
     EXPECT_TRUE(vd.empty());
 
     vd.set<std::int32_t>("some int", 123456);
     vd.set<std::string>("some string", "hello, world");
-    EXPECT_EQ(vd.size(), 2);
+    EXPECT_EQ(std::size(vd), 2);
     vd.erase("some string");
-    EXPECT_EQ(vd.size(), 1);
+    EXPECT_EQ(std::size(vd), 1);
 }
 
 TEST_F(TestVariantDictionary, Clear) {
@@ -495,7 +495,7 @@ TEST_F(TestVariantDictionary, Index) {
     VariantDictionary vd;
     vd["bool"] = true;
     EXPECT_TRUE(!vd.empty());
-    EXPECT_EQ(vd.size(), 1);
+    EXPECT_EQ(std::size(vd), 1);
 
     bool result;
     EXPECT_TRUE(vd.get("bool", result));

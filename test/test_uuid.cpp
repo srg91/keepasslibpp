@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <iterator>
 #include <set>
 #include <stdexcept>
 #include <string>
@@ -42,7 +43,7 @@ TEST(TestUuid, NewUuid) {
     EXPECT_EQ(u2, u3);
 
     const size_t default_size = UUID_SIZE;
-    EXPECT_EQ(byte_string.size(), default_size);
+    EXPECT_EQ(std::size(byte_string), default_size);
 }
 
 TEST(TestUuid, NewUuidByUuid) {
@@ -109,7 +110,7 @@ TEST(TestUuid, IsUnique) {
 
     std::vector<Uuid> v(100);
     std::set<Uuid> s(v.begin(), v.end());
-    EXPECT_EQ(v.size(), s.size());
+    EXPECT_EQ(std::size(v), std::size(s));
 }
 
 TEST(TestUuid, IsNil) {
@@ -141,7 +142,7 @@ TEST(TestUuid, AddToMap) {
     for (int i = 0; i < n; i++) {
         m[Uuid()] = "some value";
     }
-    EXPECT_EQ(m.size(), n);
+    EXPECT_EQ(std::size(m), n);
 }
 
 TEST(TestUuid, AddToUnorderedMap) {
@@ -150,7 +151,7 @@ TEST(TestUuid, AddToUnorderedMap) {
     for (int i = 0; i < n; i++) {
         m[Uuid()] = "some value";
     }
-    EXPECT_EQ(m.size(), n);
+    EXPECT_EQ(std::size(m), n);
 }
 
 TEST(TestUuid, AddToSet) {
@@ -159,7 +160,7 @@ TEST(TestUuid, AddToSet) {
     for (int i = 0; i < n; i++) {
         s.insert(Uuid());
     }
-    EXPECT_EQ(s.size(), n);
+    EXPECT_EQ(std::size(s), n);
 }
 
 TEST(TestUuid, AddToUnorderedSet) {
@@ -168,5 +169,5 @@ TEST(TestUuid, AddToUnorderedSet) {
     for (int i = 0; i < n; i++) {
         s.insert(Uuid());
     }
-    EXPECT_EQ(s.size(), n);
+    EXPECT_EQ(std::size(s), n);
 }
