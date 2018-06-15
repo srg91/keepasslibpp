@@ -1,6 +1,6 @@
 #include "byte_vector.hpp"
 #include "exception.hpp"
-#include "mem_util.hpp"
+#include "memory_util.hpp"
 #include "variant_dictionary.hpp"
 
 #include <cstdint>
@@ -34,22 +34,22 @@ void VariantDictionary::clear() {
 }
 
 std::ostream& VariantDictionary::serialize(std::ostream& stream) const noexcept {
-    mem_util::Write<uint16_t>(stream, vdVersion);
+    MemoryUtil::write(stream, vdVersion);
 
     for (const auto& [key, value] : dict) {
         // write type id
         ValueTypeId value_type = std::visit(GuessTypeVisitor(), value);
-        mem_util::Write(stream, static_cast<std::uint8_t>(value_type));
+        MemoryUtil::write(stream, static_cast<std::uint8_t>(value_type));
 
         // write key
-        mem_util::Write(stream, static_cast<std::int32_t>(key.size()));
-        mem_util::Write(stream, key);
+        MemoryUtil::write(stream, static_cast<std::int32_t>(key.size()));
+        MemoryUtil::write(stream, key);
 
         // write value
         std::visit(WriteValueVisitor(stream), value);
     }
 
-    mem_util::Write(stream, static_cast<std::uint8_t>(ValueTypeId::None));
+    MemoryUtil::write(stream, static_cast<std::uint8_t>(ValueTypeId::None));
 }
 
 std::string VariantDictionary::serialize() const noexcept {
@@ -62,7 +62,7 @@ VariantDictionary VariantDictionary::deserialize(std::istream& stream) {
     VariantDictionary vd;
     try {
         deserialize(stream, vd);
-    } catch (std::length_error&) {
+    } catch (exception::NotEnoughBytesException) {
         // TODO: Add error message?
         throw exception::FileCorruptedError();
     }
@@ -71,7 +71,7 @@ VariantDictionary VariantDictionary::deserialize(std::istream& stream) {
 
 void VariantDictionary::deserialize(std::istream& stream,
                                     VariantDictionary& vd) {
-    auto version = mem_util::Read<std::uint16_t>(stream);
+    auto version = MemoryUtil::read<std::uint16_t>(stream);
     if ((version & vdmCritical) > (vdVersion & vdmCritical))
         // TODO: Add error message?
         throw exception::NewVersionRequiredError();
@@ -80,37 +80,37 @@ void VariantDictionary::deserialize(std::istream& stream,
         // TODO: Add error message?
         if (stream.peek() < 0) throw exception::FileCorruptedError();
         auto value_type = static_cast<ValueTypeId>(
-            mem_util::Read<std::int8_t>(stream));
+            MemoryUtil::read<std::int8_t>(stream));
         if (value_type == ValueTypeId::None) break;
 
-        auto key_size = mem_util::Read<std::int32_t>(stream);
-        auto key = mem_util::Read<std::string>(
+        auto key_size = MemoryUtil::read<std::int32_t>(stream);
+        auto key = MemoryUtil::read<std::string>(
             stream, static_cast<std::size_t>(key_size));
 
         auto value_size = static_cast<std::size_t>(
-            mem_util::Read<std::int32_t>(stream));
+            MemoryUtil::read<std::int32_t>(stream));
         mapped_type value;
         switch (value_type) {
             case ValueTypeId::Bool:
-                value = mem_util::Read<bool>(stream);
+                value = MemoryUtil::read<bool>(stream);
                 break;
             case ValueTypeId::Int32:
-                value = mem_util::Read<std::int32_t>(stream);
+                value = MemoryUtil::read<std::int32_t>(stream);
                 break;
             case ValueTypeId::Int64:
-                value = mem_util::Read<std::int64_t>(stream);
+                value = MemoryUtil::read<std::int64_t>(stream);
                 break;
             case ValueTypeId::UInt32:
-                value = mem_util::Read<std::uint32_t>(stream);
+                value = MemoryUtil::read<std::uint32_t>(stream);
                 break;
             case ValueTypeId::UInt64:
-                value = mem_util::Read<std::uint64_t>(stream);
+                value = MemoryUtil::read<std::uint64_t>(stream);
                 break;
             case ValueTypeId::String:
-                value = mem_util::Read<std::string>(stream, value_size);
+                value = MemoryUtil::read<std::string>(stream, value_size);
                 break;
             case ValueTypeId::ByteArray:
-                value = mem_util::Read<ByteVector>(stream, value_size);
+                value = MemoryUtil::read<ByteVector>(stream, value_size);
                 break;
             default:
                 // TODO: Add error message?

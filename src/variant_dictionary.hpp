@@ -1,7 +1,7 @@
 #pragma once
 
 #include "byte_vector.hpp"
-#include "mem_util.hpp"
+#include "memory_util.hpp"
 
 #include <cstdint>
 #include <iostream>
@@ -95,31 +95,20 @@ private:
         std::ostream& stream;
         explicit WriteValueVisitor(std::ostream& stream) : stream(stream) {}
 
-        template <
-            typename T,
-            typename = std::enable_if_t<std::is_trivial<T>::value>
-        >
-        std::size_t guess_size(T) const { return sizeof(T);}
-
-        std::size_t guess_size(const std::string& value) const {
-            return value.size();
-        }
-
-        std::size_t guess_size(const ByteVector& value) const {
-            return value.size();
+        template <typename T>
+        std::size_t guess_size(const T& value) const {
+            if constexpr (std::is_trivial_v<T>) {
+                return sizeof(T);
+            } else {
+                return std::size(value);
+            }
         }
 
         template <typename T>
         void operator ()(const T& value) const {
             auto value_size = static_cast<std::int32_t>(guess_size(value));
-            mem_util::Write(stream, value_size);
-            mem_util::Write(stream, value);
-        }
-
-        void operator ()(const ByteVector& value) const {
-            auto value_size = static_cast<std::int32_t>(guess_size(value));
-            mem_util::Write(stream, value_size);
-            mem_util::Write(stream, value);
+            MemoryUtil::write(stream, value_size);
+            MemoryUtil::write(stream, value);
         }
 
     };

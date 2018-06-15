@@ -14,6 +14,7 @@ enum class ErrorCode {
     InvalidKdfParameters,
     ArgumentIsNull,
     ArgumentOutOfRange,
+    NotEnoughBytes,
 };
 
 class KeePassLibError: public std:: exception {
@@ -52,6 +53,7 @@ public:
 };
 
 // TODO: Rename?
+// TODO: Sersly? Error at top and exceptions below??
 class ArgumentNullException: public KeePassLibError {
 public:
     ArgumentNullException(const std::string& a)
@@ -69,6 +71,17 @@ public:
         , argument(a) {};
 private:
     const std::string argument;
+};
+
+// TODO: Rename?
+class NotEnoughBytesException: public KeePassLibError {
+public:
+    NotEnoughBytesException(const std::size_t actual,
+                            const std::size_t expected)
+        : KeePassLibError(ErrorCode::NotEnoughBytes)
+        , actual(actual), expected(expected) {};
+private:
+    const std::size_t actual, expected;
 };
 
 }

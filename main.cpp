@@ -1,7 +1,7 @@
 #include "crypto_util.hpp"
 #include "kdf_engine_aes.hpp"
 #include "kdf_engine_argon.hpp"
-#include "mem_util.hpp"
+#include "memory_util.hpp"
 #include "uuid.hpp"
 #include "kdf_parameters.hpp"
 #include "variant_dictionary.hpp"
