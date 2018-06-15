@@ -29,7 +29,7 @@ public:
 private:
     Uuid extractUuid();
 
-    static const std::string uuid_key;
+    inline static const std::string uuid_key = "$UUID";
     const Uuid kdf_uuid;
 };
 

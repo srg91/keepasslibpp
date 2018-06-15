@@ -5,82 +5,54 @@
 #include "kdf_parameters.hpp"
 #include "rand.hpp"
 
-// TODO: don't forget to move
-//#include <openssl/evp.h>
 #include <gcrypt.h>
 
 #include <cstdint>
+#include <iterator>
 
 using namespace keepasslibpp;
 
-// uint64
-const std::string AesKdf::paramRounds = "R";
-// char[32]
-const std::string AesKdf::paramSeed = "S";
-
-KdfParameters AesKdf::getDefaultParameters() const  {
+KdfParameters KdfEngineAes::getDefaultParameters() const  {
     KdfParameters kp = KdfEngine::getDefaultParameters();
-    kp.set(paramRounds, DEFAULT_KEY_ENCRYPTION_ROUNDS);
+    kp.set(KdfEngineAes::paramRounds, KdfEngineAes::defaultRounds);
     return kp;
 }
 
-void AesKdf::randomize(KdfParameters& kp) const {
-    kp[paramSeed] = Rand(RandomStrength::strong).get(AesKdf::defaultSize);
+void KdfEngineAes::randomize(KdfParameters& kp) const {
+    kp[KdfEngineAes::paramSeed] =
+        Rand(RandomStrength::strong).get(KdfEngineAes::defaultSize);
 }
 
-ByteVector AesKdf::transform(ByteVector msg, const KdfParameters& kp) const {
+ByteVector KdfEngineAes::transform(const ByteVector& msg,
+                                   const KdfParameters& kp) const {
     std::uint64_t rounds;
-    if (!kp.get<std::uint64_t>(paramRounds, rounds))
+    if (!kp.get<std::uint64_t>(KdfEngineAes::paramRounds, rounds))
         throw exception::ArgumentNullException("rounds");
 
     ByteVector seed;
-    if (!kp.get<ByteVector>(paramSeed, seed))
+    if (!kp.get<ByteVector>(KdfEngineAes::paramSeed, seed))
         throw exception::ArgumentNullException("seed");
 
-    // TODO: something without copy??
-    if (msg.size() != AesKdf::defaultSize) {
-        msg = Hash(HashAlgorithm::sha256).sum(msg);
+    // TODO: something without copy?
+    auto data = msg;
+    if (data.size() != KdfEngineAes::defaultSize) {
+        data = Hash(HashAlgorithm::sha256).sum(data);
     }
 
-    if (seed.size() != AesKdf::defaultSize) {
+    if (seed.size() != KdfEngineAes::defaultSize) {
         seed = Hash(HashAlgorithm::sha256).sum(seed);
     }
 
-    // TODO: do not copy msg?
-    return transformKey(msg, seed, rounds);
+    return transformKey(data, seed, rounds);
 }
 
-//type::ByteVector AesKdf::transformKey(const type::ByteVector& data, const type::ByteVector& seed,
-//                                  std::uint64_t rounds) const {
-//    type::ByteVector result_data = data;
-//    // TODO: Add many many checks
-//    // TODO: change 16 to some constant?
-//    // TODO: change it to char* ?
-//    type::ByteVector iv(16, 0);
-//    // TODO: handle errors
-//    auto ctx = EVP_CIPHER_CTX_new();
-//    // TODO: handle errors
-//    EVP_EncryptInit_ex(ctx, EVP_aes_256_ecb(), nullptr, &seed[0], &iv[0]);
-//
-//    int len = 16;
-//    for (std::uint64_t i = 0; i < rounds; i++) {
-//        // TODO: handle errors
-//        EVP_EncryptUpdate(ctx, &result_data[0], &len, &result_data[0], len);
-//        EVP_EncryptUpdate(ctx, &result_data[16], &len, &result_data[16], len);
-//    }
-//
-//    EVP_CIPHER_CTX_free(ctx);
-//    return CryptoUtil::hashSha256(result_data);
-//}
-
-ByteVector AesKdf::transformKey(const ByteVector& data, const ByteVector& seed,
+ByteVector KdfEngineAes::transformKey(const ByteVector& data, const ByteVector& seed,
                                        std::uint64_t rounds) const {
     // TODO: do not copy?
     ByteVector result_data = data;
     // TODO: Add many many checks
-    // TODO: change to constant by gcry_cipher_get_algo_keylen or smtelse
-    // TODO: change it to char* ?
-    ByteVector iv(16, 0);
+    // TODO: move this to constructor
+    ByteVector iv(gcry_cipher_get_algo_blklen(GCRY_CIPHER_AES256), 0);
     // TODO: handle errors
     // TODO: handle errors
     gcry_cipher_hd_t handle;
@@ -88,15 +60,23 @@ ByteVector AesKdf::transformKey(const ByteVector& data, const ByteVector& seed,
     // TODO: add gcry_control?
     // TODO: handle errors
     gcry_cipher_open(&handle, GCRY_CIPHER_AES256, GCRY_CIPHER_MODE_ECB, 0);
-    gcry_cipher_setiv(handle, &iv[0], iv.size());
-    gcry_cipher_setkey(handle, &seed[0], seed.size());
+    gcry_cipher_setiv(handle, std::data(iv), std::size(iv));
+    gcry_cipher_setkey(handle, std::data(seed), std::size(seed));
 
     // TODO: make constant by gcry_cipher_get_algo_keylen or smtelse
-    size_t len = 16;
+    size_t len = gcry_cipher_get_algo_blklen(GCRY_CIPHER_AES256);
     for (std::uint64_t i = 0; i < rounds; i++) {
         // TODO: handle errors
-        gcry_cipher_encrypt(handle, &result_data[0], len, &result_data[0], len);
-        gcry_cipher_encrypt(handle, &result_data[16], len, &result_data[16], len);
+        gcry_cipher_encrypt(
+            handle,
+            std::data(result_data), len,
+            std::data(result_data), len
+        );
+        gcry_cipher_encrypt(
+            handle,
+            std::data(result_data) + len, len,
+            std::data(result_data) + len, len
+        );
     }
 
     return Hash(HashAlgorithm::sha256).sum(result_data);

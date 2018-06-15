@@ -10,50 +10,51 @@
 
 using namespace keepasslibpp;
 
-const std::string Argon2Kdf::paramSalt = "S";
-const std::string Argon2Kdf::paramParallelism = "P";
-const std::string Argon2Kdf::paramMemory = "M";
-const std::string Argon2Kdf::paramIterations = "I";
-const std::string Argon2Kdf::paramVersion = "V";
-const std::string Argon2Kdf::paramSecretKey = "K";
-const std::string Argon2Kdf::paramAssocData = "A";
+const std::string KdfEngineArgon2::paramSalt = "S";
+const std::string KdfEngineArgon2::paramParallelism = "P";
+const std::string KdfEngineArgon2::paramMemory = "M";
+const std::string KdfEngineArgon2::paramIterations = "I";
+const std::string KdfEngineArgon2::paramVersion = "V";
+const std::string KdfEngineArgon2::paramSecretKey = "K";
+const std::string KdfEngineArgon2::paramAssocData = "A";
 
-const std::uint32_t Argon2Kdf::minVersion = 0x10;
-const std::uint32_t Argon2Kdf::maxVersion = 0x13;
+const std::uint32_t KdfEngineArgon2::minVersion = 0x10;
+const std::uint32_t KdfEngineArgon2::maxVersion = 0x13;
 
-const std::uint32_t Argon2Kdf::minSalt = 8;
-const std::uint32_t Argon2Kdf::maxSalt = static_cast<std::uint32_t>(-1);
+const std::uint32_t KdfEngineArgon2::minSalt = 8;
+const std::uint32_t KdfEngineArgon2::maxSalt = static_cast<std::uint32_t>(-1);
 
-const std::uint64_t Argon2Kdf::minIterations = 1;
-const std::uint64_t Argon2Kdf::maxIterations = static_cast<std::uint32_t>(-1);
+const std::uint64_t KdfEngineArgon2::minIterations = 1;
+const std::uint64_t KdfEngineArgon2::maxIterations = static_cast<std::uint32_t>(-1);
 
-const std::uint64_t Argon2Kdf::minMemory = 1024 * 8;
-const std::uint64_t Argon2Kdf::maxMemory = 1024u * static_cast<std::uint32_t>(-1);
+const std::uint64_t KdfEngineArgon2::minMemory = 1024 * 8;
+const std::uint64_t KdfEngineArgon2::maxMemory = 1024u * static_cast<std::uint32_t>(-1);
 
-const std::uint32_t Argon2Kdf::minParallelism = 1;
-const std::uint32_t Argon2Kdf::maxParallelism = (1u << 24u) - 1;
+const std::uint32_t KdfEngineArgon2::minParallelism = 1;
+const std::uint32_t KdfEngineArgon2::maxParallelism = (1u << 24u) - 1;
 
-const std::uint64_t Argon2Kdf::defaultIterations = 2;
-const std::uint64_t Argon2Kdf::defaultMemory = 1024 * 1024;
-const std::uint32_t Argon2Kdf::defaultParallelism = 2;
+const std::uint64_t KdfEngineArgon2::defaultIterations = 2;
+const std::uint64_t KdfEngineArgon2::defaultMemory = 1024 * 1024;
+const std::uint32_t KdfEngineArgon2::defaultParallelism = 2;
 
-KdfParameters Argon2Kdf::getDefaultParameters() const {
+KdfParameters KdfEngineArgon2::getDefaultParameters() const {
     KdfParameters kp = KdfEngine::getDefaultParameters();
 
-    kp[paramVersion] = Argon2Kdf::maxVersion;
-    kp[paramIterations] = Argon2Kdf::defaultIterations;
-    kp[paramMemory] = Argon2Kdf::defaultMemory;
-    kp[paramParallelism] = Argon2Kdf::defaultParallelism;
+    kp[paramVersion] = KdfEngineArgon2::maxVersion;
+    kp[paramIterations] = KdfEngineArgon2::defaultIterations;
+    kp[paramMemory] = KdfEngineArgon2::defaultMemory;
+    kp[paramParallelism] = KdfEngineArgon2::defaultParallelism;
 
     return kp;
 }
 
-void Argon2Kdf::randomize(KdfParameters& kp) const {
+void KdfEngineArgon2::randomize(KdfParameters& kp) const {
     // TODO: const?
     kp[paramSalt] = Rand(RandomStrength::strong).get(32);
 }
 
-ByteVector Argon2Kdf::transform(ByteVector msg, const KdfParameters& kp) const {
+ByteVector KdfEngineArgon2::transform(const ByteVector& msg,
+                                const KdfParameters& kp) const {
     std::uint32_t version;
     if (!kp.get<std::uint32_t>(paramVersion, version))
         throw exception::ArgumentNullException("version");
@@ -100,10 +101,16 @@ ByteVector Argon2Kdf::transform(ByteVector msg, const KdfParameters& kp) const {
     );
 }
 
-ByteVector Argon2Kdf::transformKey(ByteVector msg, ByteVector salt,
-                                   std::uint32_t parallelism, std::uint64_t memory, std::uint64_t iterations,
-                                   std::size_t result_size, std::uint32_t version,
-                                   ByteVector secret_key, ByteVector assoc_data) const {
+ByteVector KdfEngineArgon2::transformKey(
+        const keepasslibpp::ByteVector& msg,
+        const keepasslibpp::ByteVector& salt,
+        std::uint32_t parallelism,
+        std::uint64_t memory,
+        std::uint64_t iterations,
+        std::size_t result_size,
+        std::uint32_t version,
+        const keepasslibpp::ByteVector& secret_key,
+        const keepasslibpp::ByteVector& assoc_data) const {
     // TODO: use secret key?
     // TODO: use assoc_data?
     // TODO: check version?

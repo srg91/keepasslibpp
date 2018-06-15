@@ -8,7 +8,7 @@
 
 namespace keepasslibpp {
 
-class Argon2Kdf : KdfEngine {
+class KdfEngineArgon2 : KdfEngine {
 public:
     static const std::string paramSalt;
     static const std::string paramParallelism;
@@ -22,7 +22,8 @@ public:
     KdfParameters getDefaultParameters() const override;
 
     void randomize(KdfParameters& kp) const override;
-    ByteVector transform(ByteVector msg, const KdfParameters& kp) const override;
+    ByteVector transform(const ByteVector& msg,
+                         const KdfParameters& kp) const override;
 private:
     Uuid uuid = Uuid::fromByteVector({
         0xef, 0x63, 0x6d, 0xdf, 0x8c, 0x29, 0x44, 0x4b,
@@ -57,12 +58,12 @@ private:
     static const std::uint64_t defaultMemory;
     static const std::uint32_t defaultParallelism;
 
-    // TODO: fix const &
     ByteVector transformKey(
-        ByteVector msg, ByteVector salt, std::uint32_t parallelism,
-        std::uint64_t memory, std::uint64_t iterations, std::size_t result_size,
-        std::uint32_t version, ByteVector secret_key, ByteVector assoc_data
-    ) const;
+        const ByteVector& msg, const ByteVector& salt,
+        std::uint32_t parallelism, std::uint64_t memory,
+        std::uint64_t iterations, std::size_t result_size,
+        std::uint32_t version, const ByteVector& secret_key,
+        const ByteVector& assoc_data) const;
 };
 
 }
