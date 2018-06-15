@@ -29,8 +29,9 @@ inline void assert_read_enough(T actual, U expected) {
 }
 
 // TODO: Think about endianness
-template <typename T, typename = std::enable_if_t<std::is_trivial_v<T>>>
-T Read(std::istream& stream) {
+template <typename T>
+std::enable_if_t<std::is_trivial_v<T>, T>
+Read(std::istream& stream) {
     T value;
     std::size_t value_size = sizeof(value);
     auto it = reinterpret_cast<char *>(&value);
@@ -49,8 +50,9 @@ T Read(std::istream& stream, std::size_t size) {
 }
 
 // TODO: Think about endianness
-template <typename T, typename = std::enable_if_t<std::is_trivial_v<T>>>
-T Read(const std::string& s) {
+template <typename T>
+std::enable_if_t<std::is_trivial_v<T>, T>
+Read(const std::string& s) {
     std::size_t value_size = sizeof(T);
     assert_read_enough(s.size(), value_size);
 
@@ -75,8 +77,9 @@ void Write(std::ostream& stream, T value) {
     }
 }
 
-template <typename T, typename = std::enable_if_t<std::is_trivial_v<T>>>
-std::string Write(T value) {
+template <typename T>
+std::enable_if_t<std::is_trivial_v<T>, std::string>
+Write(T value) {
     auto it = reinterpret_cast<const char *>(&value);
     return std::string(it, it + sizeof(value));
 }
