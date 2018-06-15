@@ -503,10 +503,10 @@ TEST_F(TestVariantDictionary, Index) {
     EXPECT_TRUE(result);
 
     auto mapped_value = vd["bool"];
-    bool is_same_types = std::is_same<
+    bool is_same_types = std::is_same_v<
         decltype(mapped_value),
         VariantDictionary::mapped_type
-    >::value;
+    >;
     EXPECT_TRUE(is_same_types);
 }
 
