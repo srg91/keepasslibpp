@@ -6,6 +6,7 @@
 #include <argon2.h>
 
 #include <cstdint>
+#include <iterator>
 #include <numeric>
 
 using namespace keepasslibpp;
@@ -65,7 +66,7 @@ ByteVector KdfEngineArgon2::transform(const ByteVector& msg,
     if (!kp.get<ByteVector>(paramSalt, salt))
         throw exception::ArgumentNullException("salt");
     // TODO: ???
-    if ((salt.size() < minSalt) || (salt.size() > maxSalt))
+    if ((std::size(salt) < minSalt) || (std::size(salt) > maxSalt))
         throw exception::ArgumentOutOfRangeException("salt");
 
     // TODO: Can we simplify this?
@@ -120,9 +121,9 @@ ByteVector KdfEngineArgon2::transformKey(
         static_cast<std::uint32_t>(memory),
         parallelism,
         &msg[0],
-        msg.size(),
+        std::size(msg),
         &salt[0],
-        salt.size(),
+        std::size(salt),
         &result[0],
         result_size
     );

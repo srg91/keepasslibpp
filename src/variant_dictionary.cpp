@@ -5,6 +5,7 @@
 
 #include <cstdint>
 #include <iostream>
+#include <iterator>
 #include <sstream>
 #include <variant>
 
@@ -22,7 +23,7 @@ VariantDictionary::size_type VariantDictionary::count(
 }
 
 std::size_t VariantDictionary::size() const {
-    return dict.size();
+    return std::size(dict);
 }
 
 void VariantDictionary::erase(const std::string& key) {
@@ -42,7 +43,7 @@ std::ostream& VariantDictionary::serialize(std::ostream& stream) const noexcept 
         MemoryUtil::write(stream, static_cast<std::uint8_t>(value_type));
 
         // write key
-        MemoryUtil::write(stream, static_cast<std::int32_t>(key.size()));
+        MemoryUtil::write(stream, static_cast<std::int32_t>(std::size(key)));
         MemoryUtil::write(stream, key);
 
         // write value

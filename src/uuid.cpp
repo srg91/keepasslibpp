@@ -7,10 +7,9 @@
 #include <functional>
 #include <iomanip>
 #include <iostream>
-#include <random>
+#include <iterator>
 #include <sstream>
 #include <string>
-#include <string_view>
 #include <utility>
 
 namespace keepasslibpp {
@@ -70,7 +69,7 @@ Uuid::uuid_t Uuid::createNil() noexcept {
 
 std::size_t Uuid::hash() const noexcept {
     return uuid_t_hash_func({reinterpret_cast<const char*>(&uuid[0]),
-                             uuid.size()});
+                             std::size(uuid)});
 }
 
 std::ostream& operator <<(std::ostream& stream, const Uuid& u) {

@@ -35,11 +35,11 @@ ByteVector KdfEngineAes::transform(const ByteVector& msg,
 
     // TODO: something without copy?
     auto data = msg;
-    if (data.size() != KdfEngineAes::defaultSize) {
+    if (std::size(data) != KdfEngineAes::defaultSize) {
         data = Hash(HashAlgorithm::sha256).sum(data);
     }
 
-    if (seed.size() != KdfEngineAes::defaultSize) {
+    if (std::size(seed) != KdfEngineAes::defaultSize) {
         seed = Hash(HashAlgorithm::sha256).sum(seed);
     }
 
