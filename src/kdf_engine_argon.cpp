@@ -120,11 +120,11 @@ ByteVector KdfEngineArgon2::transformKey(
         static_cast<std::uint32_t>(iterations),
         static_cast<std::uint32_t>(memory),
         parallelism,
-        &msg[0],
+        std::data(msg),
         std::size(msg),
-        &salt[0],
+        std::data(salt),
         std::size(salt),
-        &result[0],
+        std::data(result),
         result_size
     );
     return result;

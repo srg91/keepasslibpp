@@ -68,7 +68,7 @@ Uuid::uuid_t Uuid::createNil() noexcept {
 }
 
 std::size_t Uuid::hash() const noexcept {
-    return uuid_t_hash_func({reinterpret_cast<const char*>(&uuid[0]),
+    return uuid_t_hash_func({reinterpret_cast<const char*>(std::data(uuid)),
                              std::size(uuid)});
 }
 

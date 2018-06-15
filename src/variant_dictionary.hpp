@@ -116,7 +116,7 @@ private:
 
 template <typename T>
 bool VariantDictionary::get(const std::string& key, T& value) const noexcept {
-    if (key.empty()) return false;
+    if (std::empty(key)) return false;
     try {
         auto vv = dict.at(key);
         value = std::get<T>(vv);
@@ -128,7 +128,7 @@ bool VariantDictionary::get(const std::string& key, T& value) const noexcept {
 
 template <typename T>
 void VariantDictionary::set(const std::string& key, const T& value) {
-    if (key.empty()) return;
+    if (std::empty(key)) return;
     dict[key] = value;
 }
 

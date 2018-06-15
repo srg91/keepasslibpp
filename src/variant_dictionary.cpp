@@ -14,7 +14,7 @@ using namespace keepasslibpp;
 namespace keepasslibpp {
 
 bool VariantDictionary::empty() const {
-    return dict.empty();
+    return std::empty(dict);
 }
 
 VariantDictionary::size_type VariantDictionary::count(

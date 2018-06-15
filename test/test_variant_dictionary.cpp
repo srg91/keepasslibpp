@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <iomanip>
 #include <iostream>
+#include <iterator>
 #include <sstream>
 #include <stdexcept>
 #include <type_traits>
@@ -148,7 +149,7 @@ TEST_F(TestVariantDictionary, DeserializationFromStream) {
 TEST_F(TestVariantDictionary, DeserializationEmptyDictionary) {
     std::string s = {0x00, 0x01, 0x00};
     auto vd = VariantDictionary::deserialize(s);
-    EXPECT_TRUE(vd.empty());
+    EXPECT_TRUE(std::empty(vd));
     EXPECT_EQ(std::size(vd), 0);
 }
 
@@ -442,7 +443,7 @@ TEST_F(TestVariantDictionary, SetByteVector) {
 
 TEST_F(TestVariantDictionary, EmptyDictionary) {
     VariantDictionary vd;
-    EXPECT_TRUE(vd.empty());
+    EXPECT_TRUE(std::empty(vd));
     EXPECT_EQ(std::size(vd), 0);
 }
 
@@ -451,7 +452,7 @@ TEST_F(TestVariantDictionary, NonEmptyDictionary) {
     vd.set<std::int32_t>("some int", 123456);
     vd.set<std::string>("some string", "hello, world");
     vd.set<bool>("some bool", true);
-    EXPECT_TRUE(!vd.empty());
+    EXPECT_TRUE(!std::empty(vd));
     EXPECT_EQ(std::size(vd), 3);
 }
 
@@ -461,7 +462,7 @@ TEST_F(TestVariantDictionary, Erase) {
     EXPECT_EQ(std::size(vd), 1);
 
     vd.erase("some int");
-    EXPECT_TRUE(vd.empty());
+    EXPECT_TRUE(std::empty(vd));
 
     vd.set<std::int32_t>("some int", 123456);
     vd.set<std::string>("some string", "hello, world");
@@ -474,10 +475,10 @@ TEST_F(TestVariantDictionary, Clear) {
     VariantDictionary vd;
     vd.set<std::int32_t>("some int", 123456);
     vd.set<std::string>("some string", "hello, world");
-    EXPECT_TRUE(!vd.empty());
+    EXPECT_TRUE(!std::empty(vd));
 
     vd.clear();
-    EXPECT_TRUE(vd.empty());
+    EXPECT_TRUE(std::empty(vd));
 }
 
 TEST_F(TestVariantDictionary, Equal) {
@@ -494,7 +495,7 @@ TEST_F(TestVariantDictionary, Equal) {
 TEST_F(TestVariantDictionary, Index) {
     VariantDictionary vd;
     vd["bool"] = true;
-    EXPECT_TRUE(!vd.empty());
+    EXPECT_TRUE(!std::empty(vd));
     EXPECT_EQ(std::size(vd), 1);
 
     bool result;
