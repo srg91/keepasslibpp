@@ -23,5 +23,20 @@ TEST(TestkdfEngineArgon2, GetDefaultParameters) {
     auto params = argon.getDefaultParameters();
     EXPECT_EQ(std::size(params), 5);
 
-    auto salt = params.get<std::uint32_t>(KdfEngineArgon2::paramSalt);
+    auto version =
+        params.get<std::uint32_t>(KdfEngineArgon2::paramVersion);
+    EXPECT_EQ(version, 0x13);
+
+    auto iterations =
+        params.get<std::uint64_t>(KdfEngineArgon2::paramIterations);
+    EXPECT_EQ(iterations, 2);
+
+    auto memory =
+        params.get<std::uint64_t>(KdfEngineArgon2::paramMemory);
+    EXPECT_EQ(memory, 1 * 1024 * 1024);
+
+    auto parallelism =
+        params.get<std::uint32_t>(KdfEngineArgon2::paramParallelism);
+    EXPECT_EQ(parallelism, 2);
 }
+

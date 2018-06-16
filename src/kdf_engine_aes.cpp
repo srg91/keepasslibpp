@@ -1,4 +1,5 @@
 #include "byte_vector.hpp"
+#include "cipher_adapter.hpp"
 #include "exception.hpp"
 #include "hash.hpp"
 #include "kdf_engine_aes.hpp"
@@ -46,28 +47,19 @@ ByteVector KdfEngineAes::transformKey(const ByteVector& data,
                                       std::uint64_t rounds) const {
     // TODO: do not copy?
     ByteVector result_data = data;
-    ByteVector iv(KdfEngineAes::blockSize, 0);
-    // TODO: handle errors
-    gcry_cipher_hd_t handle;
 
-    // TODO: add gcry_control?
-    // TODO: handle errors
-    gcry_cipher_open(&handle, GCRY_CIPHER_AES256, GCRY_CIPHER_MODE_ECB, 0);
-    gcry_cipher_setiv(handle, std::data(iv), std::size(iv));
-    gcry_cipher_setkey(handle, std::data(seed), std::size(seed));
+    CipherAdapter cipher(CipherAlgorithm::aes256, CipherMode::ecb);
+
+    ByteVector iv(KdfEngineAes::blockSize, 0);
+    cipher.setIv(iv);
+    cipher.setKey(seed);
 
     size_t len = KdfEngineAes::blockSize;
     for (std::uint64_t i = 0; i < rounds; i++) {
-        // TODO: handle errors
-        gcry_cipher_encrypt(
-            handle,
-            std::data(result_data), len,
-            std::data(result_data), len
-        );
-        gcry_cipher_encrypt(
-            handle,
-            std::data(result_data) + len, len,
-            std::data(result_data) + len, len
+        cipher.encrypt(
+            std::begin(result_data),
+            std::begin(result_data),
+            std::size(result_data)
         );
     }
 

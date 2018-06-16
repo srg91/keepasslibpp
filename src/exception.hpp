@@ -108,8 +108,7 @@ public:
 
 class NotEnoughBytesError: public KeePassError {
 public:
-    NotEnoughBytesError(std::size_t actual,
-                        std::size_t expected)
+    explicit NotEnoughBytesError(std::size_t actual, std::size_t expected)
         : KeePassError("NotEnoughBytesError",
                        "not enough bytes to read")
         , actual(actual), expected(expected) {};
@@ -125,8 +124,15 @@ private:
 
 class KdfEngineError: public KeePassError {
 public:
-    KdfEngineError() : KeePassError("KdfEngineError",
-                                    "unknown kdf engine error") {};
+    explicit KdfEngineError(std::string_view message)
+        : KeePassError("KdfEngineError", message) {};
+
+    KdfEngineError()
+        : KdfEngineError("unknown kdf engine error") {};
+};
+
+class KdfEngineAesError : public KdfEngineError {
+    
 };
 
 }

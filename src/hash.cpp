@@ -51,9 +51,9 @@ int Hash::getGcryptAlgorithm(keepasspp::HashAlgorithm algorithm) noexcept {
     int gcrypt_algorithm = 0;
 
     switch (algorithm) {
-    case HashAlgorithm::sha256:
-        gcrypt_algorithm = GCRY_MD_SHA256;
-        break;
+        case HashAlgorithm::sha256:
+            gcrypt_algorithm = GCRY_MD_SHA256;
+            break;
     }
 
     return gcrypt_algorithm;
