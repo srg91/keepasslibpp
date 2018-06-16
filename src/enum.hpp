@@ -185,16 +185,16 @@ enum class PwCompareOptions {
 // IOAccessType
 
 // TODO: get rid of it
-namespace AppRunFlags {
-    enum AppRunFlags {
-        None = 0,
-        GetStdOutput = 1,
-        WaitForExit = 2,
-        GCKeepAlive = 4,
-        DoEvents = 8,
-        DisableForms = 16
-    };
-}
+//namespace AppRunFlags {
+//    enum AppRunFlags {
+//        None = 0,
+//        GetStdOutput = 1,
+//        WaitForExit = 2,
+//        GCKeepAlive = 4,
+//        DoEvents = 8,
+//        DisableForms = 16
+//    };
+//}
 
 enum class ScaleTransformFlags {
     None,

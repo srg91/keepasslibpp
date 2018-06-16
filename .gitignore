@@ -39,3 +39,9 @@ cmake-build-*
 
 # MacOS stuff
 .DS_Store
+
+# VIM
+*.swp
+
+# Doxygen stuff
+doxygen_sqlite3.db
