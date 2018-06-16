@@ -15,22 +15,22 @@ public:
         , name("KeePassError")
         , msg("unknown error") {};
 
-    explicit KeePassError(std::string&& message)
+    explicit KeePassError(std::string_view message)
         : namespace_("keepasspp")
         , name("KeePassError")
-        , msg(std::move(message)) {};
+        , msg(message) {};
 
-    explicit KeePassError(std::string&& error_name, std::string&& message)
+    explicit KeePassError(std::string_view error_name, std::string_view message)
         : namespace_("keepasspp")
-        , name(std::move(error_name))
-        , msg(std::move(message)) {};
+        , name(error_name)
+        , msg(message) {};
 
-    explicit KeePassError(std::string&& namespace_,
-                          std::string&& error_name,
-                          std::string&& message)
-        : namespace_(std::move(namespace_))
-        , name(std::move(error_name))
-        , msg(std::move(message)) {};
+    explicit KeePassError(std::string_view namespace_,
+                          std::string_view error_name,
+                          std::string_view message)
+        : namespace_(namespace_)
+        , name(error_name)
+        , msg(message) {};
 
     virtual std::string what() {
         std::ostringstream s;
@@ -47,32 +47,27 @@ class UnknownError: public KeePassError {};
 
 class NewVersionRequiredError: public KeePassError {
 public:
-    explicit NewVersionRequiredError(std::string&& message)
-        : KeePassError("NewVersionRequiredError",
-                       std::forward<std::string>(message)) {};
+    explicit NewVersionRequiredError(std::string_view message)
+        : KeePassError("NewVersionRequiredError", message) {};
 };
 
 class FileCorruptedError: public KeePassError {
 public:
-    explicit FileCorruptedError(std::string&& message)
-        : KeePassError("FileCorruptedError",
-                       std::forward<std::string>(message)) {};
+    explicit FileCorruptedError(std::string_view message)
+        : KeePassError("FileCorruptedError", message) {};
 };
 
 class InvalidKdfParametersError: public KeePassError {
 public:
-    explicit InvalidKdfParametersError(std::string&& message)
-        : KeePassError("InvalidKdfParametersError",
-                       std::forward<std::string>(message)) {};
+    explicit InvalidKdfParametersError(std::string_view message)
+        : KeePassError("InvalidKdfParametersError", message) {};
 };
 
 class ArgumentError: public KeePassError {
 public:
-    explicit ArgumentError(std::string&& message,
-                           std::string&& argument)
-        : ArgumentError("ArgumentError",
-                        std::forward<std::string>(message),
-                        std::forward<std::string>(argument)) {};
+    explicit ArgumentError(std::string_view message,
+                           std::string_view argument)
+        : ArgumentError("ArgumentError", message, argument) {};
 
     std::string what() override {
         // TODO: another way?
@@ -85,20 +80,10 @@ public:
         return message;
     }
 protected:
-    // TODO: remove code-duplication?
-    explicit ArgumentError(std::string&& error_name,
-                           std::string&& message,
+    explicit ArgumentError(std::string_view error_name,
+                           std::string_view message,
                            std::string_view argument)
-        : KeePassError(std::forward<std::string>(error_name),
-                       std::forward<std::string>(message))
-        , argument(argument) {};
-
-    explicit ArgumentError(std::string&& error_name,
-                           std::string&& message,
-                           std::string&& argument)
-        : KeePassError(std::forward<std::string>(error_name),
-                       std::forward<std::string>(message))
-        , argument(std::move(argument)) {};
+        : KeePassError(error_name, message), argument(argument) {};
 
     const std::string argument;
 
@@ -107,22 +92,18 @@ protected:
 
 class ArgumentIsNullError: public ArgumentError {
 public:
-    explicit ArgumentIsNullError(const std::string& argument)
+    explicit ArgumentIsNullError(std::string_view argument)
         : ArgumentError("ArgumentIsNullError",
                         "argument <argument> is null",
-                        argument) {}
-    explicit ArgumentIsNullError(std::string&& argument)
-        : ArgumentError("ArgumentIsNullError",
-                        "argument <argument> is null",
-                        std::forward<std::string>(argument)){};
+                        argument){};
 };
 
 class ArgumentIsOutOfRangeError: public ArgumentError {
 public:
-    explicit ArgumentIsOutOfRangeError(std::string&& argument)
+    explicit ArgumentIsOutOfRangeError(std::string_view argument)
         : ArgumentError("ArgumentIsOutOfRangeError",
                         "argument <argument> is out of range",
-                        std::forward<std::string>(argument)) {};
+                        argument) {};
 };
 
 class NotEnoughBytesError: public KeePassError {
