@@ -27,11 +27,11 @@ ByteVector KdfEngineAes::transform(const ByteVector& msg,
                                    const KdfParameters& kp) const {
     std::uint64_t rounds;
     if (!kp.get<std::uint64_t>(KdfEngineAes::paramRounds, rounds))
-        throw exception::ArgumentNullException("rounds");
+        throw exception::ArgumentIsNullError("rounds");
 
     ByteVector seed;
     if (!kp.get<ByteVector>(KdfEngineAes::paramSeed, seed))
-        throw exception::ArgumentNullException("seed");
+        throw exception::ArgumentIsNullError("seed");
 
     // TODO: something without copy?
     auto data = msg;

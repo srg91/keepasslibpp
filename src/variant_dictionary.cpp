@@ -63,9 +63,8 @@ VariantDictionary VariantDictionary::deserialize(std::istream& stream) {
     VariantDictionary vd;
     try {
         deserialize(stream, vd);
-    } catch (exception::NotEnoughBytesException) {
-        // TODO: Add error message?
-        throw exception::FileCorruptedError();
+    } catch (const exception::NotEnoughBytesError&) {
+        throw exception::FileCorruptedError("cannot read enough bytes");
     }
     return vd;
 }
@@ -74,12 +73,12 @@ void VariantDictionary::deserialize(std::istream& stream,
                                     VariantDictionary& vd) {
     auto version = MemoryUtil::read<std::uint16_t>(stream);
     if ((version & vdmCritical) > (vdVersion & vdmCritical))
-        // TODO: Add error message?
-        throw exception::NewVersionRequiredError();
+        throw exception::NewVersionRequiredError(
+            "newer variant dictionary version found");
 
     for (;;) {
-        // TODO: Add error message?
-        if (stream.peek() < 0) throw exception::FileCorruptedError();
+        if (stream.peek() < 0)
+            throw exception::FileCorruptedError("unexpected symbol");
         auto value_type = static_cast<ValueTypeId>(
             MemoryUtil::read<std::int8_t>(stream));
         if (value_type == ValueTypeId::None) break;
@@ -114,13 +113,13 @@ void VariantDictionary::deserialize(std::istream& stream,
                 value = MemoryUtil::read<ByteVector>(stream, value_size);
                 break;
             default:
-                // TODO: Add error message?
-                throw exception::NewVersionRequiredError();
+                throw exception::NewVersionRequiredError(
+                    "unknown variant dictionary type");
         }
         vd[key] = value;
 
-        // TODO: Add error message?
-        if (!stream) throw exception::FileCorruptedError();
+        if (!stream)
+            throw exception::FileCorruptedError("unexpected end on stream");
     }
 }
 

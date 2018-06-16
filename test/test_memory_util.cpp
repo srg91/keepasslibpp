@@ -148,13 +148,13 @@ TEST(TestMemoryUtil, ReadInt32FromEmptyStream) {
         std::istringstream s;
         MemoryUtil::read<std::int32_t>(s);
     };
-    EXPECT_THROW(empty_stream_statement(), exception::NotEnoughBytesException);
+    EXPECT_THROW(empty_stream_statement(), exception::NotEnoughBytesError);
 
     auto short_stream_statement = []{
         std::istringstream s({0x78, 0x56});
         MemoryUtil::read<std::int32_t>(s);
     };
-    EXPECT_THROW(short_stream_statement(), exception::NotEnoughBytesException);
+    EXPECT_THROW(short_stream_statement(), exception::NotEnoughBytesError);
 }
 
 TEST(TestMemoryUtil, ReadInt32WithIncorrectStringSize) {
@@ -162,13 +162,13 @@ TEST(TestMemoryUtil, ReadInt32WithIncorrectStringSize) {
         std::string s = {0x78, 0x56, 0x34};
         MemoryUtil::read<std::int32_t>(s);
     };
-    EXPECT_THROW(short_statement(), exception::NotEnoughBytesException);
+    EXPECT_THROW(short_statement(), exception::NotEnoughBytesError);
 
     auto long_statement = []{
         std::string s = {0x78, 0x56, 0x34, 0x12, 0x11};
         MemoryUtil::read<std::int32_t>(s);
     };
-    EXPECT_THROW(long_statement(), exception::NotEnoughBytesException);
+    EXPECT_THROW(long_statement(), exception::NotEnoughBytesError);
 }
 
 TEST(TestMemoryUtil, WriteBoolToStream) {

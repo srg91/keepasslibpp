@@ -58,35 +58,35 @@ ByteVector KdfEngineArgon2::transform(const ByteVector& msg,
                                 const KdfParameters& kp) const {
     std::uint32_t version;
     if (!kp.get<std::uint32_t>(paramVersion, version))
-        throw exception::ArgumentNullException("version");
+        throw exception::ArgumentIsNullError("version");
     if ((version < minVersion) || (version > maxVersion))
-        throw exception::ArgumentOutOfRangeException("version");
+        throw exception::ArgumentIsOutOfRangeError("version");
 
     ByteVector salt;
     if (!kp.get<ByteVector>(paramSalt, salt))
-        throw exception::ArgumentNullException("salt");
+        throw exception::ArgumentIsNullError("salt");
     // TODO: ???
     if ((std::size(salt) < minSalt) || (std::size(salt) > maxSalt))
-        throw exception::ArgumentOutOfRangeException("salt");
+        throw exception::ArgumentIsOutOfRangeError("salt");
 
     // TODO: Can we simplify this?
     std::uint32_t parallelism;
     if (!kp.get<std::uint32_t>(paramParallelism, parallelism))
-        throw exception::ArgumentNullException("parallelism");
+        throw exception::ArgumentIsNullError("parallelism");
     if ((parallelism < minParallelism) || (parallelism > maxParallelism))
-        throw exception::ArgumentOutOfRangeException("parallelism");
+        throw exception::ArgumentIsOutOfRangeError("parallelism");
 
     std::uint64_t memory;
     if (!kp.get<std::uint64_t>(paramMemory, memory))
-        throw exception::ArgumentNullException("memory");
+        throw exception::ArgumentIsNullError("memory");
     if ((memory < minMemory) || (memory > maxMemory))
-        throw exception::ArgumentOutOfRangeException("memory");
+        throw exception::ArgumentIsOutOfRangeError("memory");
 
     std::uint64_t iterations;
     if (!kp.get<std::uint64_t>(paramIterations, iterations))
-        throw exception::ArgumentNullException("iterations");
+        throw exception::ArgumentIsNullError("iterations");
     if ((iterations < minIterations) || (iterations > maxIterations))
-        throw exception::ArgumentOutOfRangeException("iterations");
+        throw exception::ArgumentIsOutOfRangeError("iterations");
 
     // TODO: Add checks?
     ByteVector secret_key;

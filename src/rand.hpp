@@ -7,13 +7,11 @@
 
 namespace keepasspp {
 
-// TODO: Move to enums?
 enum class RandomStrength {
     weak,
     strong
 };
 
-// TODO: Make some facade?
 class Rand {
 public:
     explicit Rand(RandomStrength rs) : strength(rs) {};

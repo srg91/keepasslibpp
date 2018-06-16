@@ -10,7 +10,8 @@ using namespace keepasspp;
 Uuid KdfParameters::extractUuid() {
     ByteVector uuid_bytes;
     if (!get<ByteVector>(KdfParameters::uuid_key, uuid_bytes))
-        throw exception::InvalidKdfParametersError();
+        throw exception::InvalidKdfParametersError(
+            "cannot find uuid in kdf parameters");
     return Uuid::fromByteVector(uuid_bytes);
 }
 

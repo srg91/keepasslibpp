@@ -4,82 +4,130 @@
 #include <iomanip>
 #include <sstream>
 #include <string>
+#include <utility>
 
 namespace keepasspp::exception {
-
-// TODO: move this to enums
-enum class ErrorCode {
-    NewVersionRequired,
-    FileCorrupted,
-    InvalidKdfParameters,
-    ArgumentIsNull,
-    ArgumentOutOfRange,
-    NotEnoughBytes,
-};
 
 class KeePassError: public std:: exception {
 public:
     // TODO: add namespace and etc
-    explicit KeePassError(ErrorCode code_) : code(code_) {};
+    KeePassError()
+        : namespace_("keepasspp")
+        , name("KeePassError")
+        , msg("unknown error") {};
+
+    explicit KeePassError(std::string&& message)
+        : namespace_("keepasspp")
+        , name("KeePassError")
+        , msg(std::move(message)) {};
+
+    explicit KeePassError(std::string&& error_name, std::string&& message)
+        : namespace_("keepasspp")
+        , name(std::move(error_name))
+        , msg(std::move(message)) {};
+
+    explicit KeePassError(std::string&& namespace_,
+                          std::string&& error_name,
+                          std::string&& message)
+        : namespace_(std::move(namespace_))
+        , name(std::move(error_name))
+        , msg(std::move(message)) {};
 
     virtual std::string what() {
         std::ostringstream s;
-        s << "keepasspp::keepasslib_error: catch error with code ";
-        s << "0x" << std::hex << std::setfill('0') << std::setw(2);
-        s << static_cast<unsigned>(code);
+        s << namespace_ << "::" << name << ": " << msg;
         return s.str();
     }
-private:
-    ErrorCode code;
+protected:
+    std::string namespace_;
+    std::string name;
+    std::string msg;
 };
 
-// TODO: Structs?
+class UnknownError: public KeePassError {};
+
 class NewVersionRequiredError: public KeePassError {
 public:
-    NewVersionRequiredError()
-        : KeePassError(ErrorCode::NewVersionRequired) {};
+    explicit NewVersionRequiredError(std::string&& message)
+        : KeePassError("NewVersionRequiredError",
+                       std::forward<std::string>(message)) {};
 };
 
 class FileCorruptedError: public KeePassError {
 public:
-    FileCorruptedError()
-        : KeePassError(ErrorCode::FileCorrupted) {};
+    explicit FileCorruptedError(std::string&& message)
+        : KeePassError("FileCorruptedError",
+                       std::forward<std::string>(message)) {};
 };
 
 class InvalidKdfParametersError: public KeePassError {
 public:
-    InvalidKdfParametersError()
-        : KeePassError(ErrorCode::InvalidKdfParameters) {};
+    explicit InvalidKdfParametersError(std::string&& message)
+        : KeePassError("InvalidKdfParametersError",
+                       std::forward<std::string>(message)) {};
 };
 
-// TODO: Rename?
-// TODO: Sersly? Error at top and exceptions below??
-class ArgumentNullException: public KeePassError {
+class ArgumentError: public KeePassError {
 public:
-    ArgumentNullException(const std::string& a)
-        : KeePassError(ErrorCode::ArgumentIsNull)
-        , argument(a) {};
-private:
+    explicit ArgumentError(std::string&& message,
+                           std::string&& argument)
+        : ArgumentError("ArgumentError",
+                        std::forward<std::string>(message),
+                        std::forward<std::string>(argument)) {};
+
+    std::string what() override {
+        // TODO: another way?
+        auto message = KeePassError::what();
+        auto n = message.find(ArgumentError::argumentPlaceholder);
+        if (n != std::string::npos) {
+            message.replace(n, std::size(ArgumentError::argumentPlaceholder),
+                            argument);
+        }
+        return message;
+    }
+protected:
+    explicit ArgumentError(std::string&& error_name,
+                           std::string&& message,
+                           std::string&& argument)
+        : KeePassError(std::forward<std::string>(error_name),
+                       std::forward<std::string>(message))
+        , argument(std::move(argument)) {};
+
     const std::string argument;
+
+    inline static const std::string argumentPlaceholder = "<argument>";
+};
+
+class ArgumentIsNullError: public ArgumentError {
+public:
+    explicit ArgumentIsNullError(std::string&& argument)
+        : ArgumentError("ArgumentIsNullError",
+                        "argument <argument> is null",
+                        std::forward<std::string>(argument)){};
+};
+
+class ArgumentIsOutOfRangeError: public ArgumentError {
+public:
+    explicit ArgumentIsOutOfRangeError(std::string&& argument)
+        : ArgumentError("ArgumentIsOutOfRangeError",
+                        "argument <argument> is out of range",
+                        std::forward<std::string>(argument)) {};
 };
 
 // TODO: Rename?
-class ArgumentOutOfRangeException: public KeePassError {
+class NotEnoughBytesError: public KeePassError {
 public:
-    ArgumentOutOfRangeException(const std::string& a)
-        : KeePassError(ErrorCode::ArgumentOutOfRange)
-        , argument(a) {};
-private:
-    const std::string argument;
-};
-
-// TODO: Rename?
-class NotEnoughBytesException: public KeePassError {
-public:
-    NotEnoughBytesException(const std::size_t actual,
-                            const std::size_t expected)
-        : KeePassError(ErrorCode::NotEnoughBytes)
+    NotEnoughBytesError(std::size_t actual,
+                        std::size_t expected)
+        : KeePassError("NotEnoughBytesError",
+                       "not enough bytes to read")
         , actual(actual), expected(expected) {};
+
+    std::string what() override {
+        std::ostringstream os(KeePassError::what());
+        os << " (" << actual << " != " << expected << " )";
+        return os.str();
+    }
 private:
     const std::size_t actual, expected;
 };

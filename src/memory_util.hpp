@@ -40,7 +40,7 @@ private:
     template <typename T, typename U>
     inline static void assertEnoughBytes(T actual, U expected) {
         if (actual != expected)
-            throw exception::NotEnoughBytesException(actual, expected);
+            throw exception::NotEnoughBytesError(actual, expected);
     };
 };
 
