@@ -23,14 +23,20 @@ public:
     ByteVector transform(const ByteVector& msg,
                          const KdfParameters& kp) const override;
 private:
-    // TODO: gcry_cipher_get_algo_keylen
-    inline static const std::size_t defaultSize = 32;
-    inline static const std::size_t defaultRounds = 6000;
-
     Uuid uuid = Uuid::fromByteVector({
         0xc9, 0xd9, 0xf3, 0x9a, 0x62, 0x8a, 0x44, 0x60,
         0xbf, 0x74, 0x0d, 0x08, 0xc1, 0x8a, 0x4f, 0xea
     });
+
+    // TODO: gcry_cipher_get_algo_keylen
+//    inline static const std::size_t defaultSize = 32;
+    static std::size_t getKeySize() noexcept;
+    static std::size_t getBlockSize() noexcept;
+
+    inline static const std::size_t defaultRounds = 6000;
+
+    inline static const std::size_t keySize = KdfEngineAes::getKeySize();
+    inline static const std::size_t blockSize = KdfEngineAes::getBlockSize();
 
     ByteVector transformKey(const ByteVector& data, const ByteVector& seed,
                             std::uint64_t rounds) const;

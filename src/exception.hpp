@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <sstream>
 #include <string>
+#include <string_view>
 #include <utility>
 
 namespace keepasspp::exception {
@@ -84,6 +85,14 @@ public:
         return message;
     }
 protected:
+    // TODO: remove code-duplication?
+    explicit ArgumentError(std::string&& error_name,
+                           std::string&& message,
+                           std::string_view argument)
+        : KeePassError(std::forward<std::string>(error_name),
+                       std::forward<std::string>(message))
+        , argument(argument) {};
+
     explicit ArgumentError(std::string&& error_name,
                            std::string&& message,
                            std::string&& argument)
@@ -98,6 +107,10 @@ protected:
 
 class ArgumentIsNullError: public ArgumentError {
 public:
+    explicit ArgumentIsNullError(const std::string& argument)
+        : ArgumentError("ArgumentIsNullError",
+                        "argument <argument> is null",
+                        argument) {}
     explicit ArgumentIsNullError(std::string&& argument)
         : ArgumentError("ArgumentIsNullError",
                         "argument <argument> is null",
@@ -127,6 +140,12 @@ public:
     }
 private:
     const std::size_t actual, expected;
+};
+
+class KdfEngineError: public KeePassError {
+public:
+    KdfEngineError() : KeePassError("KdfEngineError",
+                                    "unknown kdf engine error") {};
 };
 
 }

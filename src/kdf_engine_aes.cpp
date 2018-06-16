@@ -10,7 +10,7 @@
 #include <cstdint>
 #include <iterator>
 
-using namespace keepasspp;
+namespace keepasspp {
 
 KdfParameters KdfEngineAes::getDefaultParameters() const  {
     KdfParameters kp = KdfEngine::getDefaultParameters();
@@ -20,7 +20,7 @@ KdfParameters KdfEngineAes::getDefaultParameters() const  {
 
 void KdfEngineAes::randomize(KdfParameters& kp) const {
     kp[KdfEngineAes::paramSeed] =
-        Rand(RandomStrength::strong).get(KdfEngineAes::defaultSize);
+        Rand(RandomStrength::strong).get(KdfEngineAes::keySize);
 }
 
 ByteVector KdfEngineAes::transform(const ByteVector& msg,
@@ -30,11 +30,11 @@ ByteVector KdfEngineAes::transform(const ByteVector& msg,
 
     // TODO: something without copy?
     auto data = msg;
-    if (std::size(data) != KdfEngineAes::defaultSize) {
+    if (std::size(data) != KdfEngineAes::keySize) {
         data = Hash(HashAlgorithm::sha256).sum(data);
     }
 
-    if (std::size(seed) != KdfEngineAes::defaultSize) {
+    if (std::size(seed) != KdfEngineAes::keySize) {
         seed = Hash(HashAlgorithm::sha256).sum(seed);
     }
 
@@ -46,10 +46,7 @@ ByteVector KdfEngineAes::transformKey(const ByteVector& data,
                                       std::uint64_t rounds) const {
     // TODO: do not copy?
     ByteVector result_data = data;
-    // TODO: Add many many checks
-    // TODO: move this to constructor
-    ByteVector iv(gcry_cipher_get_algo_blklen(GCRY_CIPHER_AES256), 0);
-    // TODO: handle errors
+    ByteVector iv(KdfEngineAes::blockSize, 0);
     // TODO: handle errors
     gcry_cipher_hd_t handle;
 
@@ -59,8 +56,7 @@ ByteVector KdfEngineAes::transformKey(const ByteVector& data,
     gcry_cipher_setiv(handle, std::data(iv), std::size(iv));
     gcry_cipher_setkey(handle, std::data(seed), std::size(seed));
 
-    // TODO: make constant by gcry_cipher_get_algo_keylen or smtelse
-    size_t len = gcry_cipher_get_algo_blklen(GCRY_CIPHER_AES256);
+    size_t len = KdfEngineAes::blockSize;
     for (std::uint64_t i = 0; i < rounds; i++) {
         // TODO: handle errors
         gcry_cipher_encrypt(
@@ -76,4 +72,14 @@ ByteVector KdfEngineAes::transformKey(const ByteVector& data,
     }
 
     return Hash(HashAlgorithm::sha256).sum(result_data);
+}
+
+std::size_t KdfEngineAes::getKeySize() noexcept {
+    return gcry_cipher_get_algo_keylen(GCRY_CIPHER_AES256);
+}
+
+std::size_t KdfEngineAes::getBlockSize() noexcept {
+    return gcry_cipher_get_algo_blklen(GCRY_CIPHER_AES256);
+}
+
 }

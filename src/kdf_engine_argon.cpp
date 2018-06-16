@@ -9,7 +9,7 @@
 #include <iterator>
 #include <numeric>
 
-using namespace keepasspp;
+namespace keepasspp {
 
 KdfParameters KdfEngineArgon2::getDefaultParameters() const {
     KdfParameters kp = KdfEngine::getDefaultParameters();
@@ -28,7 +28,7 @@ void KdfEngineArgon2::randomize(KdfParameters& kp) const {
 }
 
 ByteVector KdfEngineArgon2::transform(const ByteVector& msg,
-                                const KdfParameters& kp) const {
+                                      const KdfParameters& kp) const {
     std::uint32_t version;
     if (!kp.get<std::uint32_t>(paramVersion, version))
         throw exception::ArgumentIsNullError("version");
@@ -101,4 +101,6 @@ ByteVector KdfEngineArgon2::transformKey(
         result_size
     );
     return result;
+}
+
 }

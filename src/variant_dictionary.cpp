@@ -9,8 +9,6 @@
 #include <sstream>
 #include <variant>
 
-using namespace keepasspp;
-
 namespace keepasspp {
 
 bool VariantDictionary::empty() const {
