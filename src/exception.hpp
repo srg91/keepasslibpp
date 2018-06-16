@@ -10,7 +10,6 @@ namespace keepasspp::exception {
 
 class KeePassError: public std:: exception {
 public:
-    // TODO: add namespace and etc
     KeePassError()
         : namespace_("keepasspp")
         , name("KeePassError")

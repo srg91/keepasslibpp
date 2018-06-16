@@ -75,45 +75,63 @@ $(function() {
 <div class="title">keepasspp::Uuid Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Represents an UUID of a password entry or group.  
+ <a href="classkeepasspp_1_1_uuid.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="uuid_8hpp_source.html">uuid.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:aae1d1faf1db101a0089b0be32e0a9e31"><td class="memItemLeft" align="right" valign="top"><a id="aae1d1faf1db101a0089b0be32e0a9e31"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>uuid_t</b> = std::array&lt; std::uint8_t, UUID_SIZE &gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkeepasspp_1_1_uuid.html#aae1d1faf1db101a0089b0be32e0a9e31">uuid_t</a> = std::array&lt; std::uint8_t, UUID_SIZE &gt;</td></tr>
+<tr class="memdesc:aae1d1faf1db101a0089b0be32e0a9e31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Underlying uuid type. <br /></td></tr>
 <tr class="separator:aae1d1faf1db101a0089b0be32e0a9e31"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a33f7b0785679248856b0b375a447c2a0"><td class="memItemLeft" align="right" valign="top"><a id="a33f7b0785679248856b0b375a447c2a0"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkeepasspp_1_1_uuid.html#a33f7b0785679248856b0b375a447c2a0">Uuid</a> ()</td></tr>
+<tr class="memdesc:a33f7b0785679248856b0b375a447c2a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new UUID instance with random value. <br /></td></tr>
+<tr class="separator:a33f7b0785679248856b0b375a447c2a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad57bf649a91f20e3ef54135e27af152b"><td class="memItemLeft" align="right" valign="top"><a id="ad57bf649a91f20e3ef54135e27af152b"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Uuid</b> (const uuid_t &amp;value)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkeepasspp_1_1_uuid.html#ad57bf649a91f20e3ef54135e27af152b">Uuid</a> (const <a class="el" href="classkeepasspp_1_1_uuid.html#aae1d1faf1db101a0089b0be32e0a9e31">uuid_t</a> &amp;value)</td></tr>
+<tr class="memdesc:ad57bf649a91f20e3ef54135e27af152b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new UUID from underlying type. <br /></td></tr>
 <tr class="separator:ad57bf649a91f20e3ef54135e27af152b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a884bbbc4ba64b4ed5fa9451217ef452f"><td class="memItemLeft" align="right" valign="top"><a id="a884bbbc4ba64b4ed5fa9451217ef452f"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Uuid</b> (uuid_t &amp;&amp;value)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Uuid</b> (<a class="el" href="classkeepasspp_1_1_uuid.html#aae1d1faf1db101a0089b0be32e0a9e31">uuid_t</a> &amp;&amp;value)</td></tr>
 <tr class="separator:a884bbbc4ba64b4ed5fa9451217ef452f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5dcbcc77a9873ed9cd549faeb648c843"><td class="memTemplParams" colspan="2"><a id="a5dcbcc77a9873ed9cd549faeb648c843"></a>
-template&lt;typename It &gt; </td></tr>
-<tr class="memitem:a5dcbcc77a9873ed9cd549faeb648c843"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Uuid</b> (It begin, It end)</td></tr>
-<tr class="separator:a5dcbcc77a9873ed9cd549faeb648c843"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a392859703e096006955d022111762203"><td class="memTemplParams" colspan="2"><a id="a392859703e096006955d022111762203"></a>
+template&lt;typename RandomIt &gt; </td></tr>
+<tr class="memitem:a392859703e096006955d022111762203"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classkeepasspp_1_1_uuid.html#a392859703e096006955d022111762203">Uuid</a> (RandomIt begin, RandomIt end)</td></tr>
+<tr class="memdesc:a392859703e096006955d022111762203"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new UUID instance by range of values. <br /></td></tr>
+<tr class="separator:a392859703e096006955d022111762203"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad20bffd06fd2d380b503c3c444be9473"><td class="memItemLeft" align="right" valign="top"><a id="ad20bffd06fd2d380b503c3c444be9473"></a>
-ByteVector&#160;</td><td class="memItemRight" valign="bottom"><b>byteVector</b> () const</td></tr>
+ByteVector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkeepasspp_1_1_uuid.html#ad20bffd06fd2d380b503c3c444be9473">byteVector</a> () const</td></tr>
+<tr class="memdesc:ad20bffd06fd2d380b503c3c444be9473"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the 16 bytes size byte vector. <br /></td></tr>
 <tr class="separator:ad20bffd06fd2d380b503c3c444be9473"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aafd8f047addf1031a6c3d2aa09822549"><td class="memItemLeft" align="right" valign="top"><a id="aafd8f047addf1031a6c3d2aa09822549"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>string</b> () const</td></tr>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkeepasspp_1_1_uuid.html#aafd8f047addf1031a6c3d2aa09822549">string</a> () const</td></tr>
+<tr class="memdesc:aafd8f047addf1031a6c3d2aa09822549"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the 16 bytes size string. <br /></td></tr>
 <tr class="separator:aafd8f047addf1031a6c3d2aa09822549"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a562725e1ee5b22ff310cc7a3976eec"><td class="memItemLeft" align="right" valign="top"><a id="a7a562725e1ee5b22ff310cc7a3976eec"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>hex</b> () const</td></tr>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkeepasspp_1_1_uuid.html#a7a562725e1ee5b22ff310cc7a3976eec">hex</a> () const</td></tr>
+<tr class="memdesc:a7a562725e1ee5b22ff310cc7a3976eec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the 32 hexadecimal digits in five groups separated by hyphens. <br /></td></tr>
 <tr class="separator:a7a562725e1ee5b22ff310cc7a3976eec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9be90f3d5bb733f6b0afcb4824f868da"><td class="memItemLeft" align="right" valign="top"><a id="a9be90f3d5bb733f6b0afcb4824f868da"></a>
-std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>hash</b> () const noexcept</td></tr>
+std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkeepasspp_1_1_uuid.html#a9be90f3d5bb733f6b0afcb4824f868da">hash</a> () const noexcept</td></tr>
+<tr class="memdesc:a9be90f3d5bb733f6b0afcb4824f868da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fast hash of current UUID bytes. <br /></td></tr>
 <tr class="separator:a9be90f3d5bb733f6b0afcb4824f868da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:aa40fd6e644448588fd0422db69fd1b50"><td class="memItemLeft" align="right" valign="top"><a id="aa40fd6e644448588fd0422db69fd1b50"></a>
-static <a class="el" href="classkeepasspp_1_1_uuid.html">Uuid</a>&#160;</td><td class="memItemRight" valign="bottom"><b>nil</b> () noexcept</td></tr>
+static <a class="el" href="classkeepasspp_1_1_uuid.html">Uuid</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkeepasspp_1_1_uuid.html#aa40fd6e644448588fd0422db69fd1b50">nil</a> () noexcept</td></tr>
+<tr class="memdesc:aa40fd6e644448588fd0422db69fd1b50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create nil UUID (all bytes are zero). <br /></td></tr>
 <tr class="separator:aa40fd6e644448588fd0422db69fd1b50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a92f5cb729ea406bb365dbeaae60dfe5b"><td class="memItemLeft" align="right" valign="top"><a id="a92f5cb729ea406bb365dbeaae60dfe5b"></a>
-static <a class="el" href="classkeepasspp_1_1_uuid.html">Uuid</a>&#160;</td><td class="memItemRight" valign="bottom"><b>fromByteVector</b> (const ByteVector &amp;bv)</td></tr>
+static <a class="el" href="classkeepasspp_1_1_uuid.html">Uuid</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classkeepasspp_1_1_uuid.html#a92f5cb729ea406bb365dbeaae60dfe5b">fromByteVector</a> (const ByteVector &amp;bv)</td></tr>
+<tr class="memdesc:a92f5cb729ea406bb365dbeaae60dfe5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new UUID from another object. <br /></td></tr>
 <tr class="separator:a92f5cb729ea406bb365dbeaae60dfe5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a75a853dc7dad4e162ffbc544235678a7"><td class="memItemLeft" align="right" valign="top"><a id="a75a853dc7dad4e162ffbc544235678a7"></a>
 static <a class="el" href="classkeepasspp_1_1_uuid.html">Uuid</a>&#160;</td><td class="memItemRight" valign="bottom"><b>fromString</b> (const std::string &amp;s)</td></tr>
@@ -131,7 +149,10 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (const
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator!=</b> (const <a class="el" href="classkeepasspp_1_1_uuid.html">Uuid</a> &amp;left, const <a class="el" href="classkeepasspp_1_1_uuid.html">Uuid</a> &amp;right)</td></tr>
 <tr class="separator:a19eadea4befa10ff3707f2218b159a7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following files:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Represents an UUID of a password entry or group. </p>
+<p>Once created, <a class="el" href="classkeepasspp_1_1_uuid.html" title="Represents an UUID of a password entry or group. ">Uuid</a> objects aren't modifiable anymore (immutable). </p>
+</div><hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/<a class="el" href="uuid_8hpp_source.html">uuid.hpp</a></li>
 <li>src/uuid.cpp</li>
 </ul>
