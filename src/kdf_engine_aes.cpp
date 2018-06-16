@@ -50,11 +50,8 @@ ByteVector KdfEngineAes::transformKey(const ByteVector& data,
 
     CipherAdapter cipher(CipherAlgorithm::aes256, CipherMode::ecb);
 
-    ByteVector iv(KdfEngineAes::blockSize, 0);
-    cipher.setIv(iv);
     cipher.setKey(seed);
 
-    size_t len = KdfEngineAes::blockSize;
     for (std::uint64_t i = 0; i < rounds; i++) {
         cipher.encrypt(
             std::begin(result_data),
@@ -66,12 +63,13 @@ ByteVector KdfEngineAes::transformKey(const ByteVector& data,
     return Hash(HashAlgorithm::sha256).sum(result_data);
 }
 
+// TODO: Get from cipheradapter
 std::size_t KdfEngineAes::getKeySize() noexcept {
     return gcry_cipher_get_algo_keylen(GCRY_CIPHER_AES256);
 }
 
-std::size_t KdfEngineAes::getBlockSize() noexcept {
-    return gcry_cipher_get_algo_blklen(GCRY_CIPHER_AES256);
-}
+//std::size_t KdfEngineAes::getBlockSize() noexcept {
+//    return gcry_cipher_get_algo_blklen(GCRY_CIPHER_AES256);
+//}
 
 }

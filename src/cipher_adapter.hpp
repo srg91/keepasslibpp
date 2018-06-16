@@ -82,7 +82,6 @@ void CipherAdapter::decrypt(InputIt input, OutputIt output,
 
     // TODO: check length
     while (count > 0) {
-        count -= this->blockLength;
         std::copy(input, input + this->blockLength, std::begin(input_buffer));
 
         // TODO: handle errors
@@ -93,6 +92,11 @@ void CipherAdapter::decrypt(InputIt input, OutputIt output,
         );
 
         std::copy(std::begin(output_buffer), std::end(output_buffer), output);
+
+        // TODO: simplfy?
+        count -= this->blockLength;
+        input += this->blockLength;
+        output += this->blockLength;
     }
 }
 

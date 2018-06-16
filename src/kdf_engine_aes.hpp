@@ -31,12 +31,12 @@ private:
     // TODO: gcry_cipher_get_algo_keylen
 //    inline static const std::size_t defaultSize = 32;
     static std::size_t getKeySize() noexcept;
-    static std::size_t getBlockSize() noexcept;
+//    static std::size_t getBlockSize() noexcept;
 
     inline static const std::size_t defaultRounds = 6000;
 
     inline static const std::size_t keySize = KdfEngineAes::getKeySize();
-    inline static const std::size_t blockSize = KdfEngineAes::getBlockSize();
+//    inline static const std::size_t blockSize = KdfEngineAes::getBlockSize();
 
     ByteVector transformKey(const ByteVector& data, const ByteVector& seed,
                             std::uint64_t rounds) const;
