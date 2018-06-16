@@ -22,18 +22,15 @@ TEST(TestKdfEngineAes, GetUuid) {
 }
 
 TEST(TestKdfEngineAes, GetDefaultParameters) {
-
     KdfEngineAes aes;
     auto params = aes.getDefaultParameters();
     EXPECT_EQ(std::size(params), 2);
 
-    std::uint64_t rounds = 0;
-    EXPECT_TRUE(params.get(KdfEngineAes::paramRounds, rounds));
+    auto rounds = params.get<std::uint64_t>(KdfEngineAes::paramRounds);
     std::uint64_t expected_rounds = 6000;
     EXPECT_EQ(rounds, expected_rounds);
 
-    ByteVector uuid;
-    EXPECT_TRUE(params.get("$UUID", uuid));
+    auto uuid = params.get<ByteVector>("$UUID");
     auto expected_uuid = aes.getUuid().byteVector();
     EXPECT_TRUE(uuid == expected_uuid);
 }
@@ -45,8 +42,7 @@ TEST(TestKdfEngineAes, Randomize) {
     aes.randomize(params);
     EXPECT_EQ(std::size(params), 3);
 
-    ByteVector seed;
-    EXPECT_TRUE(params.get(KdfEngineAes::paramSeed, seed));
+    auto seed = params.get<ByteVector>(KdfEngineAes::paramSeed);
     ByteVector not_expected(32);
     EXPECT_EQ(std::size(seed), std::size(not_expected));
     EXPECT_TRUE(seed != not_expected);

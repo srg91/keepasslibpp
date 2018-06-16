@@ -11,33 +11,6 @@
 
 using namespace keepasspp;
 
-const std::string KdfEngineArgon2::paramSalt = "S";
-const std::string KdfEngineArgon2::paramParallelism = "P";
-const std::string KdfEngineArgon2::paramMemory = "M";
-const std::string KdfEngineArgon2::paramIterations = "I";
-const std::string KdfEngineArgon2::paramVersion = "V";
-const std::string KdfEngineArgon2::paramSecretKey = "K";
-const std::string KdfEngineArgon2::paramAssocData = "A";
-
-const std::uint32_t KdfEngineArgon2::minVersion = 0x10;
-const std::uint32_t KdfEngineArgon2::maxVersion = 0x13;
-
-const std::uint32_t KdfEngineArgon2::minSalt = 8;
-const std::uint32_t KdfEngineArgon2::maxSalt = static_cast<std::uint32_t>(-1);
-
-const std::uint64_t KdfEngineArgon2::minIterations = 1;
-const std::uint64_t KdfEngineArgon2::maxIterations = static_cast<std::uint32_t>(-1);
-
-const std::uint64_t KdfEngineArgon2::minMemory = 1024 * 8;
-const std::uint64_t KdfEngineArgon2::maxMemory = 1024u * static_cast<std::uint32_t>(-1);
-
-const std::uint32_t KdfEngineArgon2::minParallelism = 1;
-const std::uint32_t KdfEngineArgon2::maxParallelism = (1u << 24u) - 1;
-
-const std::uint64_t KdfEngineArgon2::defaultIterations = 2;
-const std::uint64_t KdfEngineArgon2::defaultMemory = 1024 * 1024;
-const std::uint32_t KdfEngineArgon2::defaultParallelism = 2;
-
 KdfParameters KdfEngineArgon2::getDefaultParameters() const {
     KdfParameters kp = KdfEngine::getDefaultParameters();
 

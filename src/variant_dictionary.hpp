@@ -38,7 +38,10 @@ public:
     void clear();
 
     template <typename T>
-    bool get(const std::string& key, T& value) const noexcept ;
+    T get(const std::string& key) const;
+
+    template <typename T>
+    bool get(const std::string& key, T& value) const noexcept;
 
     template <typename T>
     void set(const std::string& key, const T& value);
@@ -115,12 +118,22 @@ private:
 };
 
 template <typename T>
+T VariantDictionary::get(const std::string& key) const {
+    // TODO: Add keepasspp errors
+    try {
+        auto vv = dict.at(key);
+        return std::get<T>(vv);
+    } catch (const std::exception&) {
+        throw exception::ArgumentIsNullError(key);
+    }
+}
+
+template <typename T>
 bool VariantDictionary::get(const std::string& key, T& value) const noexcept {
     if (std::empty(key)) return false;
     try {
-        auto vv = dict.at(key);
-        value = std::get<T>(vv);
-    } catch(const std::exception&) {
+        value = this->get<T>(key);
+    } catch(const exception::ArgumentIsNullError&) {
         return false;
     }
     return true;

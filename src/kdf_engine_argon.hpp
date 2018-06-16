@@ -4,19 +4,20 @@
 #include "kdf_engine.hpp"
 
 #include <cstdint>
+#include <limits>
 #include <string>
 
 namespace keepasspp {
 
-class KdfEngineArgon2 : KdfEngine {
+class KdfEngineArgon2 : public KdfEngine {
 public:
-    static const std::string paramSalt;
-    static const std::string paramParallelism;
-    static const std::string paramMemory;
-    static const std::string paramIterations;
-    static const std::string paramVersion;
-    static const std::string paramSecretKey;
-    static const std::string paramAssocData;
+    inline static const std::string paramSalt = "S";
+    inline static const std::string paramParallelism = "P";
+    inline static const std::string paramMemory = "M";
+    inline static const std::string paramIterations = "I";
+    inline static const std::string paramVersion = "V";
+    inline static const std::string paramSecretKey = "K";
+    inline static const std::string paramAssocData = "A";
 
     const Uuid& getUuid() const override { return uuid; };
     KdfParameters getDefaultParameters() const override;
@@ -35,28 +36,28 @@ private:
 
     // TODO: Change this consts to DEFINES from argon2.h
     // TODO: Is libargon can work with these versions?
-    static const std::uint32_t minVersion;
-    static const std::uint32_t maxVersion;
+    inline static const std::uint32_t minVersion = 0x10;
+    inline static const std::uint32_t maxVersion = 0x13;
 
-    static const std::uint32_t minSalt;
-    // TODO: std::numeric_limits<std::uint32_t>::max() ?
-    static const std::uint32_t maxSalt;
+    inline static const std::uint32_t minSalt = 8;
+    inline static const std::uint32_t maxSalt =
+        std::numeric_limits<std::uint32_t>::max();
 
-    static const std::uint64_t minIterations;
-    // TODO: std::numeric_limits<std::uint32_t>::max() ?
-    static const std::uint64_t maxIterations;
+    inline static const std::uint64_t minIterations = 1;
+    inline static const std::uint64_t maxIterations =
+        std::numeric_limits<std::uint64_t>::max();
 
-    static const std::uint64_t minMemory;
-    // TODO: 1024 * std::numeric_limits<std::uint32_t>::max() ?
+    inline static const std::uint64_t minMemory = 8 * 1024;
     // TODO: IS IT REAL??? 4TB???????????
-    static const std::uint64_t maxMemory;
+    inline static const std::uint64_t maxMemory =
+        1024 * std::numeric_limits<std::uint32_t>::max();
 
-    static const std::uint32_t minParallelism;
-    static const std::uint32_t maxParallelism;
+    inline static const std::uint32_t minParallelism = 1;
+    inline static const std::uint32_t maxParallelism = (1u << 24u) - 1;
 
-    static const std::uint64_t defaultIterations;
-    static const std::uint64_t defaultMemory;
-    static const std::uint32_t defaultParallelism;
+    inline static const std::uint64_t defaultIterations = 2;
+    inline static const std::uint64_t defaultMemory = 1 * 1024 * 1024;
+    inline static const std::uint32_t defaultParallelism = 2;
 
     ByteVector transformKey(
         const ByteVector& msg, const ByteVector& salt,

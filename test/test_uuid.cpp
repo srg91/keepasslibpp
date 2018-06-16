@@ -1,4 +1,5 @@
 #include "byte_vector.hpp"
+#include "exception.hpp"
 #include "uuid.hpp"
 
 #include <gtest/gtest.h>
@@ -29,7 +30,7 @@ TEST(TestUuid, CompareLength) {
 
     std::string expect_throw(UUID_SIZE + 5, 0);
     EXPECT_THROW(Uuid::fromString(expect_throw).string(),
-                 std::invalid_argument);
+                 exception::NotEnoughBytesError);
 }
 
 TEST(TestUuid, NewUuid) {

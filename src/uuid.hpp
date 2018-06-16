@@ -1,6 +1,7 @@
 #pragma once
 
 #include "byte_vector.hpp"
+#include "exception.hpp"
 
 #include <array>
 #include <cstdint>
@@ -27,6 +28,7 @@ public:
     /// Underlying uuid type.
     using uuid_t = std::array<std::uint8_t, UUID_SIZE>;
 
+    // TODO: Add constructor with initializer list
     /// Construct a new UUID instance with random value.
     Uuid() : uuid(createNew()) {};
 
@@ -83,15 +85,9 @@ std::ostream& operator <<(std::ostream& stream, const Uuid& u);
 
 template <typename RandomIt>
 void Uuid::checkSize(RandomIt begin, RandomIt end) {
-    // TODO: Make keepasspp exception
     auto it_size = end - begin;
-    if (it_size != UUID_SIZE) {
-        std::string message = "invalid interval size: ";
-        message += std::to_string(it_size);
-        message += " != ";
-        message += std::to_string(UUID_SIZE);
-        throw std::invalid_argument(message);
-    }
+    if (it_size != UUID_SIZE)
+        throw exception::NotEnoughBytesError(it_size, UUID_SIZE);
 }
 
 template <typename RandomIt>

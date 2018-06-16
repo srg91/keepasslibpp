@@ -25,13 +25,8 @@ void KdfEngineAes::randomize(KdfParameters& kp) const {
 
 ByteVector KdfEngineAes::transform(const ByteVector& msg,
                                    const KdfParameters& kp) const {
-    std::uint64_t rounds;
-    if (!kp.get<std::uint64_t>(KdfEngineAes::paramRounds, rounds))
-        throw exception::ArgumentIsNullError("rounds");
-
-    ByteVector seed;
-    if (!kp.get<ByteVector>(KdfEngineAes::paramSeed, seed))
-        throw exception::ArgumentIsNullError("seed");
+    auto rounds = kp.get<std::uint64_t>(KdfEngineAes::paramRounds);
+    auto seed = kp.get<ByteVector>(KdfEngineAes::paramSeed);
 
     // TODO: something without copy?
     auto data = msg;

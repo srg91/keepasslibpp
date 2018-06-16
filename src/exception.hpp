@@ -1,6 +1,5 @@
 #pragma once
 
-#include <exception>
 #include <iomanip>
 #include <sstream>
 #include <string>
@@ -113,7 +112,6 @@ public:
                         std::forward<std::string>(argument)) {};
 };
 
-// TODO: Rename?
 class NotEnoughBytesError: public KeePassError {
 public:
     NotEnoughBytesError(std::size_t actual,
