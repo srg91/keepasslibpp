@@ -1,9 +1,11 @@
 #include "byte_vector.hpp"
 #include "cipher_adapter.hpp"
+#include "exception.hpp"
 
 #include <gcrypt.h>
 
 #include <iterator>
+#include <string>
 
 namespace keepasspp {
 
@@ -13,14 +15,14 @@ CipherAdapter::CipherAdapter(keepasspp::CipherAlgorithm algorithm,
         , mode(mode)
         , keyLength(CipherAdapter::getKeyLength(algorithm))
         , blockLength(CipherAdapter::getBlockLength(algorithm)) {
-    // TODO: Handle errors
-    gcry_cipher_open(
+    auto error = gcry_cipher_open(
         &this->handle,
         CipherAdapter::getMappedAlgorithm(this->algorithm),
         CipherAdapter::getMappedMode(this->mode),
         // TODO: do we need ability to change this flag?
         0
     );
+    if (error) CipherAdapter::throwError(error);
 };
 
 CipherAdapter::~CipherAdapter() {
@@ -42,13 +44,15 @@ std::size_t CipherAdapter::getKeyLength(
 }
 
 void CipherAdapter::setIv(const ByteVector& iv) {
-    // TODO: handle errors
-    gcry_cipher_setiv(this->handle, std::data(iv), std::size(iv));
+    auto error =
+        gcry_cipher_setiv(this->handle, std::data(iv), std::size(iv));
+    if (error) CipherAdapter::throwError(error);
 }
 
 void CipherAdapter::setKey(const ByteVector& key) {
-    // TODO: handle errors
-    gcry_cipher_setkey(this->handle, std::data(key), std::size(key));
+    auto error =
+        gcry_cipher_setkey(this->handle, std::data(key), std::size(key));
+    if (error) CipherAdapter::throwError(error);
 }
 
 int CipherAdapter::getMappedAlgorithm(
@@ -61,11 +65,16 @@ int CipherAdapter::getMappedAlgorithm(
 
 int CipherAdapter::getMappedMode(keepasspp::CipherMode mode) noexcept {
     switch (mode) {
-//        case CipherMode::none:
-//            return GCRY_CIPHER_MODE_NONE;
         case CipherMode::ecb:
             return GCRY_CIPHER_MODE_ECB;
+        case CipherMode::cbc:
+            return GCRY_CIPHER_MODE_CBC;
     }
+}
+
+std::string CipherAdapter::throwError(gcry_error_t e) {
+    throw exception::CipherInternalError(gcry_strsource(e),
+                                         gcry_strerror(e));
 }
 
 }

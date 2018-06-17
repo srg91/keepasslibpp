@@ -1,11 +1,13 @@
 #pragma once
 
 #include "byte_vector.hpp"
+#include "exception.hpp"
 
 #include <gcrypt.h>
 
 #include <algorithm>
 #include <functional>
+#include <iterator>
 #include <cstddef>
 
 // TODO: Rename?
@@ -16,7 +18,8 @@ enum class CipherAlgorithm {
 };
 
 enum class CipherMode {
-    ecb
+    ecb,
+    cbc
 };
 
 // TODO: add check algorithm exists in gcrypt
@@ -56,11 +59,17 @@ private:
     
     static int getMappedAlgorithm(CipherAlgorithm algorithm) noexcept;
     static int getMappedMode(CipherMode mode) noexcept;
+    // TODO: string_view?
+    static std::string throwError(gcry_error_t e);
 };
 
 template <typename InputIt, typename OutputIt>
 void CipherAdapter::cipher(InputIt input, OutputIt output, std::size_t count,
                            CipherAdapter::Action action) {
+    if ((count % this->blockLength) != 0)
+        // TODO: more beautiful message
+        throw exception::InputNotMultipleByBlockSize(count, this->blockLength);
+
     std::function<decltype(gcry_cipher_encrypt)> cipher_func;
     switch (action) {
         case CipherAdapter::Action::encrypt:
@@ -74,23 +83,24 @@ void CipherAdapter::cipher(InputIt input, OutputIt output, std::size_t count,
     ByteVector input_buffer(this->blockLength);
     ByteVector output_buffer(this->blockLength);
 
-    // TODO: check length
     while (count > 0) {
-        std::copy(input, input + this->blockLength, std::begin(input_buffer));
+        std::copy(input, std::next(input, this->blockLength),
+                  std::begin(input_buffer));
 
-        // TODO: handle errors
-        cipher_func(
+        auto error = cipher_func(
             this->handle,
             std::data(output_buffer), std::size(output_buffer),
             std::data(input_buffer), std::size(input_buffer)
         );
+        if (error) CipherAdapter::throwError(error);
 
-        std::copy(std::begin(output_buffer), std::end(output_buffer), output);
+        std::copy(std::begin(output_buffer), std::end(output_buffer),
+                  output);
 
         // TODO: simplfy?
         count -= this->blockLength;
-        input += this->blockLength;
-        output += this->blockLength;
+        std::advance(input, this->blockLength);
+        std::advance(output, this->blockLength);
     }
 };
 

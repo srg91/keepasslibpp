@@ -125,7 +125,46 @@ private:
 class CipherAdapterError: public KeePassError {
 public:
     explicit CipherAdapterError(std::string_view message)
-        : KeePassError("CipherAdapterError", message) {};
+        : CipherAdapterError("CipherAdapterError", message) {};
+protected:
+    explicit CipherAdapterError(std::string_view error_name,
+                                std::string_view message)
+        : KeePassError(error_name, message) {};
+};
+
+class InputNotMultipleByBlockSize: public CipherAdapterError {
+public:
+    explicit InputNotMultipleByBlockSize(std::size_t length,
+                                         std::size_t block_size)
+        : CipherAdapterError(
+            "InputNotMultipleByBlockSize",
+            InputNotMultipleByBlockSize::formatMessage(length, block_size)
+        ) {};
+private:
+    static std::string formatMessage(std::size_t length,
+                                     std::size_t block_size) {
+        std::ostringstream os;
+        os << "input must be a multiple of " << block_size << " in length";
+        return os.str();
+    }
+};
+
+// TODO: map all internal errors to our errors
+class CipherInternalError: public CipherAdapterError {
+public:
+    explicit CipherInternalError(std::string_view source,
+                                 std::string_view error)
+        : CipherAdapterError(
+            "CipherInternalError",
+            CipherInternalError::formatMessage(source, error)
+        ) {};
+private:
+    static std::string formatMessage(std::string_view source,
+                                     std::string_view error) noexcept {
+        std::ostringstream os;
+        os << "[" << source << "] " << error;
+        return os.str();
+    }
 };
 
 class KdfEngineError: public KeePassError {

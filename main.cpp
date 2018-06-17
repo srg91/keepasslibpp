@@ -54,13 +54,38 @@ ostream& operator <<(ostream& stream, keepasspp::ByteVector value) {
 // 32480
 int main() {
     keepasspp::ByteVector u(16);
+    keepasspp::ByteVector key(32);
 
     gcry_check_version(GCRYPT_VERSION);
     gcry_control(GCRYCTL_INITIALIZATION_FINISHED, 0);
 
-    unsigned n = 1'000'000;
-    auto start = chrono::steady_clock::now();
-    for (unsigned i = 0; i < n; i++) {
+//    unsigned n = 1'000'000;
+//    auto start = chrono::steady_clock::now();
+//    for (unsigned i = 0; i < n; i++) {
+        gcry_cipher_hd_t handle;
+
+        gcry_cipher_open(
+            &handle,
+            GCRY_CIPHER_AES256,
+            GCRY_CIPHER_MODE_ECB,
+            0
+        );
+
+        gcry_cipher_setkey(handle, std::data(key), std::size(key));
+
+        auto error = gcry_cipher_encrypt(
+            handle,
+            std::data(u),
+            std::size(u),
+            std::data(u),
+            17
+        );
+
+        if (error != 0)
+            std::cerr << gcry_strsource(error) << "/" << gcry_strerror(error);
+        else
+            std::cout << "OK" << std::endl;
+
 //        gcry_randomize(u.data(), 16, GCRY_WEAK_RANDOM);
 //        gcry_create_nonce(std::data(u), std::size(u));
 //        for (auto it = std::begin(u); it != std::end(u); ++it) {
@@ -68,12 +93,12 @@ int main() {
 //            gcry_randomize(&*it, 1, GCRY_STRONG_RANDOM);
 //        }
 //        gcry_create_nonce(std::data(u), std::size(u));
-    }
+//    }
 
-    auto end = chrono::steady_clock::now();
-    auto ns = chrono::duration_cast<chrono::nanoseconds>(end - start);
-    cout << "count: " << (ns / n).count() << " ns/op" << endl;
-    cout << "Text: " << u <<endl;
+//    auto end = chrono::steady_clock::now();
+//    auto ns = chrono::duration_cast<chrono::nanoseconds>(end - start);
+//    cout << "count: " << (ns / n).count() << " ns/op" << endl;
+//    cout << "Text: " << u <<endl;
 
     return 0;
 }
