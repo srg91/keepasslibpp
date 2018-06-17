@@ -33,7 +33,7 @@ TEST(TestKdfEngineArgon2, GetDefaultParameters) {
 
     auto memory =
         params.get<std::uint64_t>(KdfEngineArgon2::paramMemory);
-    EXPECT_EQ(memory, 1 * 1024);
+    EXPECT_EQ(memory, 1 * 1024 * 1024);
 
     auto parallelism =
         params.get<std::uint32_t>(KdfEngineArgon2::paramParallelism);
