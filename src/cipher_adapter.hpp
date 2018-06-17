@@ -95,6 +95,7 @@ void CipherAdapter::cipher(InputIt input, OutputIt output, std::size_t count,
     while (count > 0) {
         count -= this->blockLength;
 
+        // TODO: very slow
         std::copy_n(input_ref, this->blockLength, std::begin(input_buffer));
         ++input_ref;
 

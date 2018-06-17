@@ -47,7 +47,8 @@ private:
     inline static const std::uint64_t maxIterations =
         std::numeric_limits<std::uint64_t>::max();
 
-    inline static const std::uint64_t minMemory = 8 * 1024;
+    // TODO: too small?
+    inline static const std::uint64_t minMemory = 8;
     // TODO: IS IT REAL??? 4TB???????????
     inline static const std::uint64_t maxMemory =
         1024 * std::numeric_limits<std::uint32_t>::max();
@@ -56,7 +57,7 @@ private:
     inline static const std::uint32_t maxParallelism = (1u << 24u) - 1;
 
     inline static const std::uint64_t defaultIterations = 2;
-    inline static const std::uint64_t defaultMemory = 1 * 1024 * 1024;
+    inline static const std::uint64_t defaultMemory = 1 * 1024;
     inline static const std::uint32_t defaultParallelism = 2;
 
     ByteVector transformKey(

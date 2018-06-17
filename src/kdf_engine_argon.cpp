@@ -77,46 +77,50 @@ ByteVector KdfEngineArgon2::transformKey(
         const ByteVector& assoc_data) const {
 
     // TODO: Do not copy
-    auto msg_ = msg;
-    auto salt_ = salt;
-    auto secret_key_ = secret_key;
-    auto assoc_data_ = assoc_data;
+//    auto msg_ = msg;
+//    auto salt_ = salt;
+//    auto secret_key_ = secret_key;
+//    auto assoc_data_ = assoc_data;
 
     ByteVector result(result_size);
-//    argon2d_hash_raw(
+    argon2d_hash_raw(
+        static_cast<std::uint32_t>(iterations),
+        static_cast<std::uint32_t>(memory),
+        parallelism,
+        std::data(msg),
+        std::size(msg),
+        std::data(salt),
+        std::size(salt),
+        std::data(result),
+        result_size
+    );
+//
+//    // TODO: cast size
+//    argon2_context context = {
+//        std::data(result),
+//        static_cast<std::uint32_t>(std::size(result)),
+//        std::data(msg_),
+//        static_cast<std::uint32_t>(std::size(msg)),
+//        std::data(salt_),
+//        static_cast<std::uint32_t>(std::size(salt)),
+//        std::data(secret_key_),
+//        static_cast<std::uint32_t>(std::size(secret_key)),
+//        std::data(assoc_data_),
+//        static_cast<std::uint32_t>(std::size(assoc_data)),
 //        static_cast<std::uint32_t>(iterations),
 //        static_cast<std::uint32_t>(memory),
 //        parallelism,
-//        std::data(msg),
-//        std::size(msg),
-//        std::data(salt),
-//        std::size(salt),
-//        std::data(result),
-//        result_size
-//    );
-
-    // TODO: cast size
-    argon2_context context = {
-        std::data(result),
-        std::size(result),
-        std::data(msg_),
-        std::size(msg),
-        std::data(salt_),
-        std::size(salt),
-        std::data(secret_key_),
-        std::size(secret_key),
-        std::data(assoc_data_),
-        std::size(assoc_data),
-        version,
-        NULL, NULL,
-        ARGON2_DEFAULT_FLAGS
-    };
-
-    int rc = argon2d_ctx(&context);
-    if (rc != ARGON2_OK)
-        // TODO: change exception
-        throw exception::CipherInternalError(
-            "argon2", argon2_error_message(rc));
+//        parallelism,
+//        version,
+//        nullptr, nullptr,
+//        ARGON2_DEFAULT_FLAGS
+//    };
+//
+//    int rc = argon2d_ctx(&context);
+//    if (rc != ARGON2_OK)
+//        // TODO: change exception
+//        throw exception::CipherInternalError(
+//            "argon2", argon2_error_message(rc));
 
     return result;
 }

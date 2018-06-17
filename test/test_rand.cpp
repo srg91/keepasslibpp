@@ -14,7 +14,7 @@ void TestFillRandom(RandomStrength strength, std::size_t count) {
 
     ByteVector bytes(count);
     rand.fill(bytes);
-    EXPECT_TRUE(bytes != ByteVector(count));
+    EXPECT_NE(bytes, ByteVector(count));
 
     std::string str(count, 0);
     rand.fill(str);
@@ -24,7 +24,7 @@ void TestFillRandom(RandomStrength strength, std::size_t count) {
 void TestGetRandom(RandomStrength strength, std::size_t count) {
     auto result = Rand(strength).get(count);
     EXPECT_EQ(std::size(result), count);
-    EXPECT_TRUE(result != ByteVector(count));
+    EXPECT_NE(result, ByteVector(count));
 }
 
 TEST(TestRand, FillWeakRandom) {
