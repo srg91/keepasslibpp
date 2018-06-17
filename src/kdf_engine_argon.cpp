@@ -1,4 +1,5 @@
 #include "byte_vector.hpp"
+#include "exception.hpp"
 #include "kdf_engine_argon.hpp"
 #include "kdf_parameters.hpp"
 #include "rand.hpp"
@@ -29,35 +30,24 @@ void KdfEngineArgon2::randomize(KdfParameters& kp) const {
 
 ByteVector KdfEngineArgon2::transform(const ByteVector& msg,
                                       const KdfParameters& kp) const {
-    std::uint32_t version;
-    if (!kp.get<std::uint32_t>(paramVersion, version))
-        throw exception::ArgumentIsNullError("version");
+    // TODO: std::clamp? or smth else?
+    auto version = kp.get<std::uint32_t>(paramVersion);
     if ((version < minVersion) || (version > maxVersion))
         throw exception::ArgumentIsOutOfRangeError("version");
 
-    ByteVector salt;
-    if (!kp.get<ByteVector>(paramSalt, salt))
-        throw exception::ArgumentIsNullError("salt");
-    // TODO: ???
+    auto salt = kp.get<ByteVector>(paramSalt);
     if ((std::size(salt) < minSalt) || (std::size(salt) > maxSalt))
         throw exception::ArgumentIsOutOfRangeError("salt");
 
-    // TODO: Can we simplify this?
-    std::uint32_t parallelism;
-    if (!kp.get<std::uint32_t>(paramParallelism, parallelism))
-        throw exception::ArgumentIsNullError("parallelism");
+    auto parallelism = kp.get<std::uint32_t>(paramParallelism);
     if ((parallelism < minParallelism) || (parallelism > maxParallelism))
         throw exception::ArgumentIsOutOfRangeError("parallelism");
 
-    std::uint64_t memory;
-    if (!kp.get<std::uint64_t>(paramMemory, memory))
-        throw exception::ArgumentIsNullError("memory");
+    auto memory = kp.get<std::uint64_t>(paramMemory);
     if ((memory < minMemory) || (memory > maxMemory))
         throw exception::ArgumentIsOutOfRangeError("memory");
 
-    std::uint64_t iterations;
-    if (!kp.get<std::uint64_t>(paramIterations, iterations))
-        throw exception::ArgumentIsNullError("iterations");
+    auto iterations = kp.get<std::uint64_t>(paramIterations);
     if ((iterations < minIterations) || (iterations > maxIterations))
         throw exception::ArgumentIsOutOfRangeError("iterations");
 
@@ -76,30 +66,58 @@ ByteVector KdfEngineArgon2::transform(const ByteVector& msg,
 }
 
 ByteVector KdfEngineArgon2::transformKey(
-        const keepasspp::ByteVector& msg,
-        const keepasspp::ByteVector& salt,
+        const ByteVector& msg,
+        const ByteVector& salt,
         std::uint32_t parallelism,
         std::uint64_t memory,
         std::uint64_t iterations,
         std::size_t result_size,
         std::uint32_t version,
-        const keepasspp::ByteVector& secret_key,
-        const keepasspp::ByteVector& assoc_data) const {
-    // TODO: use secret key?
-    // TODO: use assoc_data?
-    // TODO: check version?
+        const ByteVector& secret_key,
+        const ByteVector& assoc_data) const {
+
+    // TODO: Do not copy
+    auto msg_ = msg;
+    auto salt_ = salt;
+    auto secret_key_ = secret_key;
+    auto assoc_data_ = assoc_data;
+
     ByteVector result(result_size);
-    argon2d_hash_raw(
-        static_cast<std::uint32_t>(iterations),
-        static_cast<std::uint32_t>(memory),
-        parallelism,
-        std::data(msg),
-        std::size(msg),
-        std::data(salt),
-        std::size(salt),
+//    argon2d_hash_raw(
+//        static_cast<std::uint32_t>(iterations),
+//        static_cast<std::uint32_t>(memory),
+//        parallelism,
+//        std::data(msg),
+//        std::size(msg),
+//        std::data(salt),
+//        std::size(salt),
+//        std::data(result),
+//        result_size
+//    );
+
+    // TODO: cast size
+    argon2_context context = {
         std::data(result),
-        result_size
-    );
+        std::size(result),
+        std::data(msg_),
+        std::size(msg),
+        std::data(salt_),
+        std::size(salt),
+        std::data(secret_key_),
+        std::size(secret_key),
+        std::data(assoc_data_),
+        std::size(assoc_data),
+        version,
+        NULL, NULL,
+        ARGON2_DEFAULT_FLAGS
+    };
+
+    int rc = argon2d_ctx(&context);
+    if (rc != ARGON2_OK)
+        // TODO: change exception
+        throw exception::CipherInternalError(
+            "argon2", argon2_error_message(rc));
+
     return result;
 }
 

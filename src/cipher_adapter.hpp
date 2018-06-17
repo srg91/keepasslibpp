@@ -2,6 +2,7 @@
 
 #include "byte_vector.hpp"
 #include "exception.hpp"
+#include "iterator_reference.hpp"
 
 #include <gcrypt.h>
 
@@ -71,6 +72,9 @@ private:
 template <typename InputIt, typename OutputIt>
 void CipherAdapter::cipher(InputIt input, OutputIt output, std::size_t count,
                            CipherAdapter::Action action) {
+    auto input_ref = ForwardIteratorReference(input);
+    auto output_ref = ForwardIteratorReference(output);
+
     if ((count % this->blockLength) != 0)
         // TODO: more beautiful message
         throw exception::InputNotMultipleByBlockSize(count, this->blockLength);
@@ -89,16 +93,10 @@ void CipherAdapter::cipher(InputIt input, OutputIt output, std::size_t count,
     ByteVector output_buffer(this->blockLength);
 
     while (count > 0) {
-        // TODO: can we simplify this?
-        // TODO: move to function
-        if constexpr (std::is_same_v<InputIt, std::istreambuf_iterator<char>>) {
-            std::copy_n(input, this->blockLength, std::begin(input_buffer));
-            input++;
-        } else {
-            std::copy(input, std::next(input, this->blockLength),
-                      std::begin(input_buffer));
-            std::advance(input, this->blockLength);
-        }
+        count -= this->blockLength;
+
+        std::copy_n(input_ref, this->blockLength, std::begin(input_buffer));
+        ++input_ref;
 
         auto error = cipher_func(
             this->handle,
@@ -108,11 +106,7 @@ void CipherAdapter::cipher(InputIt input, OutputIt output, std::size_t count,
         if (error) CipherAdapter::throwError(error);
 
         std::copy(std::begin(output_buffer), std::end(output_buffer),
-                  output);
-
-        // TODO: simplfy?
-        count -= this->blockLength;
-        std::advance(output, this->blockLength);
+                  output_ref);
     }
 };
 
