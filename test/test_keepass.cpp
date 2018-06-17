@@ -1,6 +1,10 @@
+#include "byte_vector.hpp"
+
 #include <gcrypt.h>
 #include <gtest/gtest.h>
 
+#include <iomanip>
+#include <iostream>
 #include <exception>
 
 int main(int argc, char **argv) {

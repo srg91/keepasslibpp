@@ -35,7 +35,7 @@ TEST(TestCipherAdapter, Encrypt) {
     ByteVector output(32);
     aes.encrypt(std::begin(input), std::begin(output), std::size(input));
 
-    EXPECT_TRUE(output == expected);
+    EXPECT_EQ(output, expected);
 }
 
 TEST(TestCipherAdapter, Decrypt) {
@@ -54,7 +54,7 @@ TEST(TestCipherAdapter, Decrypt) {
     ByteVector output(32);
     aes.decrypt(std::begin(input), std::begin(output), std::size(input));
 
-    EXPECT_TRUE(output == expected);
+    EXPECT_EQ(output, expected);
 }
 
 TEST(TestCipherAdapter, SetKey) {
@@ -81,7 +81,7 @@ TEST(TestCipherAdapter, SetKey) {
     EXPECT_NO_THROW(
         aes.encrypt(std::begin(input), std::begin(output), std::size(input))
     );
-    EXPECT_TRUE(output == expected);
+    EXPECT_EQ(output, expected);
 }
 
 TEST(TestCipherAdapter, SetIv) {
@@ -101,7 +101,7 @@ TEST(TestCipherAdapter, SetIv) {
     };
 
     aes.encrypt(std::begin(input), std::begin(output), std::size(input));
-    EXPECT_TRUE(output == expected);
+    EXPECT_EQ(output, expected);
 
     expected = {
         0xe8, 0x03, 0x78, 0xdf, 0x76, 0xa2, 0x13, 0xd3,
@@ -112,7 +112,7 @@ TEST(TestCipherAdapter, SetIv) {
 
     aes.setIv(iv);
     aes.encrypt(std::begin(input), std::begin(output), std::size(input));
-    EXPECT_TRUE(output == expected);
+    EXPECT_EQ(output, expected);
 }
 
 // TODO: add tests for getMapped?

@@ -73,7 +73,7 @@ TEST(TestUuid, NewUuidByByteVector) {
     };
     auto u = Uuid::fromByteVector(expected);
     auto bytes = u.byteVector();
-    EXPECT_TRUE(bytes == expected);
+    EXPECT_EQ(bytes, expected);
 }
 
 TEST(TestUuid, NewUuidByIterator) {

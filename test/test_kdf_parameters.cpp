@@ -64,13 +64,13 @@ TEST_F(TestKdfParameters, SerializationToStream) {
 
 TEST_F(TestKdfParameters, DeserializationFromString) {
     auto kp = KdfParameters::DeserializeExt(sample_bytes);
-    EXPECT_TRUE(kp == sample_params);
+    EXPECT_EQ(kp, sample_params);
 }
 
 TEST_F(TestKdfParameters, DeserializationFromStream) {
     std::istringstream stream(sample_bytes);
     auto kp = KdfParameters::DeserializeExt(stream);
-    EXPECT_TRUE(kp == sample_params);
+    EXPECT_EQ(kp, sample_params);
 }
 
 TEST_F(TestKdfParameters, NewKdfParameters)
@@ -81,7 +81,7 @@ TEST_F(TestKdfParameters, NewKdfParameters)
 
     ByteVector kdf_uuid;
     EXPECT_TRUE(kp.get<ByteVector>("$UUID", kdf_uuid));
-    EXPECT_TRUE(kdf_uuid == u.byteVector());
+    EXPECT_EQ(kdf_uuid, u.byteVector());
 }
 
 TEST_F(TestKdfParameters, InvalidKdfParameters) {

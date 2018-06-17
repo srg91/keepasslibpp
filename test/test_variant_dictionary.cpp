@@ -136,14 +136,14 @@ TEST_F(TestVariantDictionary, SerializationToStream) {
 TEST_F(TestVariantDictionary, DeserializationFromString) {
     auto vd = VariantDictionary::deserialize(sample_bytes);
     // TODO: Implement << operator?
-    EXPECT_TRUE(vd == sample_dict);
+    EXPECT_EQ(vd, sample_dict);
 }
 
 TEST_F(TestVariantDictionary, DeserializationFromStream) {
     std::istringstream stream(sample_bytes);
     auto vd = VariantDictionary::deserialize(stream);
     // TODO: Implement << operator?
-    EXPECT_TRUE(vd == sample_dict);
+    EXPECT_EQ(vd, sample_dict);
 }
 
 TEST_F(TestVariantDictionary, DeserializationEmptyDictionary) {
@@ -299,7 +299,7 @@ TEST_F(TestVariantDictionary, GetByteVector) {
     ByteVector expected = {
         'h', 'e', 'l', 'l', 'o', ',', ' ', 'w', 'o', 'r', 'l', 'd'
     };
-    EXPECT_TRUE(result == expected);
+    EXPECT_EQ(result, expected);
 }
 
 TEST_F(TestVariantDictionary, GetNothing) {
@@ -489,7 +489,7 @@ TEST_F(TestVariantDictionary, Equal) {
     right["string"] = std::string("hello, world");
     right["int32"] = std::int32_t(123456);
 
-    EXPECT_TRUE(left == right);
+    EXPECT_EQ(left, right);
 }
 
 TEST_F(TestVariantDictionary, Index) {

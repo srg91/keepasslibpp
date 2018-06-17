@@ -12,7 +12,7 @@ TEST(TestByteVector, ToByteVector) {
                            'w', 'o', 'r', 'l', 'd', '!'};
 
     auto result = to_byte_vector(s);
-    EXPECT_TRUE(result == expected);
+    EXPECT_EQ(result, expected);
 }
 
 TEST(TestByteVector, ToString) {

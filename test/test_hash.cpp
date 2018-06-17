@@ -24,7 +24,7 @@ TEST(TestHash, SumFromString) {
     EXPECT_EQ(std::size(expected), SHA256_SIZE);
 
     auto result = Hash(HashAlgorithm::sha256).sum(input);
-    EXPECT_TRUE(result == expected);
+    EXPECT_EQ(result, expected);
 }
 
 TEST(TestHash, SumWithWrite) {
@@ -38,7 +38,7 @@ TEST(TestHash, SumWithWrite) {
 
     auto sha256 = Hash(HashAlgorithm::sha256);
     auto result = sha256.write(input).sum();
-    EXPECT_TRUE(result == expected);
+    EXPECT_EQ(result, expected);
 }
 
 TEST(TestHash, HexSumFromString) {
