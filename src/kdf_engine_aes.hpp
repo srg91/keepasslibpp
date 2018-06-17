@@ -1,6 +1,7 @@
 #pragma once
 
 #include "byte_vector.hpp"
+#include "cipher_adapter.hpp"
 #include "kdf_engine.hpp"
 
 #include <cstddef>
@@ -28,15 +29,10 @@ private:
         0xbf, 0x74, 0x0d, 0x08, 0xc1, 0x8a, 0x4f, 0xea
     });
 
-    // TODO: gcry_cipher_get_algo_keylen
-//    inline static const std::size_t defaultSize = 32;
-    static std::size_t getKeySize() noexcept;
-//    static std::size_t getBlockSize() noexcept;
-
     inline static const std::size_t defaultRounds = 6000;
 
-    inline static const std::size_t keySize = KdfEngineAes::getKeySize();
-//    inline static const std::size_t blockSize = KdfEngineAes::getBlockSize();
+    inline static const std::size_t keySize =
+        CipherAdapter::getKeyLength(CipherAlgorithm::aes256);
 
     ByteVector transformKey(const ByteVector& data, const ByteVector& seed,
                             std::uint64_t rounds) const;

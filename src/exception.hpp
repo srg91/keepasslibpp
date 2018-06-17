@@ -122,6 +122,12 @@ private:
     const std::size_t actual, expected;
 };
 
+class CipherAdapterError: public KeePassError {
+public:
+    explicit CipherAdapterError(std::string_view message)
+        : KeePassError("CipherAdapterError", message) {};
+};
+
 class KdfEngineError: public KeePassError {
 public:
     explicit KdfEngineError(std::string_view message)
@@ -132,7 +138,7 @@ public:
 };
 
 class KdfEngineAesError : public KdfEngineError {
-    
+
 };
 
 }

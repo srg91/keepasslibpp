@@ -63,13 +63,4 @@ ByteVector KdfEngineAes::transformKey(const ByteVector& data,
     return Hash(HashAlgorithm::sha256).sum(result_data);
 }
 
-// TODO: Get from cipheradapter
-std::size_t KdfEngineAes::getKeySize() noexcept {
-    return gcry_cipher_get_algo_keylen(GCRY_CIPHER_AES256);
-}
-
-//std::size_t KdfEngineAes::getBlockSize() noexcept {
-//    return gcry_cipher_get_algo_blklen(GCRY_CIPHER_AES256);
-//}
-
 }
