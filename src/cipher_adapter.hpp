@@ -37,8 +37,13 @@ public:
 
     template <typename InputIt, typename OutputIt>
     void encrypt(InputIt input, OutputIt output, std::size_t count);
+    template <typename InputIt>
+    ByteVector encrypt(InputIt input, std::size_t count);
+
     template <typename InputIt, typename OutputIt>
     void decrypt(InputIt input, OutputIt output, std::size_t count);
+    template <typename InputIt>
+    ByteVector decrypt(InputIt input, std::size_t count);
 private:
     const CipherAlgorithm algorithm;
     const CipherMode mode;
@@ -60,7 +65,7 @@ private:
     static int getMappedAlgorithm(CipherAlgorithm algorithm) noexcept;
     static int getMappedMode(CipherMode mode) noexcept;
     // TODO: string_view?
-    static std::string throwError(gcry_error_t e);
+    static void throwError(gcry_error_t e);
 };
 
 template <typename InputIt, typename OutputIt>
@@ -84,8 +89,16 @@ void CipherAdapter::cipher(InputIt input, OutputIt output, std::size_t count,
     ByteVector output_buffer(this->blockLength);
 
     while (count > 0) {
-        std::copy(input, std::next(input, this->blockLength),
-                  std::begin(input_buffer));
+        // TODO: can we simplify this?
+        // TODO: move to function
+        if constexpr (std::is_same_v<InputIt, std::istreambuf_iterator<char>>) {
+            std::copy_n(input, this->blockLength, std::begin(input_buffer));
+            input++;
+        } else {
+            std::copy(input, std::next(input, this->blockLength),
+                      std::begin(input_buffer));
+            std::advance(input, this->blockLength);
+        }
 
         auto error = cipher_func(
             this->handle,
@@ -99,7 +112,6 @@ void CipherAdapter::cipher(InputIt input, OutputIt output, std::size_t count,
 
         // TODO: simplfy?
         count -= this->blockLength;
-        std::advance(input, this->blockLength);
         std::advance(output, this->blockLength);
     }
 };
@@ -109,9 +121,24 @@ void CipherAdapter::encrypt(InputIt input, OutputIt output, std::size_t count) {
     this->cipher(input, output, count, CipherAdapter::Action::encrypt);
 }
 
+template <typename InputIt>
+ByteVector CipherAdapter::encrypt(InputIt input, std::size_t count) {
+    ByteVector output(count);
+    this->encrypt(input, std::begin(output), count);
+    return output;
+}
+
 template <typename InputIt, typename OutputIt>
 void CipherAdapter::decrypt(InputIt input, OutputIt output, std::size_t count) {
     this->cipher(input, output, count, CipherAdapter::Action::decrypt);
 }
+
+template <typename InputIt>
+ByteVector CipherAdapter::decrypt(InputIt input, std::size_t count) {
+    ByteVector output(count);
+    this->decrypt(input, std::begin(output), count);
+    return output;
+}
+
 
 }

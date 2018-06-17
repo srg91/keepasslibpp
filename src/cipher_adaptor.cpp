@@ -72,7 +72,8 @@ int CipherAdapter::getMappedMode(keepasspp::CipherMode mode) noexcept {
     }
 }
 
-std::string CipherAdapter::throwError(gcry_error_t e) {
+void CipherAdapter::throwError(gcry_error_t e) {
+    if (!e) return;
     throw exception::CipherInternalError(gcry_strsource(e),
                                          gcry_strerror(e));
 }

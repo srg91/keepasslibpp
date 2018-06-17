@@ -1,5 +1,6 @@
 1. Заменить const std::string на std::string_view ?
 2. Добавить класс byte_vector_view?
+3. Заменить iterator1 - iterator2 на std::distance (из <iterator>)
 3. Добавить hash-адаптер
 2. Добавить тесты на ошибки as is? Выдали ошибку - получили сообщение
 3. Добавить версионирование?

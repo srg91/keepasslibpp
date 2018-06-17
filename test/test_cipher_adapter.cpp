@@ -6,6 +6,7 @@
 
 #include <cstddef>
 #include <iterator>
+#include <sstream>
 
 using namespace keepasspp;
 
@@ -21,7 +22,7 @@ TEST(TestCipherAdapter, GetKeyLength) {
 
 TEST(TestCipherAdapter, Encrypt) {
     auto key = to_byte_vector("jJ4AOXiyVa1pTMkdMXLOwxloIFtygxkp");
-    auto input = to_byte_vector("CLptVAZ5iIpYRWEhJyZ4ublZQcHj91mk");
+    std::string input = "CLptVAZ5iIpYRWEhJyZ4ublZQcHj91mk";
     ByteVector expected = {
         0x2d, 0xbe, 0x5c, 0xe0, 0x62, 0x32, 0x5c, 0xab,
         0xc9, 0xd8, 0xe1, 0xa6, 0xed, 0xe1, 0x27, 0x08,
@@ -32,10 +33,37 @@ TEST(TestCipherAdapter, Encrypt) {
     CipherAdapter aes(CipherAlgorithm::aes256, CipherMode::ecb);
     aes.setKey(key);
 
-    ByteVector output(32);
-    aes.encrypt(std::begin(input), std::begin(output), std::size(input));
-
+    auto output = aes.encrypt(std::begin(input), std::size(input));
     EXPECT_EQ(output, expected);
+
+    output = ByteVector(std::size(input));
+    aes.encrypt(std::begin(input), std::begin(output), std::size(input));
+    EXPECT_EQ(output, expected);
+}
+
+TEST(TestCipherAdapter, EncryptStream) {
+    auto key = to_byte_vector("jJ4AOXiyVa1pTMkdMXLOwxloIFtygxkp");
+    std::istringstream is("CLptVAZ5iIpYRWEhJyZ4ublZQcHj91mk"
+                          "/eof/");
+    ByteVector expected = {
+        0x2d, 0xbe, 0x5c, 0xe0, 0x62, 0x32, 0x5c, 0xab,
+        0xc9, 0xd8, 0xe1, 0xa6, 0xed, 0xe1, 0x27, 0x08,
+        0x37, 0x54, 0x47, 0x34, 0xaa, 0x61, 0x32, 0xa2,
+        0x1d, 0x42, 0xac, 0x3c, 0x56, 0xfb, 0x70, 0xe1
+    };
+
+    CipherAdapter aes(CipherAlgorithm::aes256, CipherMode::ecb);
+    aes.setKey(key);
+
+    auto output = aes.encrypt(
+        std::istreambuf_iterator<char>(is),
+        32
+    );
+    EXPECT_EQ(output, expected);
+
+    std::string rest;
+    is >> rest;
+    EXPECT_EQ(rest, "/eof/");
 }
 
 TEST(TestCipherAdapter, Decrypt) {
@@ -51,10 +79,38 @@ TEST(TestCipherAdapter, Decrypt) {
     CipherAdapter aes(CipherAlgorithm::aes256, CipherMode::ecb);
     aes.setKey(key);
 
-    ByteVector output(32);
-    aes.decrypt(std::begin(input), std::begin(output), std::size(input));
-
+    auto output = aes.decrypt(std::begin(input), std::size(input));
     EXPECT_EQ(output, expected);
+
+    output = ByteVector(std::size(input));
+    aes.decrypt(std::begin(input), std::begin(output), std::size(input));
+    EXPECT_EQ(output, expected);
+}
+
+TEST(TestCipherAdapter, DecryptStream) {
+    ByteVector input = {
+        0x2d, 0xbe, 0x5c, 0xe0, 0x62, 0x32, 0x5c, 0xab,
+        0xc9, 0xd8, 0xe1, 0xa6, 0xed, 0xe1, 0x27, 0x08,
+        0x37, 0x54, 0x47, 0x34, 0xaa, 0x61, 0x32, 0xa2,
+        0x1d, 0x42, 0xac, 0x3c, 0x56, 0xfb, 0x70, 0xe1
+    };
+    std::istringstream is(to_string(input) + "/eof/");
+
+    auto key = to_byte_vector("jJ4AOXiyVa1pTMkdMXLOwxloIFtygxkp");
+    auto expected = to_byte_vector("CLptVAZ5iIpYRWEhJyZ4ublZQcHj91mk");
+
+    CipherAdapter aes(CipherAlgorithm::aes256, CipherMode::ecb);
+    aes.setKey(key);
+
+    auto output = aes.decrypt(
+        std::istreambuf_iterator<char>(is),
+        32
+    );
+    EXPECT_EQ(output, expected);
+
+    std::string rest;
+    is >> rest;
+    EXPECT_EQ(rest, "/eof/");
 }
 
 TEST(TestCipherAdapter, SetKey) {
@@ -115,5 +171,26 @@ TEST(TestCipherAdapter, SetIv) {
     EXPECT_EQ(output, expected);
 }
 
-// TODO: add tests for getMapped?
-// TODO: add tests for handle errors
+TEST(TestCipherAdapter, InvalidInput) {
+    auto key = to_byte_vector("jJ4AOXiyVa1pTMkdMXLOwxloIFtygxkp");
+    auto input = to_byte_vector("Hello, world!");
+
+    CipherAdapter aes(CipherAlgorithm::aes256, CipherMode::ecb);
+    aes.setKey(key);
+
+    EXPECT_THROW(aes.encrypt(std::begin(input), std::size(input)),
+                 exception::InputNotMultipleByBlockSize);
+
+}
+
+TEST(TestCipherAdapter, UnknownAlgorithmOrMode) {
+    EXPECT_THROW(
+        CipherAdapter aes(static_cast<CipherAlgorithm>(-1), CipherMode::ecb),
+        exception::CipherInternalError
+    );
+
+    EXPECT_THROW(
+        CipherAdapter aes(CipherAlgorithm::aes256, static_cast<CipherMode>(-1)),
+        exception::CipherInternalError
+    );
+}
