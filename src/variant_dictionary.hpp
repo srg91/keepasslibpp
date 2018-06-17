@@ -15,6 +15,7 @@
 namespace keepasspp {
 
 // TODO: Use template for container (in src use unordered, but map in tests)
+// TODO: Add iterator?
 class VariantDictionary {
 public:
     // TODO: Rename this all stuff?
