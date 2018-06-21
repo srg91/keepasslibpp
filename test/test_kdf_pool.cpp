@@ -16,7 +16,7 @@ public:
     explicit SomeKdfEngine(Uuid uuid)
         : uuid(uuid) {};
 
-    const Uuid& getUuid() const override {
+    const Uuid& getUuid() const noexcept override {
         return uuid;
     }
 

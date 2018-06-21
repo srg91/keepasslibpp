@@ -11,7 +11,7 @@ namespace keepasspp {
 
 class KdfEngine {
 public:
-    virtual const Uuid& getUuid() const = 0;
+    virtual const Uuid& getUuid() const noexcept = 0;
 
     virtual KdfParameters getDefaultParameters() const {
         return KdfParameters(getUuid());

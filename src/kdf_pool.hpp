@@ -12,6 +12,7 @@
 
 namespace keepasspp {
 
+// TODO: make threadsafe? what about globalness?
 // TODO: add iterator? add
 class KdfPool {
 public:

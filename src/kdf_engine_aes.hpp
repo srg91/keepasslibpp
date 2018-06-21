@@ -17,14 +17,14 @@ public:
     // ByteVector
     inline static const std::string paramSeed = "S";
 
-    const Uuid& getUuid() const override { return uuid; }
+    const Uuid& getUuid() const noexcept override { return uuid; }
     KdfParameters getDefaultParameters() const override;
 
     void randomize(KdfParameters& kp) const override;
     ByteVector transform(const ByteVector& msg,
                          const KdfParameters& kp) const override;
 private:
-    Uuid uuid = Uuid::fromByteVector({
+    inline static const auto uuid = Uuid::fromByteVector({
         0xc9, 0xd9, 0xf3, 0x9a, 0x62, 0x8a, 0x44, 0x60,
         0xbf, 0x74, 0x0d, 0x08, 0xc1, 0x8a, 0x4f, 0xea
     });

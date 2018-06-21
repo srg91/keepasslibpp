@@ -19,14 +19,14 @@ public:
     inline static const std::string paramSecretKey = "K";
     inline static const std::string paramAssocData = "A";
 
-    const Uuid& getUuid() const override { return uuid; };
+    const Uuid& getUuid() const noexcept override { return uuid; };
     KdfParameters getDefaultParameters() const override;
 
     void randomize(KdfParameters& kp) const override;
     ByteVector transform(const ByteVector& msg,
                          const KdfParameters& kp) const override;
 private:
-    Uuid uuid = Uuid::fromByteVector({
+    inline static const auto uuid = Uuid::fromByteVector({
         0xef, 0x63, 0x6d, 0xdf, 0x8c, 0x29, 0x44, 0x4b,
         0x91, 0xf7, 0xa9, 0xa4, 0x03, 0xe3, 0x0a, 0x0c
     });
