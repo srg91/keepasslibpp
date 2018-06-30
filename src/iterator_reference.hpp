@@ -4,6 +4,8 @@
 
 namespace keepasspp {
 
+// TODO: Never used, remove?
+
 // TODO: Small hack to pass iterators by reference
 // TODO: If you know good way to do this, please remove this
 
