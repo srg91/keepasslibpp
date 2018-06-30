@@ -132,22 +132,23 @@ protected:
         : KeePassError(error_name, message) {};
 };
 
-class InputNotMultipleByBlockSize: public CipherAdapterError {
-public:
-    explicit InputNotMultipleByBlockSize(std::size_t length,
-                                         std::size_t block_size)
-        : CipherAdapterError(
-            "InputNotMultipleByBlockSize",
-            InputNotMultipleByBlockSize::formatMessage(length, block_size)
-        ) {};
-private:
-    static std::string formatMessage(std::size_t length,
-                                     std::size_t block_size) {
-        std::ostringstream os;
-        os << "input must be a multiple of " << block_size << " in length";
-        return os.str();
-    }
-};
+// TODO: Remove or use?
+//class InputNotMultipleByBlockSize: public CipherAdapterError {
+//public:
+//    explicit InputNotMultipleByBlockSize(std::size_t length,
+//                                         std::size_t block_size)
+//        : CipherAdapterError(
+//            "InputNotMultipleByBlockSize",
+//            InputNotMultipleByBlockSize::formatMessage(length, block_size)
+//        ) {};
+//private:
+//    static std::string formatMessage(std::size_t length,
+//                                     std::size_t block_size) {
+//        std::ostringstream os;
+//        os << "input must be a multiple of " << block_size << " in length";
+//        return os.str();
+//    }
+//};
 
 // TODO: map all internal errors to our errors
 class CipherInternalError: public CipherAdapterError {

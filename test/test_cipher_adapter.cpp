@@ -20,7 +20,7 @@ TEST(TestCipherAdapter, GetKeyLength) {
     EXPECT_EQ(result, 32);
 }
 
-TEST(TestCipherAdapter, Encrypt) {
+TEST(TestCipherAdapter, EncryptAes256) {
     auto key = to_byte_vector("jJ4AOXiyVa1pTMkdMXLOwxloIFtygxkp");
     std::string input = "CLptVAZ5iIpYRWEhJyZ4ublZQcHj91mk";
     ByteVector expected = {
@@ -33,40 +33,18 @@ TEST(TestCipherAdapter, Encrypt) {
     CipherAdapter aes(CipherAlgorithm::aes256, CipherMode::ecb);
     aes.setKey(key);
 
-    auto output = aes.encrypt(std::begin(input), std::size(input));
+    ByteVector output(std::size(input));
+    aes.encrypt(input, output);
     EXPECT_EQ(output, expected);
 
-    output = ByteVector(std::size(input));
-    aes.encrypt(std::begin(input), std::begin(output), std::size(input));
+    output = to_byte_vector(input);
+    EXPECT_NE(output, expected);
+    aes.encrypt(output);
     EXPECT_EQ(output, expected);
 }
 
-TEST(TestCipherAdapter, EncryptStream) {
-    auto key = to_byte_vector("jJ4AOXiyVa1pTMkdMXLOwxloIFtygxkp");
-    std::istringstream is("CLptVAZ5iIpYRWEhJyZ4ublZQcHj91mk"
-                          "/eof/");
-    ByteVector expected = {
-        0x2d, 0xbe, 0x5c, 0xe0, 0x62, 0x32, 0x5c, 0xab,
-        0xc9, 0xd8, 0xe1, 0xa6, 0xed, 0xe1, 0x27, 0x08,
-        0x37, 0x54, 0x47, 0x34, 0xaa, 0x61, 0x32, 0xa2,
-        0x1d, 0x42, 0xac, 0x3c, 0x56, 0xfb, 0x70, 0xe1
-    };
 
-    CipherAdapter aes(CipherAlgorithm::aes256, CipherMode::ecb);
-    aes.setKey(key);
-
-    auto output = aes.encrypt(
-        std::istreambuf_iterator<char>(is),
-        32
-    );
-    EXPECT_EQ(output, expected);
-
-    std::string rest;
-    is >> rest;
-    EXPECT_EQ(rest, "/eof/");
-}
-
-TEST(TestCipherAdapter, Decrypt) {
+TEST(TestCipherAdapter, DecryptAes256) {
     auto key = to_byte_vector("jJ4AOXiyVa1pTMkdMXLOwxloIFtygxkp");
     ByteVector input = {
         0x2d, 0xbe, 0x5c, 0xe0, 0x62, 0x32, 0x5c, 0xab,
@@ -74,43 +52,24 @@ TEST(TestCipherAdapter, Decrypt) {
         0x37, 0x54, 0x47, 0x34, 0xaa, 0x61, 0x32, 0xa2,
         0x1d, 0x42, 0xac, 0x3c, 0x56, 0xfb, 0x70, 0xe1
     };
-    auto expected = to_byte_vector("CLptVAZ5iIpYRWEhJyZ4ublZQcHj91mk");
+    auto expected_string = "CLptVAZ5iIpYRWEhJyZ4ublZQcHj91mk";
+    auto expected = to_byte_vector(expected_string);
 
     CipherAdapter aes(CipherAlgorithm::aes256, CipherMode::ecb);
     aes.setKey(key);
 
-    auto output = aes.decrypt(std::begin(input), std::size(input));
+    ByteVector output(std::size(input));
+    aes.decrypt(input, output);
     EXPECT_EQ(output, expected);
 
-    output = ByteVector(std::size(input));
-    aes.decrypt(std::begin(input), std::begin(output), std::size(input));
-    EXPECT_EQ(output, expected);
-}
-
-TEST(TestCipherAdapter, DecryptStream) {
-    ByteVector input = {
-        0x2d, 0xbe, 0x5c, 0xe0, 0x62, 0x32, 0x5c, 0xab,
-        0xc9, 0xd8, 0xe1, 0xa6, 0xed, 0xe1, 0x27, 0x08,
-        0x37, 0x54, 0x47, 0x34, 0xaa, 0x61, 0x32, 0xa2,
-        0x1d, 0x42, 0xac, 0x3c, 0x56, 0xfb, 0x70, 0xe1
-    };
-    std::istringstream is(to_string(input) + "/eof/");
-
-    auto key = to_byte_vector("jJ4AOXiyVa1pTMkdMXLOwxloIFtygxkp");
-    auto expected = to_byte_vector("CLptVAZ5iIpYRWEhJyZ4ublZQcHj91mk");
-
-    CipherAdapter aes(CipherAlgorithm::aes256, CipherMode::ecb);
-    aes.setKey(key);
-
-    auto output = aes.decrypt(
-        std::istreambuf_iterator<char>(is),
-        32
-    );
+    output = input;
+    EXPECT_NE(output, expected);
+    aes.decrypt(output);
     EXPECT_EQ(output, expected);
 
-    std::string rest;
-    is >> rest;
-    EXPECT_EQ(rest, "/eof/");
+    auto string_output = std::string(std::size(expected), 0);
+    aes.decrypt(input, string_output);
+    EXPECT_EQ(string_output, expected_string);
 }
 
 TEST(TestCipherAdapter, SetKey) {
@@ -129,14 +88,12 @@ TEST(TestCipherAdapter, SetKey) {
     ByteVector output(32);
     // TODO: shows unexpected error in stderr
     EXPECT_THROW(
-        aes.encrypt(std::begin(input), std::begin(output), std::size(input)),
+        aes.encrypt(input, output),
         exception::CipherInternalError
     );
 
     aes.setKey(key);
-    EXPECT_NO_THROW(
-        aes.encrypt(std::begin(input), std::begin(output), std::size(input))
-    );
+    EXPECT_NO_THROW(aes.encrypt(input, output));
     EXPECT_EQ(output, expected);
 }
 
@@ -156,7 +113,7 @@ TEST(TestCipherAdapter, SetIv) {
         0x1c, 0xc6, 0x74, 0x99, 0xf3, 0xc0, 0x40, 0x61
     };
 
-    aes.encrypt(std::begin(input), std::begin(output), std::size(input));
+    aes.encrypt(input, output);
     EXPECT_EQ(output, expected);
 
     expected = {
@@ -167,7 +124,7 @@ TEST(TestCipherAdapter, SetIv) {
     };
 
     aes.setIv(iv);
-    aes.encrypt(std::begin(input), std::begin(output), std::size(input));
+    aes.encrypt(input, output);
     EXPECT_EQ(output, expected);
 }
 
@@ -178,9 +135,7 @@ TEST(TestCipherAdapter, InvalidInput) {
     CipherAdapter aes(CipherAlgorithm::aes256, CipherMode::ecb);
     aes.setKey(key);
 
-    EXPECT_THROW(aes.encrypt(std::begin(input), std::size(input)),
-                 exception::InputNotMultipleByBlockSize);
-
+    EXPECT_THROW(aes.encrypt(input), exception::CipherInternalError);
 }
 
 TEST(TestCipherAdapter, UnknownAlgorithmOrMode) {

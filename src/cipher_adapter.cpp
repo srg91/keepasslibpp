@@ -79,4 +79,51 @@ void CipherAdapter::throwError(gcry_error_t e) {
                                          gcry_strerror(e));
 }
 
+void CipherAdapter::cipher(const void* input, std::size_t input_size,
+                           void* output, std::size_t output_size,
+                           CipherAdapter::Direction direction) {
+    // TODO: should we check input / output size?
+    // TODO: is it can be different?
+    std::function<decltype(gcry_cipher_encrypt)> cipher_func;
+    switch (direction) {
+        case CipherAdapter::Direction::encrypt:
+            cipher_func = gcry_cipher_encrypt;
+            break;
+        case CipherAdapter::Direction::decrypt:
+            cipher_func = gcry_cipher_decrypt;
+            break;
+    }
+
+    auto error = cipher_func(
+        this->handle,
+        output, output_size,
+        input, input_size
+    );
+    if (error) CipherAdapter::throwError(error);
+}
+
+void CipherAdapter::encrypt(const void* input, std::size_t input_size,
+                            void* output, std::size_t output_size) {
+    this->cipher(input, input_size, output, output_size,
+                 CipherAdapter::Direction::encrypt);
+}
+
+void CipherAdapter::encrypt(void* input, std::size_t input_size) {
+    this->cipher(input, input_size, input, input_size,
+                 CipherAdapter::Direction::encrypt);
+}
+
+
+//TODO: can we remove this copy paste?
+void CipherAdapter::decrypt(const void* input, std::size_t input_size,
+                            void* output, std::size_t output_size) {
+    this->cipher(input, input_size, output, output_size,
+                 CipherAdapter::Direction::decrypt);
+}
+
+void CipherAdapter::decrypt(void* input, std::size_t input_size) {
+    this->cipher(input, input_size, input, input_size,
+                 CipherAdapter::Direction::decrypt);
+}
+
 }

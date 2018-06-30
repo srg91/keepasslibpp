@@ -15,12 +15,14 @@
 namespace keepasspp {
 
 enum class CipherAlgorithm {
-    aes256
+    aes256,
+    chacha20
 };
 
 enum class CipherMode {
     ecb,
-    cbc
+    cbc,
+    stream
 };
 
 // TODO: add check algorithm exists in gcrypt
@@ -36,15 +38,22 @@ public:
     void setIv(const ByteVector& iv);
     void setKey(const ByteVector& key);
 
-    template <typename InputIt, typename OutputIt>
-    void encrypt(InputIt input, OutputIt output, std::size_t count);
-    template <typename InputIt>
-    ByteVector encrypt(InputIt input, std::size_t count);
+    // TODO: how we can return new output?
+    template <typename Container>
+    void encrypt(Container& input);
+    template <typename C1, typename C2>
+    void encrypt(const C1& input, C2& output);
+    void encrypt(void* input, std::size_t input_size);
+    void encrypt(const void* input, std::size_t input_size,
+                 void* output, std::size_t output_size);
 
-    template <typename InputIt, typename OutputIt>
-    void decrypt(InputIt input, OutputIt output, std::size_t count);
-    template <typename InputIt>
-    ByteVector decrypt(InputIt input, std::size_t count);
+    template <typename Container>
+    void decrypt(Container& input);
+    template <typename C1, typename C2>
+    void decrypt(const C1& input, C2& output);
+    void decrypt(void* input, std::size_t input_size);
+    void decrypt(const void* input, std::size_t input_size,
+                 void* output, std::size_t output_size);
 private:
     const CipherAlgorithm algorithm;
     const CipherMode mode;
@@ -54,86 +63,46 @@ private:
 
     gcry_cipher_hd_t handle;
 
-    enum class Action {
+    enum class Direction {
         encrypt,
         decrypt
     };
 
-    template <typename InputIt, typename OutputIt>
-    void cipher(InputIt input, OutputIt output, std::size_t count,
-                Action action);
-    
+    // TODO: change it to span in c++20? or iterators?
+    void cipher(const void* input, std::size_t input_size,
+                void* output, std::size_t output_size,
+                Direction direction);
+
     static int getMappedAlgorithm(CipherAlgorithm algorithm) noexcept;
     static int getMappedMode(CipherMode mode) noexcept;
     // TODO: string_view?
     static void throwError(gcry_error_t e);
 };
 
-template <typename InputIt, typename OutputIt>
-void CipherAdapter::cipher(InputIt input, OutputIt output, std::size_t count,
-                           CipherAdapter::Action action) {
-    auto input_ref = ForwardIteratorReference(input);
-    auto output_ref = ForwardIteratorReference(output);
-
-    if ((count % this->blockLength) != 0)
-        // TODO: more beautiful message
-        throw exception::InputNotMultipleByBlockSize(count, this->blockLength);
-
-    std::function<decltype(gcry_cipher_encrypt)> cipher_func;
-    switch (action) {
-        case CipherAdapter::Action::encrypt:
-            cipher_func = gcry_cipher_encrypt;
-            break;
-        case CipherAdapter::Action::decrypt:
-            cipher_func = gcry_cipher_decrypt;
-            break;
-    }
-
-    ByteVector input_buffer(this->blockLength);
-    ByteVector output_buffer(this->blockLength);
-
-    while (count > 0) {
-        count -= this->blockLength;
-
-        // TODO: very slow
-        std::copy_n(input_ref, this->blockLength, std::begin(input_buffer));
-        ++input_ref;
-
-        auto error = cipher_func(
-            this->handle,
-            std::data(output_buffer), std::size(output_buffer),
-            std::data(input_buffer), std::size(input_buffer)
-        );
-        if (error) CipherAdapter::throwError(error);
-
-        std::copy(std::begin(output_buffer), std::end(output_buffer),
-                  output_ref);
-    }
-};
-
-template <typename InputIt, typename OutputIt>
-void CipherAdapter::encrypt(InputIt input, OutputIt output, std::size_t count) {
-    this->cipher(input, output, count, CipherAdapter::Action::encrypt);
+template <typename C1, typename C2>
+void CipherAdapter::encrypt(const C1& input, C2& output) {
+    this->encrypt(
+        std::data(input), std::size(input),
+        std::data(output), std::size(output)
+    );
 }
 
-template <typename InputIt>
-ByteVector CipherAdapter::encrypt(InputIt input, std::size_t count) {
-    ByteVector output(count);
-    this->encrypt(input, std::begin(output), count);
-    return output;
+template <typename Container>
+void CipherAdapter::encrypt(Container& input) {
+    this->encrypt(input, input);
 }
 
-template <typename InputIt, typename OutputIt>
-void CipherAdapter::decrypt(InputIt input, OutputIt output, std::size_t count) {
-    this->cipher(input, output, count, CipherAdapter::Action::decrypt);
+template <typename C1, typename C2>
+void CipherAdapter::decrypt(const C1& input, C2& output) {
+    this->decrypt(
+        std::data(input), std::size(input),
+        std::data(output), std::size(output)
+    );
 }
 
-template <typename InputIt>
-ByteVector CipherAdapter::decrypt(InputIt input, std::size_t count) {
-    ByteVector output(count);
-    this->decrypt(input, std::begin(output), count);
-    return output;
+template <typename Container>
+void CipherAdapter::decrypt(Container& input) {
+    this->decrypt(input, input);
 }
-
 
 }

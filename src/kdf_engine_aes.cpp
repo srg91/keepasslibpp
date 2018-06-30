@@ -53,11 +53,7 @@ ByteVector KdfEngineAes::transformKey(const ByteVector& data,
     cipher.setKey(seed);
 
     for (std::uint64_t i = 0; i < rounds; i++) {
-        cipher.encrypt(
-            std::begin(result_data),
-            std::begin(result_data),
-            std::size(result_data)
-        );
+        cipher.encrypt(result_data);
     }
 
     return Hash(HashAlgorithm::sha256).sum(result_data);
