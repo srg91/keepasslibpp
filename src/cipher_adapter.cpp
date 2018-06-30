@@ -9,8 +9,8 @@
 
 namespace keepasspp {
 
-CipherAdapter::CipherAdapter(keepasspp::CipherAlgorithm algorithm,
-                             keepasspp::CipherMode mode)
+CipherAdapter::CipherAdapter(CipherAlgorithm algorithm,
+                             CipherMode mode)
         : algorithm(algorithm)
         , mode(mode)
         , keyLength(CipherAdapter::getKeyLength(algorithm))
@@ -29,15 +29,13 @@ CipherAdapter::~CipherAdapter() {
     gcry_cipher_close(this->handle);
 }
 
-std::size_t CipherAdapter::getBlockLength(
-        keepasspp::CipherAlgorithm algorithm) noexcept {
+std::size_t CipherAdapter::getBlockLength(CipherAlgorithm algorithm) noexcept {
     return gcry_cipher_get_algo_blklen(
         CipherAdapter::getMappedAlgorithm(algorithm)
     );
 }
 
-std::size_t CipherAdapter::getKeyLength(
-        keepasspp::CipherAlgorithm algorithm) noexcept {
+std::size_t CipherAdapter::getKeyLength(CipherAlgorithm algorithm) noexcept {
     return gcry_cipher_get_algo_keylen(
         CipherAdapter::getMappedAlgorithm(algorithm)
     );
@@ -55,20 +53,23 @@ void CipherAdapter::setKey(const ByteVector& key) {
     if (error) CipherAdapter::throwError(error);
 }
 
-int CipherAdapter::getMappedAlgorithm(
-        keepasspp::CipherAlgorithm algorithm) noexcept {
+int CipherAdapter::getMappedAlgorithm(CipherAlgorithm algorithm) noexcept {
     switch (algorithm) {
         case CipherAlgorithm::aes256:
             return GCRY_CIPHER_AES256;
+        case CipherAlgorithm::chacha20:
+            return GCRY_CIPHER_CHACHA20;
     }
 }
 
-int CipherAdapter::getMappedMode(keepasspp::CipherMode mode) noexcept {
+int CipherAdapter::getMappedMode(CipherMode mode) noexcept {
     switch (mode) {
         case CipherMode::ecb:
             return GCRY_CIPHER_MODE_ECB;
         case CipherMode::cbc:
             return GCRY_CIPHER_MODE_CBC;
+        case CipherMode::stream:
+            return GCRY_CIPHER_MODE_STREAM;
     }
 }
 
