@@ -149,3 +149,41 @@ TEST(TestCipherAdapter, UnknownAlgorithmOrMode) {
         exception::CipherInternalError
     );
 }
+
+TEST(TestCipherAdapter, EncryptChaCha20) {
+    auto iv = to_byte_vector(std::string(12, 0x11));
+    auto key = to_byte_vector("jJ4AOXiyVa1pTMkdMXLOwxloIFtygxkp");
+
+    auto input = to_byte_vector("Hello, world");
+    ByteVector expected = {
+        0xb1, 0x2a, 0xcf, 0x3e, 0xeb, 0xf5,
+        0xfd, 0x97, 0xf7, 0xe5, 0xa7, 0x7f
+    };
+
+    CipherAdapter chacha20(CipherAlgorithm::chacha20, CipherMode::stream);
+    chacha20.setKey(key);
+    chacha20.setIv(iv);
+
+    ByteVector output(std::size(input));
+    chacha20.encrypt(input, output);
+    EXPECT_EQ(output, expected);
+}
+
+TEST(TestCipherAdapter, DecryptChaCha20) {
+    auto iv = to_byte_vector(std::string(12, 0x11));
+    auto key = to_byte_vector("jJ4AOXiyVa1pTMkdMXLOwxloIFtygxkp");
+
+    ByteVector input = {
+        0xb1, 0x2a, 0xcf, 0x3e, 0xeb, 0xf5,
+        0xfd, 0x97, 0xf7, 0xe5, 0xa7, 0x7f
+    };
+    std::string expected = "Hello, world";
+
+    CipherAdapter chacha20(CipherAlgorithm::chacha20, CipherMode::stream);
+    chacha20.setKey(key);
+    chacha20.setIv(iv);
+
+    std::string output(std::size(expected), 0);
+    chacha20.decrypt(input, output);
+    EXPECT_EQ(output, expected);
+}

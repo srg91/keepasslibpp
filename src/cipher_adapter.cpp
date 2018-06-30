@@ -41,18 +41,6 @@ std::size_t CipherAdapter::getKeyLength(CipherAlgorithm algorithm) noexcept {
     );
 }
 
-void CipherAdapter::setIv(const ByteVector& iv) {
-    auto error =
-        gcry_cipher_setiv(this->handle, std::data(iv), std::size(iv));
-    if (error) CipherAdapter::throwError(error);
-}
-
-void CipherAdapter::setKey(const ByteVector& key) {
-    auto error =
-        gcry_cipher_setkey(this->handle, std::data(key), std::size(key));
-    if (error) CipherAdapter::throwError(error);
-}
-
 int CipherAdapter::getMappedAlgorithm(CipherAlgorithm algorithm) noexcept {
     switch (algorithm) {
         case CipherAlgorithm::aes256:

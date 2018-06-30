@@ -35,8 +35,11 @@ public:
     static std::size_t getBlockLength(CipherAlgorithm algorithm) noexcept;
     static std::size_t getKeyLength(CipherAlgorithm algorithm) noexcept;
 
-    void setIv(const ByteVector& iv);
-    void setKey(const ByteVector& key);
+    // TODO: setIv have to be used after setKey. Should we force check it?
+    template <typename Container>
+    void setKey(const Container& key);
+    template <typename Container>
+    void setIv(const Container& iv);
 
     // TODO: how we can return new output?
     template <typename Container>
@@ -78,6 +81,20 @@ private:
     // TODO: string_view?
     static void throwError(gcry_error_t e);
 };
+
+template <typename Container>
+void CipherAdapter::setKey(const Container& key) {
+    auto error =
+        gcry_cipher_setkey(this->handle, std::data(key), std::size(key));
+    if (error) CipherAdapter::throwError(error);
+}
+
+template <typename Container>
+void CipherAdapter::setIv(const Container& iv) {
+    auto error =
+        gcry_cipher_setiv(this->handle, std::data(iv), std::size(iv));
+    if (error) CipherAdapter::throwError(error);
+}
 
 template <typename C1, typename C2>
 void CipherAdapter::encrypt(const C1& input, C2& output) {
