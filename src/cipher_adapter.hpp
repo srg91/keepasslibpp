@@ -32,8 +32,16 @@ public:
     explicit CipherAdapter(CipherAlgorithm algorithm, CipherMode mode);
     ~CipherAdapter();
 
+    // TODO: rename?
+    std::size_t getBlockLength() const noexcept { return this->blockLength; }
+    std::size_t getKeyLength() const noexcept { return this->keyLength; }
+
+    // TODO: or rename this?
     static std::size_t getBlockLength(CipherAlgorithm algorithm) noexcept;
     static std::size_t getKeyLength(CipherAlgorithm algorithm) noexcept;
+
+    bool isStream() { return this->mode == CipherMode::stream; }
+    bool isBlock() { return !this->isStream(); }
 
     // TODO: setIv have to be used after setKey. Should we force check it?
     template <typename Container>
@@ -44,7 +52,8 @@ public:
     // TODO: how we can return new output?
     template <typename Container>
     void encrypt(Container& input);
-    template <typename C1, typename C2>
+    // TODO: Add check is has std::data?
+    template <typename C1, typename C2, typename = std::enable_if_t<!std::is_trivial_v<C2>>>
     void encrypt(const C1& input, C2& output);
     void encrypt(void* input, std::size_t input_size);
     void encrypt(const void* input, std::size_t input_size,
@@ -52,7 +61,8 @@ public:
 
     template <typename Container>
     void decrypt(Container& input);
-    template <typename C1, typename C2>
+    // TODO: Add check is has std::data?
+    template <typename C1, typename C2, typename = std::enable_if_t<!std::is_trivial_v<C2>>>
     void decrypt(const C1& input, C2& output);
     void decrypt(void* input, std::size_t input_size);
     void decrypt(const void* input, std::size_t input_size,
@@ -96,7 +106,7 @@ void CipherAdapter::setIv(const Container& iv) {
     if (error) CipherAdapter::throwError(error);
 }
 
-template <typename C1, typename C2>
+template <typename C1, typename C2, typename>
 void CipherAdapter::encrypt(const C1& input, C2& output) {
     this->encrypt(
         std::data(input), std::size(input),
@@ -109,7 +119,7 @@ void CipherAdapter::encrypt(Container& input) {
     this->encrypt(input, input);
 }
 
-template <typename C1, typename C2>
+template <typename C1, typename C2, typename>
 void CipherAdapter::decrypt(const C1& input, C2& output) {
     this->decrypt(
         std::data(input), std::size(input),
